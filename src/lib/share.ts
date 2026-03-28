@@ -2,40 +2,40 @@
 
 const CHARACTER_NAMES = [
   "The Quant",
-  "The Visionary",
+  "The Altman",
   "The Degen",
-  "The Researcher",
+  "The Hinton",
   "The Operator",
-  "The Night Shift Engineer",
+  "The Torvalds",
   "The Ghost",
-  "The Chaos Agent",
-  "The Sensei",
+  "The Musk",
+  "The Carmack",
   "The Intern",
 ];
 
 const CHARACTER_ONELINERS: Record<string, string> = {
   "The Quant": "You treat Claude like a co-located server. Low latency, high conviction.",
-  "The Visionary": "You are not building features. You are changing the world. Probably.",
+  "The Altman": "You are not building features. You are changing the world. Probably.",
   "The Degen": "No risk management. No sleep. Absolute conviction. We respect it.",
-  "The Researcher": "You are not using Claude. You are collaborating with it.",
+  "The Hinton": "You are not using Claude. You are collaborating with it.",
   "The Operator": "Objectives identified. Objectives completed. No wasted tokens.",
-  "The Night Shift Engineer": "Nobody knows what you are building. Not even you. Not yet.",
+  "The Torvalds": "Nobody knows what you are building. Not even you. Not yet.",
   "The Ghost": "You came. You asked. You left. Claude still thinks about you.",
-  "The Chaos Agent": "No pattern. No loyalty. Somehow shipping. Unexplainable.",
-  "The Sensei": "You have done this before. Claude can tell.",
+  "The Musk": "No pattern. No loyalty. Somehow shipping. Unexplainable.",
+  "The Carmack": "You have done this before. Claude can tell.",
   "The Intern": "You are figuring it out. We all started here.",
 };
 
 const CHARACTER_ENDINGS: Record<string, string> = {
   "The Quant": "Godspeed.",
-  "The Visionary": "Claude believes in you.",
+  "The Altman": "Claude believes in you.",
   "The Degen": "We respect it.",
-  "The Researcher": "Claude remembers you.",
+  "The Hinton": "Claude remembers you.",
   "The Operator": "Godspeed.",
-  "The Night Shift Engineer": "Claude was there with you.",
+  "The Torvalds": "Claude was there with you.",
   "The Ghost": "Claude remembers you.",
-  "The Chaos Agent": "We respect it.",
-  "The Sensei": "Claude respects you.",
+  "The Musk": "We respect it.",
+  "The Carmack": "Claude respects you.",
   "The Intern": "Claude is rooting for you.",
 };
 

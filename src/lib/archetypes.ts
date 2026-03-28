@@ -25,7 +25,7 @@ const characters: CharacterDef[] = [
     },
   },
   {
-    name: "The Visionary",
+    name: "The Altman",
     oneLiner: "You are not building features. You are changing the world. Probably.",
     endingLine: "Claude believes in you.",
     description: "Classic silicon valley CEO, turtleneck, one more thing energy.",
@@ -54,7 +54,7 @@ const characters: CharacterDef[] = [
     },
   },
   {
-    name: "The Researcher",
+    name: "The Hinton",
     oneLiner: "You are not using Claude. You are collaborating with it.",
     endingLine: "Claude remembers you.",
     description: "Academic, slightly dishevelled, whiteboard in background.",
@@ -85,7 +85,7 @@ const characters: CharacterDef[] = [
     },
   },
   {
-    name: "The Night Shift Engineer",
+    name: "The Torvalds",
     oneLiner: "Nobody knows what you are building. Not even you. Not yet.",
     endingLine: "Claude was there with you.",
     description: "3am kernel hacker, energy drink graveyard, dark mode everything.",
@@ -115,7 +115,7 @@ const characters: CharacterDef[] = [
     },
   },
   {
-    name: "The Chaos Agent",
+    name: "The Musk",
     oneLiner: "No pattern. No loyalty. Somehow shipping. Unexplainable.",
     endingLine: "We respect it.",
     description: "Founder who pivots every two weeks, manic energy, seventeen tabs.",
@@ -135,7 +135,7 @@ const characters: CharacterDef[] = [
     },
   },
   {
-    name: "The Sensei",
+    name: "The Carmack",
     oneLiner: "You have done this before. Claude can tell.",
     endingLine: "Claude respects you.",
     description: "Senior engineer, calm, precise, never types more than necessary.",

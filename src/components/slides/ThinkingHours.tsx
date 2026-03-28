@@ -53,7 +53,7 @@ function BrainwaveCanvas({ stats }: { stats: ComputedStats }) {
       for (let x = 0; x <= W; x++) {
         const envelope = Math.sin(x / W * Math.PI);
         const y = cy + Math.sin((x * freq) + t) * amp * envelope;
-        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
       ctx.strokeStyle = "#ff6b35";
       ctx.lineWidth = 2.5;
@@ -70,7 +70,7 @@ function BrainwaveCanvas({ stats }: { stats: ComputedStats }) {
       for (let x = 0; x <= W; x++) {
         const envelope = Math.sin(x / W * Math.PI);
         const y = cy + Math.sin((x * freq) + t) * amp * envelope;
-        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
       ctx.lineTo(W, cy);
       ctx.lineTo(0, cy);

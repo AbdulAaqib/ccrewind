@@ -152,6 +152,8 @@ export interface ComputedStats {
   retryClusters: number;
   totalRetries: number;
   topProjectStats: Array<{ name: string; messages: number; tokens: number; sessions: number }>;
+  estimatedCostUSD: number;
+  costByModel: Array<{ model: string; cost: number }>;
 }
 
 export interface Character {

@@ -77,9 +77,9 @@ export default function PowerScore({ cps }: Props) {
           transition={{ delay: 0.2, duration: 0.6 }}
           className="text-center"
         >
-          <span className="font-label text-[10px] font-bold tracking-[0.3em] uppercase text-primary">
-            Claude Power Score
-          </span>
+          <h1 className="font-headline text-4xl md:text-7xl font-extrabold tracking-tight text-on-surface text-glow">
+            Claude Code Elo
+          </h1>
         </motion.div>
 
         {/* Big score number */}

@@ -153,6 +153,14 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
               >
                 <span className="text-on-surface">Claude Code,</span>
                 <br />
+                <motion.img
+                  src="/mascots/power-score.png"
+                  alt="Claude mascot"
+                  initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 15 }}
+                  className="inline-block w-10 h-10 md:w-14 md:h-14 rounded-lg object-cover align-middle mr-1 md:mr-2 -mt-1"
+                />
                 <span className="text-primary">Rewind.</span>
               </motion.h1>
             </div>
@@ -251,12 +259,19 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsLoading(true);
-                  setLoadingText("Generating demo data...");
-                  setTimeout(() => {
-                    const demoData = generateDemoData();
-                    setLoadingText("Ready.");
-                    setTimeout(() => onDataParsed(demoData), 400);
-                  }, 800);
+                  setLoadingText("Loading demo data...");
+                  fetch("/demo-data.json")
+                    .then(r => r.json())
+                    .then(data => {
+                      setLoadingText("Ready.");
+                      setTimeout(() => onDataParsed(data), 400);
+                    })
+                    .catch(() => {
+                      // Fallback to generated demo
+                      const demoData = generateDemoData();
+                      setLoadingText("Ready.");
+                      setTimeout(() => onDataParsed(demoData), 400);
+                    });
                 }}
                 className="bg-surface-container-high hover:bg-surface-container-highest border border-on-surface/10 text-on-surface rounded-full px-8 py-3 font-label text-xs font-bold uppercase tracking-widest transition-all duration-200 hover:scale-105 active:scale-95"
               >

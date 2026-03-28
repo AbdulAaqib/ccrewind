@@ -16,6 +16,7 @@ import Sharpshooter from "@/components/slides/Sharpshooter";
 import Streak from "@/components/slides/Streak";
 import StopReason from "@/components/slides/StopReason";
 import RetrySpiral from "@/components/slides/RetrySpiral";
+import TheBill from "@/components/slides/TheBill";
 import Dashboard from "@/components/slides/Dashboard";
 import CharacterReveal from "@/components/reveal/CharacterReveal";
 import PowerScore from "@/components/reveal/PowerScore";
@@ -85,6 +86,7 @@ export default function Home() {
               <Streak stats={stats} />
               <StopReason stats={stats} />
               <RetrySpiral stats={stats} />
+              <TheBill stats={stats} />
               <PowerScore cps={cps} />
               <CharacterReveal character={character} stats={stats} cps={cps} />
             </SlideContainer>
@@ -100,7 +102,9 @@ export default function Home() {
             className="min-h-screen"
           >
             <ShareCard character={character} stats={stats} cps={cps} />
-            <Dashboard stats={stats} />
+            <div id="dashboard">
+              <Dashboard stats={stats} cps={cps} />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

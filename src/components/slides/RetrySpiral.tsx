@@ -16,8 +16,7 @@ export default function RetrySpiral({ stats }: { stats: ComputedStats }) {
     svg.selectAll("*").remove();
 
     const size = 300;
-    const cx = size / 2,
-      cy = size / 2;
+    const cx = size / 2, cy = size / 2;
     svg.attr("viewBox", `0 0 ${size} ${size}`);
 
     const rsi = stats.retrySpiral;
@@ -38,14 +37,12 @@ export default function RetrySpiral({ stats }: { stats: ComputedStats }) {
     }
 
     // Draw spiral path
-    const line = d3
-      .line<[number, number]>()
-      .x((d) => d[0])
-      .y((d) => d[1])
+    const line = d3.line<[number, number]>()
+      .x(d => d[0])
+      .y(d => d[1])
       .curve(d3.curveBasisOpen);
 
-    const spiralPath = svg
-      .append("path")
+    const spiralPath = svg.append("path")
       .datum(spiralPoints)
       .attr("d", line)
       .attr("fill", "none")
@@ -59,9 +56,9 @@ export default function RetrySpiral({ stats }: { stats: ComputedStats }) {
     const dotCount = Math.min(stats.retryClusters, 30);
     const dotSpacing = Math.floor(totalPoints / Math.max(dotCount, 1));
 
-    const colorScale = d3
-      .scaleSequential(d3.interpolateRgbBasis(["#4a4946", "#ff6b35", "#ffdbd0"]))
-      .domain([0, dotCount - 1]);
+    const colorScale = d3.scaleSequential(
+      d3.interpolateRgbBasis(["#4a4946", "#ff6b35", "#ffdbd0"])
+    ).domain([0, dotCount - 1]);
 
     for (let i = 0; i < dotCount; i++) {
       const idx = Math.min(i * dotSpacing, spiralPoints.length - 1);
@@ -69,10 +66,8 @@ export default function RetrySpiral({ stats }: { stats: ComputedStats }) {
       const isLast = i === dotCount - 1;
       const dotRadius = isLast ? 6 : 3;
 
-      svg
-        .append("circle")
-        .attr("cx", x)
-        .attr("cy", y)
+      svg.append("circle")
+        .attr("cx", x).attr("cy", y)
         .attr("r", 0)
         .attr("fill", colorScale(i))
         .attr("opacity", 0)
@@ -84,10 +79,8 @@ export default function RetrySpiral({ stats }: { stats: ComputedStats }) {
 
       // Glow on the final dot
       if (isLast) {
-        svg
-          .append("circle")
-          .attr("cx", x)
-          .attr("cy", y)
+        svg.append("circle")
+          .attr("cx", x).attr("cy", y)
           .attr("r", 0)
           .attr("fill", "none")
           .attr("stroke", "#ff6b35")
@@ -106,10 +99,8 @@ export default function RetrySpiral({ stats }: { stats: ComputedStats }) {
     }
 
     // Center label
-    svg
-      .append("text")
-      .attr("x", cx)
-      .attr("y", cy - 8)
+    svg.append("text")
+      .attr("x", cx).attr("y", cy - 8)
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .attr("fill", "#ff6b35")
@@ -118,15 +109,10 @@ export default function RetrySpiral({ stats }: { stats: ComputedStats }) {
       .attr("font-weight", "800")
       .attr("opacity", 0)
       .text(rsi.toFixed(1))
-      .transition()
-      .delay(1200)
-      .duration(500)
-      .attr("opacity", 1);
+      .transition().delay(1200).duration(500).attr("opacity", 1);
 
-    svg
-      .append("text")
-      .attr("x", cx)
-      .attr("y", cy + 14)
+    svg.append("text")
+      .attr("x", cx).attr("y", cy + 14)
       .attr("text-anchor", "middle")
       .attr("fill", "#97908a")
       .attr("font-size", "8px")
@@ -135,59 +121,35 @@ export default function RetrySpiral({ stats }: { stats: ComputedStats }) {
       .attr("letter-spacing", "0.15em")
       .attr("opacity", 0)
       .text("RSI")
-      .transition()
-      .delay(1300)
-      .duration(500)
-      .attr("opacity", 1);
+      .transition().delay(1300).duration(500).attr("opacity", 1);
   }, [stats]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-4 md:px-6 py-12 md:py-20 max-w-2xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="flex flex-col items-center gap-2 mb-4"
-      >
+        className="flex flex-col items-center gap-2 mb-4">
         <span className="font-label text-[10px] font-bold tracking-[0.3em] uppercase text-primary">Retry Spiral</span>
-        <h2 className="font-headline text-4xl md:text-7xl font-extrabold tracking-tight text-center text-glow">
-          {narrative.archetypeLabel}
-        </h2>
+        <h2 className="font-headline text-4xl md:text-7xl font-extrabold tracking-tight text-center text-glow">{narrative.archetypeLabel}</h2>
       </motion.div>
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.6 }}
-        className="font-body text-lg md:text-xl italic text-on-surface-variant text-center max-w-md mb-6"
-      >
-        {narrative.story}
-      </motion.p>
+      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.6 }}
+        className="font-body text-lg md:text-xl italic text-on-surface-variant text-center max-w-md mb-6">{narrative.story}</motion.p>
 
       {/* GIF Mascot Placeholder */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
+      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.7, duration: 0.5 }}
-        className="w-32 h-32 md:w-44 md:h-44 rounded-2xl overflow-hidden mb-4 md:mb-6"
-      >
-        <img src="/mascots/retry-spiral.png" alt="Retry spiral mascot" className="w-full h-full object-cover" />
+        className="w-32 h-32 md:w-44 md:h-44 rounded-2xl overflow-hidden mb-4 md:mb-6">
+        <video src="/mascots/videos/retry-spiral.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-xs"
-      >
+        className="w-full max-w-xs">
         <svg ref={svgRef} className="w-full h-auto" />
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.8 }}
-        className="mt-6 flex items-center gap-6"
-      >
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }}
+        className="mt-6 flex items-center gap-6">
         <div className="text-center">
           <span className="font-headline text-2xl font-extrabold text-primary">{stats.retryClusters}</span>
           <span className="font-label text-[10px] uppercase tracking-widest text-on-surface/40 ml-1">Clusters</span>

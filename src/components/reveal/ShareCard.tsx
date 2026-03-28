@@ -4,7 +4,7 @@ import { useRef, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Character, ComputedStats, CPSBreakdown } from "@/types";
 import { ShareData, buildShareURL } from "@/lib/share";
-import html2canvas from "html2canvas";
+import { toPng } from "html-to-image";
 
 interface Props {
   character: Character;
@@ -35,16 +35,22 @@ export default function ShareCard({ character, stats, cps }: Props) {
     if (!cardRef.current || downloading) return;
     setDownloading(true);
     try {
-      const canvas = await html2canvas(cardRef.current, {
+      const dataUrl = await toPng(cardRef.current, {
+        pixelRatio: 2,
         backgroundColor: "#262624",
-        scale: 2,
-        useCORS: true,
-        logging: false,
+        skipFonts: true,
+        filter: (node: HTMLElement) => {
+          // Skip link/style elements that reference cross-origin stylesheets
+          if (node.tagName === "LINK" && (node as HTMLLinkElement).href?.includes("fonts.googleapis")) return false;
+          return true;
+        },
       });
       const link = document.createElement("a");
+      link.href = dataUrl;
       link.download = `cc-rewind-${character.name.toLowerCase().replace(/\s+/g, "-")}.png`;
-      link.href = canvas.toDataURL("image/png");
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
     } catch (e) {
       console.error("Download failed:", e);
     } finally {
@@ -202,6 +208,28 @@ export default function ShareCard({ character, stats, cps }: Props) {
         >
           Start Over
         </button>
+
+      </motion.div>
+
+      {/* Fixed scroll-down indicator at bottom of screen */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+        className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center cursor-pointer bg-surface-dim/80 backdrop-blur-sm rounded-full px-5 py-2.5 border border-on-surface/10"
+        onClick={() => document.getElementById("dashboard")?.scrollIntoView({ behavior: "smooth" })}
+      >
+        <span className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface mb-1">
+          Your Dashboard
+        </span>
+        <motion.svg
+          animate={{ y: [0, 5, 0] }}
+          transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+          width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+          className="text-on-surface"
+        >
+          <path d="M7 13l5 5 5-5" />
+        </motion.svg>
       </motion.div>
     </div>
   );

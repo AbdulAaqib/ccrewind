@@ -26,23 +26,7 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
   ctx.closePath();
 }
 
-const STRIP = [
-  "1.2M",
-  "3.4M",
-  "7.8M",
-  "19M",
-  "999K",
-  "48M",
-  "2.1M",
-  "16M",
-  "5.5M",
-  "12M",
-  "33M",
-  "8.7M",
-  "21M",
-  "4.4M",
-  "66M",
-];
+const STRIP = ["1.2M","3.4M","7.8M","19M","999K","48M","2.1M","16M","5.5M","12M","33M","8.7M","21M","4.4M","66M"];
 
 function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComplete: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -54,20 +38,16 @@ function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComp
     if (!ctx) return;
 
     const total = stats.totalTokens;
-    const W = 400,
-      H = 320;
-    canvas.width = W;
-    canvas.height = H;
+    const W = 400, H = 320;
+    canvas.width = W; canvas.height = H;
 
     const reelDefs = [
-      { label: "INPUT", value: fmt(stats.totalInputTokens), color: "#ff6b35", lockAt: 3200 },
-      { label: "OUTPUT", value: fmt(stats.totalOutputTokens), color: "#ffb59d", lockAt: 5600 },
-      { label: "CACHE", value: fmt(stats.totalCacheReadTokens), color: "#ffdbd0", lockAt: 8200 },
+      { label: "INPUT",  value: fmt(stats.totalInputTokens),     color: "#ff6b35", lockAt: 3200 },
+      { label: "OUTPUT", value: fmt(stats.totalOutputTokens),    color: "#ffb59d", lockAt: 5600 },
+      { label: "CACHE",  value: fmt(stats.totalCacheReadTokens), color: "#ffdbd0", lockAt: 8200 },
     ];
 
-    const REEL_W = 76,
-      REEL_H = 90,
-      GAP = 12;
+    const REEL_W = 76, REEL_H = 90, GAP = 12;
     const totalW = reelDefs.length * REEL_W + (reelDefs.length - 1) * GAP;
     const startX = (W - totalW) / 2;
 
@@ -75,8 +55,8 @@ function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComp
     // Box padding top/bottom: 22px each → box height = 220
     const BOX_PAD = 22;
     const CONTENT_H = REEL_H + 20 + 16 + 32 + 18; // 176
-    const BOX_H = CONTENT_H + BOX_PAD * 2; // 220
-    const BOX_TOP = (H - BOX_H) / 2; // vertically centred in canvas
+    const BOX_H = CONTENT_H + BOX_PAD * 2;         // 220
+    const BOX_TOP = (H - BOX_H) / 2;               // vertically centred in canvas
     const REEL_Y = BOX_TOP + BOX_PAD;
     const ROW_H = 34;
 
@@ -88,8 +68,7 @@ function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComp
       flashAlpha: 0,
     }));
 
-    let shakeX = 0,
-      shakeY = 0;
+    let shakeX = 0, shakeY = 0;
     const startTime = performance.now();
     let counterVal = 0;
     let completed = false;
@@ -102,8 +81,7 @@ function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComp
       ctx.fillStyle = "#262624";
       ctx.fillRect(0, 0, W, H);
 
-      shakeX *= 0.7;
-      shakeY *= 0.7;
+      shakeX *= 0.7; shakeY *= 0.7;
       ctx.save();
       ctx.translate(shakeX, shakeY);
 
@@ -111,9 +89,7 @@ function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComp
       ctx.fillStyle = "#2f2f2d";
       roundRect(ctx, startX - 14, BOX_TOP, totalW + 28, BOX_H, 12);
       ctx.fill();
-      ctx.strokeStyle = "#4a4946";
-      ctx.lineWidth = 2;
-      ctx.stroke();
+      ctx.strokeStyle = "#4a4946"; ctx.lineWidth = 2; ctx.stroke();
 
       reels.forEach((reel, i) => {
         const x = startX + i * (REEL_W + GAP);
@@ -187,6 +163,7 @@ function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComp
         ctx.fillText(reel.label, x + REEL_W / 2, REEL_Y + REEL_H + 7);
       });
 
+
       ctx.restore();
 
       // total counter after last reel
@@ -227,10 +204,7 @@ export default function TokenFurnace({ stats }: { stats: ComputedStats }) {
     audio.preload = "auto";
     audioRef.current = audio;
     // Play on mount (slot machine starts immediately)
-    const play = () => {
-      audio.currentTime = 0;
-      audio.play().catch(() => {});
-    };
+    const play = () => { audio.currentTime = 0; audio.play().catch(() => {}); };
     // Try immediately; if blocked by autoplay policy, play on first interaction
     play();
     const handler = () => play();
@@ -245,50 +219,32 @@ export default function TokenFurnace({ stats }: { stats: ComputedStats }) {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-4 md:px-6 py-8 max-w-2xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
-        className="mb-4"
-      >
-        <span className="font-label text-[10px] font-bold tracking-[0.3em] uppercase text-primary">
-          Token Consumption
-        </span>
+        className="mb-4">
+        <span className="font-label text-[10px] font-bold tracking-[0.3em] uppercase text-primary">Token Consumption</span>
       </motion.div>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="mb-6 w-full flex justify-center"
-      >
+        className="mb-6 w-full flex justify-center">
         <SlotMachineCanvas stats={stats} onComplete={() => setDone(true)} />
       </motion.div>
       <AnimatePresence>
         {done && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="w-32 h-32 md:w-44 md:h-44 rounded-2xl overflow-hidden mb-4 md:mb-6"
-          >
-            <img src="/mascots/token-furnace.png" alt="Token furnace mascot" className="w-full h-full object-cover" />
+            className="w-32 h-32 md:w-44 md:h-44 rounded-2xl overflow-hidden mb-4 md:mb-6">
+            <video src="/mascots/videos/token-furnace.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
           </motion.div>
         )}
       </AnimatePresence>
       <AnimatePresence>
         {done && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col items-center gap-2"
-          >
-            <h2 className="font-headline text-4xl md:text-6xl font-extrabold tracking-tight text-center text-glow">
-              {narrative.archetypeLabel}
-            </h2>
-            <p className="font-body text-base md:text-lg italic text-on-surface-variant text-center max-w-md">
-              {narrative.story}
-            </p>
+            className="flex flex-col items-center gap-2">
+            <h2 className="font-headline text-4xl md:text-6xl font-extrabold tracking-tight text-center text-glow">{narrative.archetypeLabel}</h2>
+            <p className="font-body text-base md:text-lg italic text-on-surface-variant text-center max-w-md">{narrative.story}</p>
           </motion.div>
         )}
       </AnimatePresence>

@@ -120,8 +120,16 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
       : `You are ${character.name}.`;
   }, [stats, character.name]);
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   const handleSpin = () => {
-    if (phase === "waiting") setPhase("spinning");
+    if (phase === "waiting") {
+      const audio = new Audio("/sounds/crate_opening.mp3");
+      audio.currentTime = 7;
+      audio.play().catch(() => {});
+      audioRef.current = audio;
+      setPhase("spinning");
+    }
   };
 
   // Animate the strip scroll
@@ -140,7 +148,7 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
     void el.offsetHeight;
 
     // Animate with CSS transition — heavy deceleration curve
-    el.style.transition = "transform 5.5s cubic-bezier(0.15, 0.85, 0.22, 1)";
+    el.style.transition = "transform 6s cubic-bezier(0.15, 0.85, 0.22, 1)";
     el.style.transform = `translateX(-${targetOffset}px)`;
 
     const onEnd = () => {
@@ -233,9 +241,9 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
           transition={{ delay: 0.1, duration: 0.4 }}
           className="mb-6"
         >
-          <span className="font-label text-[10px] font-bold tracking-[0.3em] uppercase text-on-surface/40">
+          <h1 className="font-headline text-4xl md:text-7xl font-extrabold tracking-tight text-on-surface text-glow">
             Your Archetype
-          </span>
+          </h1>
         </motion.div>
 
         {/* Crate opening strip — visible during waiting, spinning, and landed */}
@@ -435,7 +443,7 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
               >
                 <div className="text-center">
                   <span className="font-headline text-4xl font-extrabold text-primary">{cps.total}</span>
-                  <p className="font-label text-[10px] uppercase tracking-widest text-on-surface/40">Power Score</p>
+                  <p className="font-label text-[10px] uppercase tracking-widest text-on-surface/40">Elo</p>
                 </div>
               </motion.div>
 

@@ -391,3 +391,35 @@ export function getStopReasonNarrative(stats: ComputedStats): SlideNarrative {
     statLabel: "Tool Use Stops",
   };
 }
+
+export function getBillNarrative(stats: ComputedStats): SlideNarrative {
+  const cost = stats.estimatedCostUSD;
+  const topModel = stats.costByModel[0];
+
+  let archetypeLabel: string;
+  let story: string;
+
+  if (cost > 500) {
+    archetypeLabel = "The Whale";
+    story = `$${cost.toFixed(2)} spent on Claude. That's not a hobby. That's infrastructure. ${topModel ? `${topModel.model.split("-").slice(0, 2).join(" ")} took most of the hit.` : ""}`;
+  } else if (cost > 100) {
+    archetypeLabel = "The Investor";
+    story = `$${cost.toFixed(2)} in. You're not experimenting anymore. You're committed. Claude is on the payroll.`;
+  } else if (cost > 20) {
+    archetypeLabel = "The Subscriber";
+    story = `$${cost.toFixed(2)} spent. More than a Netflix subscription, less than therapy. Arguably more useful than both.`;
+  } else if (cost > 0) {
+    archetypeLabel = "The Free Tier";
+    story = `$${cost.toFixed(2)}. You're barely scratching the surface. Claude has so much more to give.`;
+  } else {
+    archetypeLabel = "The Ghost";
+    story = "No cost data found. Either you're on a free plan or you've erased the receipts.";
+  }
+
+  return {
+    archetypeLabel,
+    story,
+    stat: `$${cost.toFixed(2)}`,
+    statLabel: "Estimated Spend",
+  };
+}

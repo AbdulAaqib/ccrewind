@@ -89,6 +89,62 @@ export function computeStats(data: ParsedData): ComputedStats {
   }
   const totalTokens = totalInputTokens + totalOutputTokens + totalCacheReadTokens + totalCacheCreationTokens;
 
+  // Estimated Cost (USD) — per-model pricing from Anthropic docs
+  const MODEL_PRICING: Record<string, { input: number; output: number; cacheRead: number; cacheWrite: number }> = {
+    "opus-4-6":   { input: 5,    output: 25,   cacheRead: 0.50, cacheWrite: 6.25  },
+    "opus-4-5":   { input: 5,    output: 25,   cacheRead: 0.50, cacheWrite: 6.25  },
+    "opus-4-1":   { input: 15,   output: 75,   cacheRead: 1.50, cacheWrite: 18.75 },
+    "opus-4":     { input: 15,   output: 75,   cacheRead: 1.50, cacheWrite: 18.75 },
+    "opus-3":     { input: 15,   output: 75,   cacheRead: 1.50, cacheWrite: 18.75 },
+    "sonnet-4-6": { input: 3,    output: 15,   cacheRead: 0.30, cacheWrite: 3.75  },
+    "sonnet-4-5": { input: 3,    output: 15,   cacheRead: 0.30, cacheWrite: 3.75  },
+    "sonnet-4":   { input: 3,    output: 15,   cacheRead: 0.30, cacheWrite: 3.75  },
+    "sonnet-3-7": { input: 3,    output: 15,   cacheRead: 0.30, cacheWrite: 3.75  },
+    "haiku-4-5":  { input: 1,    output: 5,    cacheRead: 0.10, cacheWrite: 1.25  },
+    "haiku-3-5":  { input: 0.80, output: 4,    cacheRead: 0.08, cacheWrite: 1.00  },
+    "haiku-3":    { input: 0.25, output: 1.25, cacheRead: 0.03, cacheWrite: 0.30  },
+  };
+
+  function matchPricing(modelId: string) {
+    const lower = modelId.toLowerCase();
+    for (const [key, pricing] of Object.entries(MODEL_PRICING)) {
+      if (lower.includes(key.replace(/-/g, "")) || lower.includes(key)) return pricing;
+    }
+    // Default to Sonnet 4 pricing
+    return MODEL_PRICING["sonnet-4"];
+  }
+
+  let estimatedCostUSD = 0;
+  const costByModel: Array<{ model: string; cost: number }> = [];
+
+  if (statsCache?.modelUsage) {
+    for (const [model, usage] of Object.entries(statsCache.modelUsage)) {
+      if (usage.costUSD && usage.costUSD > 0) {
+        estimatedCostUSD += usage.costUSD;
+        costByModel.push({ model, cost: usage.costUSD });
+      } else {
+        const p = matchPricing(model);
+        const cost =
+          ((usage.inputTokens || 0) / 1_000_000) * p.input +
+          ((usage.outputTokens || 0) / 1_000_000) * p.output +
+          ((usage.cacheReadInputTokens || 0) / 1_000_000) * p.cacheRead +
+          ((usage.cacheCreationInputTokens || 0) / 1_000_000) * p.cacheWrite;
+        estimatedCostUSD += cost;
+        costByModel.push({ model, cost });
+      }
+    }
+  }
+  if (estimatedCostUSD === 0 && totalTokens > 0) {
+    // Fallback: estimate from aggregate tokens using Sonnet pricing
+    const p = MODEL_PRICING["sonnet-4"];
+    estimatedCostUSD =
+      (totalInputTokens / 1_000_000) * p.input +
+      (totalOutputTokens / 1_000_000) * p.output +
+      (totalCacheReadTokens / 1_000_000) * p.cacheRead +
+      (totalCacheCreationTokens / 1_000_000) * p.cacheWrite;
+  }
+  costByModel.sort((a, b) => b.cost - a.cost);
+
   // Loyalty Test
   const modelCounts: Record<string, number> = {};
   if (statsCache?.modelUsage) {
@@ -278,6 +334,8 @@ export function computeStats(data: ParsedData): ComputedStats {
     retryClusters,
     totalRetries,
     topProjectStats,
+    estimatedCostUSD: Math.round(estimatedCostUSD * 100) / 100,
+    costByModel,
   };
 }
 

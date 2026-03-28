@@ -169,17 +169,14 @@ export function getLoyaltyTestNarrative(stats: ComputedStats): SlideNarrative {
   let story: string;
 
   if (modelCount === 1) {
-    archetypeLabel = "The Loyalist";
-    story = `You found ${cleanModel} and you stayed. 100% loyalty. Stability in a chaotic world.`;
+    archetypeLabel = "Soulmates 💍";
+    story = `You found ${cleanModel} and never looked at another model. 100% loyalty. Claude is flattered.`;
   } else if (primaryModelPercentage > 0.8) {
-    archetypeLabel = "The Loyalist";
-    story = `${Math.round(primaryModelPercentage * 100)}% ${cleanModel}. You found your model and you stayed. The others were just experiments.`;
-  } else if (modelCount >= 3) {
-    archetypeLabel = "The Model Hopper";
-    story = `${modelCount} different models. You chase the new thing. There is always a newer model, and you know it.`;
+    archetypeLabel = "Married 💍";
+    story = `${Math.round(primaryModelPercentage * 100)}% ${cleanModel}. Committed. The others were nothing. Just a phase.`;
   } else {
-    archetypeLabel = "The Strategist";
-    story = `You use ${cleanModel} for the grunt work and switch when it matters. You know what you are doing.`;
+    archetypeLabel = "The Roster 😈";
+    story = `${modelCount} different models. No loyalty. No remorse. Claude knows about the others.`;
   }
 
   return {

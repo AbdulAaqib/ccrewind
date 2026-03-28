@@ -15,51 +15,50 @@ export default function LoyaltyTest({ stats }: { stats: ComputedStats }) {
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    const width = 320, height = 380;
-    const radius = 120, innerRadius = radius * 0.55;
-    svg.attr("viewBox", `0 0 ${width} ${height}`);
-    const g = svg.append("g").attr("transform", `translate(${width / 2},${height / 2 - 30})`);
-
     const modelEntries = Object.entries(stats.modelCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
     const total = modelEntries.reduce((a, b) => a + b[1], 0);
     if (total === 0) return;
 
-    const colors = ["#ff6b35", "#ffb59d", "#ffdbd0", "#97908a", "#4a4946", "#2f2f2d"];
+    const colors = ["#ff6b35", "#ffb59d", "#ffdbd0", "#97908a", "#4a4946"];
+    const margin = { left: 130, right: 70, top: 24, bottom: 24 };
+    const barH = 52, gap = 22;
+    const width = 480;
+    const height = modelEntries.length * (barH + gap) + margin.top + margin.bottom;
+    const maxW = width - margin.left - margin.right;
 
-    const pie = d3.pie<[string, number]>().value((d) => d[1]).sort(null).padAngle(0.02);
-    const arcGen = d3.arc<d3.PieArcDatum<[string, number]>>()
-      .innerRadius(innerRadius).outerRadius(radius).cornerRadius(4);
-    const arcs = pie(modelEntries);
-
-    arcs.forEach((d, i) => {
-      const path = g.append("path").datum(d).attr("fill", colors[i % colors.length]).attr("opacity", 0);
-      path.transition().delay(400 + i * 150).duration(800).ease(d3.easeCubicOut)
-        .attr("opacity", 0.9)
-        .attrTween("d", () => {
-          const interp = d3.interpolate({ ...d, startAngle: d.startAngle, endAngle: d.startAngle }, d);
-          return (t: number) => arcGen(interp(t)) || "";
-        });
-    });
-
-    g.append("text").attr("text-anchor", "middle").attr("dominant-baseline", "middle")
-      .attr("fill", "#faf9f5").attr("font-size", "28px")
-      .attr("font-family", "Plus Jakarta Sans").attr("font-weight", "800")
-      .attr("opacity", 0).text(`${modelEntries.length}`)
-      .transition().delay(800).duration(400).attr("opacity", 1);
-
-    g.append("text").attr("text-anchor", "middle").attr("y", 20)
-      .attr("fill", "#97908a").attr("font-size", "10px")
-      .attr("font-family", "Plus Jakarta Sans").attr("font-weight", "700")
-      .text(modelEntries.length === 1 ? "model" : "models");
+    svg.attr("viewBox", `0 0 ${width} ${height}`);
 
     modelEntries.forEach((entry, i) => {
       const cleanName = entry[0].replace("claude-", "").replace(/-\d{8,}$/, "");
       const pct = Math.round((entry[1] / total) * 100);
-      g.append("circle").attr("cx", -60).attr("cy", radius + 20 + i * 18).attr("r", 4).attr("fill", colors[i % colors.length]);
-      g.append("text").attr("x", -50).attr("y", radius + 20 + i * 18)
-        .attr("dominant-baseline", "middle").attr("fill", "#d3d2ce")
-        .attr("font-size", "10px").attr("font-family", "Plus Jakarta Sans")
-        .text(`${cleanName} — ${pct}%`);
+      const y = margin.top + i * (barH + gap);
+      const barW = (entry[1] / total) * maxW;
+
+      // label
+      svg.append("text").attr("x", margin.left - 10).attr("y", y + barH / 2)
+        .attr("text-anchor", "end").attr("dominant-baseline", "middle")
+        .attr("fill", "#d3d2ce").attr("font-size", "16px")
+        .attr("font-family", "Plus Jakarta Sans").attr("font-weight", "700")
+        .attr("opacity", 0).text(cleanName)
+        .transition().delay(i * 100).duration(400).attr("opacity", 1);
+
+      // track
+      svg.append("rect").attr("x", margin.left).attr("y", y)
+        .attr("width", maxW).attr("height", barH).attr("rx", 6).attr("fill", "#2f2f2d");
+
+      // bar
+      svg.append("rect").attr("x", margin.left).attr("y", y)
+        .attr("width", 0).attr("height", barH).attr("rx", 6)
+        .attr("fill", colors[i % colors.length]).attr("opacity", 0.85)
+        .transition().delay(300 + i * 150).duration(900).ease(d3.easeCubicOut)
+        .attr("width", barW);
+
+      // pct
+      svg.append("text").attr("x", margin.left + barW + 10).attr("y", y + barH / 2)
+        .attr("dominant-baseline", "middle").attr("fill", colors[i % colors.length])
+        .attr("font-size", "18px").attr("font-family", "Plus Jakarta Sans").attr("font-weight", "800")
+        .attr("opacity", 0).text(`${pct}%`)
+        .transition().delay(900 + i * 150).duration(400).attr("opacity", 1);
     });
   }, [stats]);
 
@@ -68,7 +67,7 @@ export default function LoyaltyTest({ stats }: { stats: ComputedStats }) {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className="flex flex-col items-center gap-2 mb-4">
-        <span className="font-label text-[10px] font-bold tracking-[0.3em] uppercase text-primary">Model Loyalty</span>
+        <span className="font-label text-[10px] font-bold tracking-[0.3em] uppercase text-primary">The Roster</span>
         <h2 className="font-headline text-4xl md:text-7xl font-extrabold tracking-tight text-center text-glow">{narrative.archetypeLabel}</h2>
       </motion.div>
       <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.6 }}
@@ -81,7 +80,7 @@ export default function LoyaltyTest({ stats }: { stats: ComputedStats }) {
       </motion.div>
       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.8, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}>
-        <svg ref={svgRef} className="w-56 h-72 md:w-80 md:h-96" />
+        <svg ref={svgRef} className="w-full" />
       </motion.div>
     </div>
   );

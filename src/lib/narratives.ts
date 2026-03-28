@@ -60,23 +60,23 @@ export function getGraveyardShiftNarrative(stats: ComputedStats): SlideNarrative
 }
 
 export function getDelegatorNarrative(stats: ComputedStats): SlideNarrative {
-  const { sidechainRatio, agentToolCalls, sidechainMessages } = stats;
+  const { agentToolCalls } = stats;
 
   let archetypeLabel: string;
   let story: string;
 
-  if (sidechainRatio > 0.3) {
-    archetypeLabel = "The Delegator";
-    story = `${Math.round(sidechainRatio * 100)}% of your messages were subagent work. You do not do things yourself. You spin up agents to do them. Respect.`;
-  } else if (agentToolCalls > 10) {
-    archetypeLabel = "The Manager";
-    story = `${agentToolCalls} agent dispatches. Sometimes you delegate. Mostly you hover. Claude notices.`;
-  } else if (sidechainMessages === 0 && agentToolCalls === 0) {
-    archetypeLabel = "The Lone Wolf";
-    story = "You wrote every line yourself. No delegation. No trust. Classic.";
+  if (agentToolCalls >= 100) {
+    archetypeLabel = "The Dario";
+    story = `${agentToolCalls} agents spawned. It is your product. Of course you delegate. Claude respects the vision.`;
+  } else if (agentToolCalls >= 40) {
+    archetypeLabel = "The Zucc";
+    story = `${agentToolCalls} agents. Optimising for efficiency. Running at inhuman scale. Feelings not required.`;
+  } else if (agentToolCalls >= 10) {
+    archetypeLabel = "The IB VP";
+    story = `${agentToolCalls} agent dispatches. You delegate just enough to stay out of the details. The analysts handle it.`;
   } else {
-    archetypeLabel = "The Micromanager";
-    story = `Only ${sidechainMessages} sidechain messages. You like to keep things close. Control is a preference, not a flaw.`;
+    archetypeLabel = "The Intern";
+    story = `${agentToolCalls === 0 ? "Zero" : agentToolCalls} agents spawned. You are doing everything yourself. Claude can take on more. Let it.`;
   }
 
   return {

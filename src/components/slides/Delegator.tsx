@@ -33,7 +33,7 @@ export default function Delegator({ stats }: { stats: ComputedStats }) {
       .transition().delay(600).duration(400).attr("opacity", 1);
 
     if (stats.sidechainMessages > 0 || stats.agentToolCalls > 0) {
-      const count = Math.min(Math.max(stats.agentToolCalls, 3), 12);
+      const count = Math.min(stats.agentToolCalls, 30);
       const orbitR = mainR + 40;
 
       g.append("circle").attr("cx", cx).attr("cy", cy).attr("r", orbitR)

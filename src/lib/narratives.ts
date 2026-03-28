@@ -326,6 +326,46 @@ export function getRetrySpiralNarrative(stats: ComputedStats): SlideNarrative {
   };
 }
 
+export function getTopProjectsNarrative(stats: ComputedStats): SlideNarrative {
+  const { topProjectStats, projectCount } = stats;
+  const top = topProjectStats[0];
+  if (!top || projectCount === 0) {
+    return {
+      archetypeLabel: "The Ghost",
+      story: "No projects found. You either haven't started or you've erased the evidence.",
+      stat: "0",
+      statLabel: "Projects",
+    };
+  }
+
+  const topName = top.name.split("/").pop() || top.name;
+  const topPct = stats.totalMessages > 0 ? Math.round((top.messages / stats.totalMessages) * 100) : 0;
+
+  let archetypeLabel: string;
+  let story: string;
+
+  if (projectCount === 1) {
+    archetypeLabel = "The One-Track Mind";
+    story = `One project. ${formatNumber(top.messages)} messages. You locked in and never looked away. Tunnel vision is a feature.`;
+  } else if (topPct > 70) {
+    archetypeLabel = "The Main Character";
+    story = `${topPct}% of your messages went to ${topName}. The other ${projectCount - 1} projects are side quests.`;
+  } else if (projectCount > 8) {
+    archetypeLabel = "The Juggler";
+    story = `${projectCount} projects, no clear favourite. You keep ${projectCount} plates spinning and somehow none have shattered. Yet.`;
+  } else {
+    archetypeLabel = "The Portfolio Manager";
+    story = `${projectCount} projects, ${topName} leading with ${topPct}%. Diversified. Hedged. You don't put all your tokens in one repo.`;
+  }
+
+  return {
+    archetypeLabel,
+    story,
+    stat: projectCount.toString(),
+    statLabel: "Total Projects",
+  };
+}
+
 export function getStopReasonNarrative(stats: ComputedStats): SlideNarrative {
   const { toolUseRatio, endTurnRatio, stopReasonCounts } = stats;
   const totalStops = Object.values(stopReasonCounts).reduce((a, b) => a + b, 0);

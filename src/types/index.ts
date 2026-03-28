@@ -151,6 +151,7 @@ export interface ComputedStats {
   retrySpiral: number;
   retryClusters: number;
   totalRetries: number;
+  topProjectStats: Array<{ name: string; messages: number; tokens: number; sessions: number }>;
 }
 
 export interface Character {

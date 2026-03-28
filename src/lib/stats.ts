@@ -139,12 +139,36 @@ export function computeStats(data: ParsedData): ComputedStats {
       projectActivity[entry.project] = (projectActivity[entry.project] || 0) + 1;
     }
   }
+  const projectTokens: Record<string, number> = {};
+  const projectSessions: Record<string, number> = {};
+  const projectMessages: Record<string, number> = {};
   for (const session of sessions) {
-    if (session.projectPath) projectSet.add(session.projectPath);
+    if (session.projectPath) {
+      projectSet.add(session.projectPath);
+      projectSessions[session.projectPath] = (projectSessions[session.projectPath] || 0) + 1;
+    }
     for (const msg of session.messages) {
       if (msg.gitBranch && msg.gitBranch !== "HEAD") branchSet.add(msg.gitBranch);
+      if (session.projectPath && (msg.type === "user" || msg.type === "assistant")) {
+        projectMessages[session.projectPath] = (projectMessages[session.projectPath] || 0) + 1;
+      }
+      if (session.projectPath && msg.type === "assistant" && msg.message?.usage) {
+        const u = msg.message.usage;
+        projectTokens[session.projectPath] = (projectTokens[session.projectPath] || 0)
+          + (u.input_tokens || 0) + (u.output_tokens || 0) + (u.cache_read_input_tokens || 0);
+      }
     }
   }
+  // Merge history-based projectActivity messages into projectMessages
+  for (const [proj, count] of Object.entries(projectActivity)) {
+    projectMessages[proj] = (projectMessages[proj] || 0) + count;
+  }
+  const topProjectStats = Array.from(projectSet).map((name) => ({
+    name,
+    messages: projectMessages[name] || projectActivity[name] || 0,
+    tokens: projectTokens[name] || 0,
+    sessions: projectSessions[name] || 0,
+  })).sort((a, b) => b.messages - a.messages).slice(0, 5);
 
   // Sharpshooter
   const promptLengths = history.map((h) => h.display?.length || 0);
@@ -243,6 +267,7 @@ export function computeStats(data: ParsedData): ComputedStats {
     retrySpiral: rsi,
     retryClusters,
     totalRetries,
+    topProjectStats,
   };
 }
 

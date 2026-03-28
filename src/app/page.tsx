@@ -11,10 +11,12 @@ import TokenFurnace from "@/components/slides/TokenFurnace";
 import LoyaltyTest from "@/components/slides/LoyaltyTest";
 import ThinkingHours from "@/components/slides/ThinkingHours";
 import CommitHistory from "@/components/slides/CommitHistory";
+import TopProjects from "@/components/slides/TopProjects";
 import Sharpshooter from "@/components/slides/Sharpshooter";
 import Streak from "@/components/slides/Streak";
 import StopReason from "@/components/slides/StopReason";
 import RetrySpiral from "@/components/slides/RetrySpiral";
+import Dashboard from "@/components/slides/Dashboard";
 import CharacterReveal from "@/components/reveal/CharacterReveal";
 import PowerScore from "@/components/reveal/PowerScore";
 import ShareCard from "@/components/reveal/ShareCard";
@@ -82,6 +84,7 @@ export default function Home() {
               <LoyaltyTest stats={stats} />
               <ThinkingHours stats={stats} />
               <CommitHistory stats={stats} />
+              <TopProjects stats={stats} />
               <Sharpshooter stats={stats} />
               <Streak stats={stats} />
               <StopReason stats={stats} />
@@ -101,6 +104,7 @@ export default function Home() {
             className="min-h-screen"
           >
             <ShareCard character={character} stats={stats} cps={cps} />
+            <Dashboard stats={stats} />
           </motion.div>
         )}
       </AnimatePresence>

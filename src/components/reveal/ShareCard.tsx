@@ -182,7 +182,7 @@ export default function ShareCard({ character, stats, cps }: Props) {
         {/* Start over */}
         <button
           onClick={() => window.location.reload()}
-          className="font-label text-[10px] font-bold tracking-widest uppercase text-on-surface/30 hover:text-on-surface/50 transition-colors mt-2"
+          className="font-label text-sm font-bold tracking-widest uppercase text-on-surface/30 hover:text-on-surface/60 transition-all cursor-pointer mt-4"
         >
           Start Over
         </button>

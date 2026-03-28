@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
             fontWeight: 800,
           }}
         >
-          CC Rewind
+          Claude Code Rewind
         </div>
       ),
       { width: 1200, height: 630 }

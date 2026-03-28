@@ -20,7 +20,7 @@ export default function SharePageClient({ encoded }: Props) {
             Invalid Share Link
           </h1>
           <p className="font-body text-on-surface/50 italic">
-            This link doesn&apos;t contain valid CC Rewind data.
+            This link doesn&apos;t contain valid Claude Code Rewind data.
           </p>
           <Link
             href="/"
@@ -60,7 +60,7 @@ export default function SharePageClient({ encoded }: Props) {
           <div className="w-full h-full flex flex-col items-center justify-between px-6 py-8 md:px-8 md:py-10 relative">
             <div className="flex flex-col items-center gap-1">
               <span className="font-label text-[10px] font-extrabold tracking-[0.2em] uppercase text-primary">
-                CC Rewind
+                Claude Code Rewind
               </span>
               <span className="font-label text-[9px] tracking-[0.3em] uppercase text-on-surface/30">
                 Your Claude Story

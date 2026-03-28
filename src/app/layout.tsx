@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CC Rewind — Your Claude Code Story",
+  title: "Claude Code Rewind",
   description: "Spotify Wrapped but for your Claude Code usage. Upload your .claude folder, get your story.",
 };
 

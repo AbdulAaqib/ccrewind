@@ -88,7 +88,7 @@ export default function SlideContainer({ children, onComplete }: SlideContainerP
       <div className="fixed top-0 left-0 w-full z-50 px-4 pt-3 pb-2 bg-gradient-to-b from-background via-background/95 to-transparent pointer-events-none">
         <div className="flex items-center gap-3 mb-2">
           <span className="font-label text-[10px] font-bold tracking-[0.2em] uppercase text-on-surface/40">
-            CC Rewind
+            Claude Code Rewind
           </span>
           <span className="font-label text-[10px] text-on-surface/20">
             {currentSlide + 1} / {totalSlides}

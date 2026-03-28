@@ -12,12 +12,12 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
   if (!data) {
     return {
-      title: "CC Rewind — Your Claude Code Story",
+      title: "Claude Code Rewind — Your Claude Code Story",
       description: "Spotify Wrapped but for your Claude Code usage.",
     };
   }
 
-  const title = `I'm ${data.name} — CC Rewind`;
+  const title = `I'm ${data.name} — Claude Code Rewind`;
   const description = `${data.oneLiner} CPS: ${data.cps}/1000. ${data.totalMessages.toLocaleString()} messages. ${data.endingLine}`;
 
   return {

@@ -100,7 +100,7 @@ export default function ShareCard({ character, stats, cps }: Props) {
             {/* Top badge */}
             <div className="flex flex-col items-center gap-1">
               <span className="font-label text-[10px] font-extrabold tracking-[0.2em] uppercase text-primary">
-                CC Rewind
+                Claude Code Rewind
               </span>
               <span className="font-label text-[9px] tracking-[0.3em] uppercase text-on-surface/30">
                 Your Claude Story

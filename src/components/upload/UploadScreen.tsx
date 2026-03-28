@@ -147,24 +147,15 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
           >
             {/* Header */}
             <div className="flex flex-col items-center gap-4">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-                className="bg-primary text-white font-label text-[10px] font-extrabold tracking-[0.2em] px-4 py-1.5 rounded-full uppercase"
-              >
-                CC Rewind
-              </motion.div>
-
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
                 className="font-headline text-4xl md:text-6xl font-extrabold tracking-tight text-center leading-tight"
               >
-                Your Claude Story
+                <span className="text-on-surface">Claude Code,</span>
                 <br />
-                <span className="text-primary">Unwrapped.</span>
+                <span className="text-primary">Rewind.</span>
               </motion.h1>
             </div>
 
@@ -274,7 +265,7 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
                 Try with demo data
               </button>
               <p className="font-body text-[11px] italic text-on-surface/30">
-                No Claude Code? See what CC Rewind looks like with sample data.
+                No Claude Code? See what Claude Code Rewind looks like with sample data.
               </p>
             </motion.div>
 

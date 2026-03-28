@@ -212,8 +212,8 @@ export default function TokenFurnace({ stats }: { stats: ComputedStats }) {
       </motion.div>
       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.6, duration: 0.5 }}
-        className="w-20 h-20 rounded-2xl border-2 border-dashed border-on-surface/10 flex items-center justify-center mb-4">
-        <span className="font-label text-[9px] tracking-widest uppercase text-on-surface/20">Mascot GIF</span>
+        className="w-32 h-32 md:w-44 md:h-44 rounded-2xl overflow-hidden mb-4">
+        <img src="/mascots/token-furnace.png" alt="Token furnace mascot" className="w-full h-full object-cover" />
       </motion.div>
       <AnimatePresence>
         {done && (

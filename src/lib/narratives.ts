@@ -82,8 +82,8 @@ export function getDelegatorNarrative(stats: ComputedStats): SlideNarrative {
   return {
     archetypeLabel,
     story,
-    stat: agentToolCalls > 0 ? agentToolCalls.toString() : `${Math.round(sidechainRatio * 100)}%`,
-    statLabel: agentToolCalls > 0 ? "Agent Dispatches" : "Sidechain Ratio",
+    stat: agentToolCalls.toString(),
+    statLabel: "Agent Dispatches",
   };
 }
 

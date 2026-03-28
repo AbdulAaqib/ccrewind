@@ -75,6 +75,7 @@ function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComp
     let animId: number;
 
     function draw(now: number) {
+      if (!ctx) return;
       const elapsed = now - startTime;
       ctx.clearRect(0, 0, W, H);
       ctx.fillStyle = "#262624";

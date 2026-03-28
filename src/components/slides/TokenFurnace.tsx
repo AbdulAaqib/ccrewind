@@ -212,7 +212,7 @@ export default function TokenFurnace({ stats }: { stats: ComputedStats }) {
       </motion.div>
       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.6, duration: 0.5 }}
-        className="w-32 h-32 md:w-44 md:h-44 rounded-2xl overflow-hidden mb-4">
+        className="w-32 h-32 md:w-44 md:h-44 rounded-2xl overflow-hidden mb-4 md:mb-6">
         <img src="/mascots/token-furnace.png" alt="Token furnace mascot" className="w-full h-full object-cover" />
       </motion.div>
       <AnimatePresence>

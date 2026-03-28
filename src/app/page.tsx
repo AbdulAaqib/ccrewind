@@ -17,6 +17,7 @@ import StopReason from "@/components/slides/StopReason";
 import RetrySpiral from "@/components/slides/RetrySpiral";
 import CharacterReveal from "@/components/reveal/CharacterReveal";
 import PowerScore from "@/components/reveal/PowerScore";
+import ShareCard from "@/components/reveal/ShareCard";
 import { ParsedData, ComputedStats, Character, CPSBreakdown } from "@/types";
 import { computeStats } from "@/lib/stats";
 import { assignCharacter } from "@/lib/archetypes";
@@ -99,7 +100,7 @@ export default function Home() {
             transition={{ duration: 0.5 }}
             className="min-h-screen"
           >
-            <CharacterReveal character={character} stats={stats} cps={cps} />
+            <ShareCard character={character} stats={stats} cps={cps} />
           </motion.div>
         )}
       </AnimatePresence>

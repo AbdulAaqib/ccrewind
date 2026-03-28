@@ -9,13 +9,13 @@ Next.js 16 + TypeScript + Tailwind v4 + Framer Motion + D3. Static export, deplo
 src/
   app/
     page.tsx              — Main orchestrator (upload → slides → reveal)
-    layout.tsx            — Root layout, Google Fonts
+    layout.tsx            — Root layout, Google Fonts, viewport meta
     globals.css           — Tailwind v4 @theme tokens, dark palette, grain texture
   components/
     upload/
-      UploadScreen.tsx    — webkitdirectory folder picker, drag-drop, loading states
+      UploadScreen.tsx    — webkitdirectory folder picker, drag-drop, demo button, hidden folder instructions
     slides/
-      SlideContainer.tsx  — Full-viewport slide system, progress bar, keyboard/tap nav
+      SlideContainer.tsx  — Full-viewport slide system, scrollable content, progress bar, keyboard/tap nav
       GraveyardShift.tsx  — Radial clock heatmap (D3 arc)
       Delegator.tsx       — Force-directed bubble chart (main vs agents)
       Arsenal.tsx         — Horizontal bar chart of tool usage
@@ -25,19 +25,36 @@ src/
       CommitHistory.tsx   — GitHub contribution-style heatmap
       Sharpshooter.tsx    — Scatter quadrant (prompt length vs msgs/session)
       Streak.tsx          — Calendar grid of active days
-      StopReason.tsx      — Split bar (tool_use vs end_turn)
+      StopReason.tsx      — Split bar with clip-path rounded corners (tool_use vs end_turn)
+      RetrySpiral.tsx     — Archimedean spiral visualization (RSI metric)
     reveal/
-      CharacterReveal.tsx — Confetti, name slam, one-liner, ending line
+      CharacterReveal.tsx — Confetti, name slam, one-liner, ending line, mascot placeholder
       PowerScore.tsx      — Animated counter, breakdown bars
   lib/
     parser.ts             — Parses raw ~/.claude folder (stats-cache.json, history.jsonl, session JSONLs)
-    stats.ts              — Computes all slide metrics from parsed data
+    stats.ts              — Computes all slide metrics from parsed data (incl. RSI clustering)
     narratives.ts         — Dynamic copy generation per slide (archetype labels, stories)
     archetypes.ts         — 10 character definitions with weighted scoring
     scoring.ts            — CPS (Claude Power Score) out of 1000, 9 components
+    demo.ts               — Deterministic demo data generator (seeded PRNG, 45 days, 187 sessions)
   types/
     index.ts              — All TypeScript interfaces
 ```
+
+### Slide Flow (13 slides + reveal)
+1. GraveyardShift — When you code (24h clock)
+2. Delegator — Delegation style (bubble chart)
+3. Arsenal — Tool usage (horizontal bars)
+4. TokenFurnace — Token consumption (fuel gauges)
+5. LoyaltyTest — Model loyalty (donut arc)
+6. ThinkingHours — Claude thinking time (concentric rings)
+7. CommitHistory — Project activity (GitHub heatmap)
+8. Sharpshooter — Prompt style (scatter quadrant)
+9. Streak — Consistency (calendar grid)
+10. StopReason — Session endings (split bar)
+11. RetrySpiral — Retry Spiral Index (Archimedean spiral)
+12. PowerScore — CPS out of 1000 (animated counter + breakdown)
+13. CharacterReveal — Archetype reveal (confetti, name, one-liner)
 
 ### Design System
 - Dark background: `#262624`
@@ -45,21 +62,26 @@ src/
 - Text: `#faf9f5` (on-surface), `#d3d2ce` (on-surface-variant)
 - Fonts: Plus Jakarta Sans (headlines/labels), Newsreader (body/italic)
 - Grain texture overlay on all screens
-- Stitch-inspired editorial aesthetic
+- Mobile-first responsive: `text-4xl md:text-7xl`, `px-4 md:px-6`, `py-12 md:py-20`
+- GIF mascot placeholders on every slide (dashed border, labeled "Mascot GIF")
 
 ### Data Source
-Users select their `~/.claude` folder via `webkitdirectory` browser input. Parsed entirely client-side:
+Users select their `~/.claude` folder via `webkitdirectory` browser input OR click "Try with demo data". Parsed entirely client-side:
 1. `stats-cache.json` — pre-aggregated daily activity, model usage, hour counts
 2. `history.jsonl` — user prompts with timestamps, project paths, session IDs
 3. `projects/<project>/<session>.jsonl` — full message transcripts (model, usage tokens, tool calls, stop_reason, isSidechain, gitBranch)
 
+Upload screen includes hidden folder visibility instructions per OS (macOS: Cmd+Shift+., Windows: View→Hidden items, Linux: Ctrl+H).
+
+### Key Metrics
+- **Retry Spiral Index (RSI)** — Clusters consecutive similar prompts (Jaccard similarity > 0.3, within 20min). RSI = avg attempts per cluster. Bands: Sniper (<1.5), Refiner (1.5–3.0), Loop Artist (>3.0).
+- **CPS (Claude Power Score)** — 9 components, max 1000. Precision, Depth, Consistency, Loyalty, Completion, Velocity, Breadth, Night Owl (easter egg), Streak.
+
 ### What's Not Done Yet
-- GIF integration (Walid making them, will go in `public/gifs/`)
+- GIF integration (Walid making them, placeholders ready in every slide)
 - Shareable card export (html2canvas)
 - Share button functionality
-- Mobile polish pass
 - Vercel deployment
-- Design refinement after first test pass
 
 ---
 

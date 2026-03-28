@@ -59,22 +59,54 @@ export default function Sharpshooter({ stats }: { stats: ComputedStats }) {
     const dotX = xScale(Math.min(stats.avgPromptLength, maxPL));
     const dotY = yScale(Math.min(stats.avgMessagesPerSession, maxMPS));
 
-    // Glow
-    g.append("circle").attr("cx", dotX).attr("cy", dotY).attr("r", 0)
-      .attr("fill", "#ff6b35").attr("opacity", 0.2)
-      .transition().delay(1000).duration(800).ease(d3.easeCubicOut).attr("r", 30);
+    // Crosshair — zooms in slowly on target
+    const crosshairR = 22;
+    const ch = g.append("g").attr("opacity", 0);
 
-    // Dot
-    g.append("circle").attr("cx", dotX).attr("cy", dotY).attr("r", 0)
-      .attr("fill", "#ff6b35").attr("stroke", "white").attr("stroke-width", 2)
-      .transition().delay(800).duration(600).ease(d3.easeBackOut).attr("r", 8);
+    ch.append("circle").attr("cx", dotX).attr("cy", dotY).attr("r", crosshairR)
+      .attr("fill", "none").attr("stroke", "#ff6b35").attr("stroke-width", 1.5).attr("opacity", 0.6);
+    [[-crosshairR - 6, 0], [crosshairR + 6, 0], [0, -crosshairR - 6], [0, crosshairR + 6]].forEach(([dx, dy]) => {
+      ch.append("line")
+        .attr("x1", dotX + dx * 0.4).attr("y1", dotY + dy * 0.4)
+        .attr("x2", dotX + dx).attr("y2", dotY + dy)
+        .attr("stroke", "#ff6b35").attr("stroke-width", 1.5).attr("opacity", 0.6);
+    });
 
-    // Label
-    g.append("text").attr("x", dotX).attr("y", dotY - 16).attr("text-anchor", "middle")
-      .attr("fill", "#faf9f5").attr("font-size", "11px")
-      .attr("font-family", "Plus Jakarta Sans").attr("font-weight", "700")
-      .attr("opacity", 0).text("You")
-      .transition().delay(1200).duration(400).attr("opacity", 1);
+    ch.transition().delay(600).duration(400).attr("opacity", 1)
+      .on("end", () => {
+        // brief pause then BANG
+        setTimeout(() => {
+          // crosshair disappears instantly
+          ch.attr("opacity", 0);
+
+          // flash — white burst
+          g.append("circle").attr("cx", dotX).attr("cy", dotY).attr("r", 4)
+            .attr("fill", "white").attr("opacity", 1)
+            .transition().duration(120).ease(d3.easeCubicOut)
+            .attr("r", 40).attr("opacity", 0).remove();
+
+          // dot appears instantly
+          g.append("circle").attr("cx", dotX).attr("cy", dotY).attr("r", 8)
+            .attr("fill", "#ff6b35").attr("stroke", "white").attr("stroke-width", 2)
+            .attr("opacity", 1);
+
+          // shockwave rings
+          [0, 1, 2, 3].forEach((i) => {
+            g.append("circle").attr("cx", dotX).attr("cy", dotY).attr("r", 8)
+              .attr("fill", "none").attr("stroke", "#ff6b35")
+              .attr("stroke-width", 3 - i * 0.6).attr("opacity", 0.9 - i * 0.15)
+              .transition().delay(i * 50).duration(600).ease(d3.easeCubicOut)
+              .attr("r", 16 + i * 18).attr("opacity", 0).remove();
+          });
+
+          // label
+          g.append("text").attr("x", dotX).attr("y", dotY - 16).attr("text-anchor", "middle")
+            .attr("fill", "#faf9f5").attr("font-size", "11px")
+            .attr("font-family", "Plus Jakarta Sans").attr("font-weight", "700")
+            .attr("opacity", 0).text("You")
+            .transition().delay(300).duration(400).attr("opacity", 1);
+        }, 400);
+      });
   }, [stats]);
 
   return (

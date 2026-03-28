@@ -210,15 +210,19 @@ export default function TokenFurnace({ stats }: { stats: ComputedStats }) {
         className="mb-6 w-full flex justify-center">
         <SlotMachineCanvas stats={stats} onComplete={() => setDone(true)} />
       </motion.div>
-      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.6, duration: 0.5 }}
-        className="w-32 h-32 md:w-44 md:h-44 rounded-2xl overflow-hidden mb-4 md:mb-6">
-        <img src="/mascots/token-furnace.png" alt="Token furnace mascot" className="w-full h-full object-cover" />
-      </motion.div>
+      <AnimatePresence>
+        {done && (
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="w-32 h-32 md:w-44 md:h-44 rounded-2xl overflow-hidden mb-4 md:mb-6">
+            <img src="/mascots/token-furnace.png" alt="Token furnace mascot" className="w-full h-full object-cover" />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <AnimatePresence>
         {done && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-center gap-2">
             <h2 className="font-headline text-4xl md:text-6xl font-extrabold tracking-tight text-center text-glow">{narrative.archetypeLabel}</h2>
             <p className="font-body text-base md:text-lg italic text-on-surface-variant text-center max-w-md">{narrative.story}</p>

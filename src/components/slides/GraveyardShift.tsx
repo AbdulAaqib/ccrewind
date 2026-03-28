@@ -15,8 +15,8 @@ export default function GraveyardShift({ stats }: { stats: ComputedStats }) {
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    const width = 320, height = 320;
-    const radius = Math.min(width, height) / 2 - 20;
+    const width = 360, height = 360;
+    const radius = Math.min(width, height) / 2 - 36;
     const innerRadius = radius * 0.3;
 
     const g = svg.attr("viewBox", `0 0 ${width} ${height}`)

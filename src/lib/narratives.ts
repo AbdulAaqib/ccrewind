@@ -194,14 +194,14 @@ export function getThinkingHoursNarrative(stats: ComputedStats): SlideNarrative 
   let story: string;
 
   if (estimatedThinkingTimeMs > 3_600_000) {
-    archetypeLabel = "The Patient One";
-    story = `Claude spent ${formatDuration(estimatedThinkingTimeMs)} thinking on your behalf. You are not alone in this.`;
-  } else if (avgResponseTimeMs < 5000) {
-    archetypeLabel = "The Impatient";
-    story = `Average response time: ${formatDuration(avgResponseTimeMs)}. Fast answers. You do not give Claude time to think.`;
+    archetypeLabel = "The Plato";
+    story = `Claude spent ${formatDuration(estimatedThinkingTimeMs)} thinking on your behalf. The allegory of the cave was just the warmup.`;
+  } else if (estimatedThinkingTimeMs > 600_000) {
+    archetypeLabel = "The Diogenes";
+    story = `${formatDuration(estimatedThinkingTimeMs)} of thinking time. You let Claude sit with the hard questions. Barrel not included.`;
   } else {
-    archetypeLabel = "The Deep Thinker";
-    story = `${formatDuration(estimatedThinkingTimeMs)} total thinking time. Sometimes you let Claude think. Sometimes you don't wait at all.`;
+    archetypeLabel = "The Thinker";
+    story = `${formatDuration(estimatedThinkingTimeMs)} total thinking time. Posed. Contemplating. Probably not moving any time soon.`;
   }
 
   return {

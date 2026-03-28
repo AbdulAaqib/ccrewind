@@ -38,17 +38,17 @@ export function getGraveyardShiftNarrative(stats: ComputedStats): SlideNarrative
   let story: string;
 
   if (isNight) {
-    archetypeLabel = "The Night Shift";
-    story = `Your peak hours are ${formatHour(peakHour)} to ${formatHour((peakHour + 3) % 24)}. Your best work happens when the rest of the world is asleep. Or your worst. Hard to tell yet.`;
+    archetypeLabel = "The Insomniac";
+    story = `Peak at ${formatHour(peakHour)}. The rest of the world is asleep. You are building something. Or spiralling. Probably both.`;
   } else if (isMorning) {
-    archetypeLabel = "The Early Bird";
-    story = `You open Claude before email. Peak activity at ${formatHour(peakHour)}. Discipline or avoidance. Both valid.`;
+    archetypeLabel = "The Sigma";
+    story = `Up before the alarm. Claude open before email. Peak at ${formatHour(peakHour)}. No distractions. No small talk. Just the grind.`;
   } else if (isEvening) {
-    archetypeLabel = "The After Hours";
-    story = `The working day ends, and you are just getting started. Peak at ${formatHour(peakHour)}. Claude is your evening companion.`;
+    archetypeLabel = "The Clark Kent";
+    story = `By day, perfectly normal. After 5pm, something else entirely. Peak at ${formatHour(peakHour)}. The glasses come off.`;
   } else {
-    archetypeLabel = "The Nine-to-Fiver";
-    story = `Peak usage at ${formatHour(peakHour)}. You use Claude during business hours like a professional. Suspicious.`;
+    archetypeLabel = "The Day Job";
+    story = `Peak usage at ${formatHour(peakHour)}. Business hours. Professional. Completely normal. Nothing to see here.`;
   }
 
   return {

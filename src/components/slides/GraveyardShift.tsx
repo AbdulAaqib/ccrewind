@@ -45,7 +45,7 @@ export default function GraveyardShift({ stats }: { stats: ComputedStats }) {
         });
     });
 
-    const labels: Record<number, string> = { 0: "12a", 6: "6a", 12: "12p", 18: "6p" };
+    const labels: Record<number, string> = { 0: "12am", 6: "6am", 12: "12pm", 18: "6pm" };
     [0, 6, 12, 18].forEach((hour) => {
       const angle = (hour / 24) * Math.PI * 2 - Math.PI / 2;
       const r = radius + 14;

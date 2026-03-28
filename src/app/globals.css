@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #262624;
+  --color-surface: #262624;
+  --color-surface-dim: #1b1c1a;
+  --color-surface-container-lowest: #1b1c1a;
+  --color-surface-container-low: #2f2f2d;
+  --color-surface-container: #343431;
+  --color-surface-container-high: #383835;
+  --color-surface-container-highest: #3d3d3a;
+  --color-surface-bright: #3d3d3a;
+  --color-surface-variant: #4a4946;
+
+  --color-primary: #ff6b35;
+  --color-primary-deep: #ab3500;
+  --color-primary-container: #ff6b35;
+  --color-primary-fixed: #ffdbd0;
+  --color-primary-fixed-dim: #ffb59d;
+
+  --color-on-surface: #faf9f5;
+  --color-on-surface-variant: #d3d2ce;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #ffffff;
+
+  --color-secondary: #c9c6bd;
+  --color-secondary-container: #3d3d3a;
+
+  --color-outline: #97908a;
+  --color-outline-variant: #4a4946;
+
+  --color-error: #ffb4ab;
+
+  --font-family-headline: "Plus Jakarta Sans", sans-serif;
+  --font-family-body: "Newsreader", serif;
+  --font-family-label: "Plus Jakarta Sans", sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-on-surface);
+    font-family: var(--font-family-body);
+  }
+
+  ::selection {
+    background-color: rgb(255 107 53 / 0.3);
+    color: var(--color-primary);
+  }
+}
+
+@layer utilities {
+  .font-headline {
+    font-family: var(--font-family-headline);
+  }
+
+  .font-body {
+    font-family: var(--font-family-body);
+  }
+
+  .font-label {
+    font-family: var(--font-family-label);
+  }
+
+  .grain-texture {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    pointer-events: none;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 40px rgb(255 107 53 / 0.3);
+  }
+}

@@ -1,0 +1,274 @@
+import { ParsedData, ComputedStats, DailyActivity } from "@/types";
+
+export function computeStats(data: ParsedData): ComputedStats {
+  const { statsCache, history, sessions } = data;
+
+  // Hour Distribution
+  const hourDistribution = new Array(24).fill(0);
+  if (statsCache?.hourCounts) {
+    for (const [hour, count] of Object.entries(statsCache.hourCounts)) {
+      hourDistribution[parseInt(hour)] = count;
+    }
+  }
+  for (const entry of history) {
+    const hour = new Date(entry.timestamp).getHours();
+    hourDistribution[hour]++;
+  }
+  for (const session of sessions) {
+    for (const msg of session.messages) {
+      if (msg.type === "user" && msg.timestamp) {
+        const hour = new Date(msg.timestamp).getHours();
+        hourDistribution[hour]++;
+      }
+    }
+  }
+  const peakHour = hourDistribution.indexOf(Math.max(...hourDistribution));
+  const peakHourCount = hourDistribution[peakHour];
+
+  // Delegator
+  let totalMsgCount = 0;
+  let sidechainMessages = 0;
+  let agentToolCalls = 0;
+  for (const session of sessions) {
+    for (const msg of session.messages) {
+      if (msg.type === "user" || msg.type === "assistant") {
+        totalMsgCount++;
+        if (msg.isSidechain) sidechainMessages++;
+      }
+      if (msg.type === "assistant" && msg.message?.content && Array.isArray(msg.message.content)) {
+        for (const block of msg.message.content) {
+          if (block.type === "tool_use" && block.name === "Agent") agentToolCalls++;
+        }
+      }
+    }
+  }
+  const sidechainRatio = totalMsgCount > 0 ? sidechainMessages / totalMsgCount : 0;
+
+  // Arsenal
+  const toolCounts: Record<string, number> = {};
+  for (const session of sessions) {
+    for (const msg of session.messages) {
+      if (msg.type === "assistant" && msg.message?.content && Array.isArray(msg.message.content)) {
+        for (const block of msg.message.content) {
+          if (block.type === "tool_use" && block.name) {
+            toolCounts[block.name] = (toolCounts[block.name] || 0) + 1;
+          }
+        }
+      }
+    }
+  }
+  const topTools = Object.entries(toolCounts)
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10);
+  const totalToolCalls = Object.values(toolCounts).reduce((a, b) => a + b, 0);
+
+  // Token Furnace
+  let totalInputTokens = 0;
+  let totalOutputTokens = 0;
+  let totalCacheReadTokens = 0;
+  let totalCacheCreationTokens = 0;
+  if (statsCache?.modelUsage) {
+    for (const usage of Object.values(statsCache.modelUsage)) {
+      totalInputTokens += usage.inputTokens || 0;
+      totalOutputTokens += usage.outputTokens || 0;
+      totalCacheReadTokens += usage.cacheReadInputTokens || 0;
+      totalCacheCreationTokens += usage.cacheCreationInputTokens || 0;
+    }
+  }
+  if (totalOutputTokens === 0) {
+    for (const session of sessions) {
+      for (const msg of session.messages) {
+        if (msg.type === "assistant" && msg.message?.usage) {
+          totalInputTokens += msg.message.usage.input_tokens || 0;
+          totalOutputTokens += msg.message.usage.output_tokens || 0;
+          totalCacheReadTokens += msg.message.usage.cache_read_input_tokens || 0;
+        }
+      }
+    }
+  }
+  const totalTokens = totalInputTokens + totalOutputTokens + totalCacheReadTokens + totalCacheCreationTokens;
+
+  // Loyalty Test
+  const modelCounts: Record<string, number> = {};
+  if (statsCache?.modelUsage) {
+    for (const [model, usage] of Object.entries(statsCache.modelUsage)) {
+      modelCounts[model] = usage.outputTokens || 0;
+    }
+  }
+  for (const session of sessions) {
+    for (const msg of session.messages) {
+      if (msg.type === "assistant" && msg.message?.model) {
+        modelCounts[msg.message.model] = (modelCounts[msg.message.model] || 0) + 1;
+      }
+    }
+  }
+  const modelEntries = Object.entries(modelCounts).sort((a, b) => b[1] - a[1]);
+  const totalModelUsage = modelEntries.reduce((a, b) => a + b[1], 0);
+  const primaryModel = modelEntries[0]?.[0] || "unknown";
+  const primaryModelPercentage = totalModelUsage > 0 ? (modelEntries[0]?.[1] || 0) / totalModelUsage : 0;
+  const modelCount = modelEntries.length;
+
+  // Thinking Hours
+  let totalThinkingMs = 0;
+  const responseTimes: number[] = [];
+  for (const session of sessions) {
+    const msgs = session.messages
+      .filter((m) => (m.type === "user" || m.type === "assistant") && m.timestamp)
+      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    for (let i = 0; i < msgs.length - 1; i++) {
+      if (msgs[i].type === "user" && msgs[i + 1].type === "assistant") {
+        const diff = new Date(msgs[i + 1].timestamp).getTime() - new Date(msgs[i].timestamp).getTime();
+        if (diff > 0 && diff < 600000) {
+          totalThinkingMs += diff;
+          responseTimes.push(diff);
+        }
+      }
+    }
+  }
+  const avgResponseTimeMs = responseTimes.length > 0 ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length : 0;
+  const maxResponseTimeMs = responseTimes.length > 0 ? Math.max(...responseTimes) : 0;
+
+  // Commit History
+  const projectSet = new Set<string>();
+  const branchSet = new Set<string>();
+  const projectActivity: Record<string, number> = {};
+  for (const entry of history) {
+    if (entry.project) {
+      projectSet.add(entry.project);
+      projectActivity[entry.project] = (projectActivity[entry.project] || 0) + 1;
+    }
+  }
+  for (const session of sessions) {
+    if (session.projectPath) projectSet.add(session.projectPath);
+    for (const msg of session.messages) {
+      if (msg.gitBranch && msg.gitBranch !== "HEAD") branchSet.add(msg.gitBranch);
+    }
+  }
+
+  // Sharpshooter
+  const promptLengths = history.map((h) => h.display?.length || 0);
+  const avgPromptLength = promptLengths.length > 0 ? promptLengths.reduce((a, b) => a + b, 0) / promptLengths.length : 0;
+  const sortedLengths = [...promptLengths].sort((a, b) => a - b);
+  const medianPromptLength = sortedLengths.length > 0 ? sortedLengths[Math.floor(sortedLengths.length / 2)] : 0;
+  const sessionMessageCounts = sessions.map((s) => s.messages.filter((m) => m.type === "user" || m.type === "assistant").length);
+  const avgMessagesPerSession = sessionMessageCounts.length > 0 ? sessionMessageCounts.reduce((a, b) => a + b, 0) / sessionMessageCounts.length : 0;
+
+  // Streak
+  const dailyActivity: DailyActivity[] = statsCache?.dailyActivity || [];
+  const activeDatesSet = new Set<string>();
+  for (const day of dailyActivity) {
+    if (day.messageCount > 0) activeDatesSet.add(day.date);
+  }
+  for (const entry of history) {
+    activeDatesSet.add(new Date(entry.timestamp).toISOString().split("T")[0]);
+  }
+  for (const session of sessions) {
+    for (const msg of session.messages) {
+      if (msg.timestamp && (msg.type === "user" || msg.type === "assistant")) {
+        activeDatesSet.add(new Date(msg.timestamp).toISOString().split("T")[0]);
+      }
+    }
+  }
+  const activeDates = Array.from(activeDatesSet).sort();
+  const { longest, current } = computeStreaks(activeDates);
+
+  // Stop Reason
+  const stopReasonCounts: Record<string, number> = {};
+  for (const session of sessions) {
+    for (const msg of session.messages) {
+      if (msg.type === "assistant" && msg.message?.stop_reason) {
+        const reason = msg.message.stop_reason;
+        stopReasonCounts[reason] = (stopReasonCounts[reason] || 0) + 1;
+      }
+    }
+  }
+  const totalStopReasons = Object.values(stopReasonCounts).reduce((a, b) => a + b, 0);
+  const toolUseRatio = totalStopReasons > 0 ? (stopReasonCounts["tool_use"] || 0) / totalStopReasons : 0;
+  const endTurnRatio = totalStopReasons > 0 ? (stopReasonCounts["end_turn"] || 0) / totalStopReasons : 0;
+
+  const totalSessions = statsCache?.totalSessions || sessions.length;
+  const firstSessionDate = statsCache?.firstSessionDate || activeDates[0] || "";
+  const lastSessionDate = activeDates[activeDates.length - 1] || "";
+  const daysActive = activeDates.length;
+
+  return {
+    hourDistribution,
+    peakHour,
+    peakHourCount,
+    totalMessages: statsCache?.totalMessages || totalMsgCount,
+    sidechainMessages,
+    sidechainRatio,
+    agentToolCalls,
+    toolCounts,
+    topTools,
+    totalToolCalls,
+    totalInputTokens,
+    totalOutputTokens,
+    totalCacheReadTokens,
+    totalCacheCreationTokens,
+    totalTokens,
+    modelCounts,
+    primaryModel,
+    primaryModelPercentage,
+    modelCount,
+    estimatedThinkingTimeMs: totalThinkingMs,
+    avgResponseTimeMs,
+    maxResponseTimeMs,
+    uniqueProjects: Array.from(projectSet),
+    uniqueBranches: Array.from(branchSet),
+    projectCount: projectSet.size,
+    branchCount: branchSet.size,
+    projectActivity,
+    avgPromptLength,
+    avgMessagesPerSession,
+    medianPromptLength,
+    longestStreak: longest,
+    currentStreak: current,
+    totalActiveDays: daysActive,
+    dailyActivity: statsCache?.dailyActivity || [],
+    activeDates,
+    stopReasonCounts,
+    toolUseRatio,
+    endTurnRatio,
+    totalSessions,
+    firstSessionDate,
+    lastSessionDate,
+    daysActive,
+    longestSessionMessages: statsCache?.longestSession?.messageCount || 0,
+    longestSessionDurationMs: statsCache?.longestSession?.duration || 0,
+  };
+}
+
+function computeStreaks(sortedDates: string[]): { longest: number; current: number } {
+  if (sortedDates.length === 0) return { longest: 0, current: 0 };
+
+  let longest = 1;
+  let streakLength = 1;
+
+  for (let i = 1; i < sortedDates.length; i++) {
+    const prev = new Date(sortedDates[i - 1]);
+    const curr = new Date(sortedDates[i]);
+    const diffDays = (curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24);
+    if (diffDays === 1) {
+      streakLength++;
+    } else {
+      streakLength = 1;
+    }
+    if (streakLength > longest) longest = streakLength;
+  }
+
+  let current = 1;
+  for (let i = sortedDates.length - 1; i > 0; i--) {
+    const curr = new Date(sortedDates[i]);
+    const prev = new Date(sortedDates[i - 1]);
+    const diffDays = (curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24);
+    if (diffDays === 1) {
+      current++;
+    } else {
+      break;
+    }
+  }
+
+  return { longest, current };
+}

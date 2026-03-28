@@ -197,6 +197,25 @@ function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComp
 export default function TokenFurnace({ stats }: { stats: ComputedStats }) {
   const narrative = getTokenFurnaceNarrative(stats);
   const [done, setDone] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const audio = new Audio("/sounds/slot_machine.mp3");
+    audio.preload = "auto";
+    audioRef.current = audio;
+    // Play on mount (slot machine starts immediately)
+    const play = () => { audio.currentTime = 0; audio.play().catch(() => {}); };
+    // Try immediately; if blocked by autoplay policy, play on first interaction
+    play();
+    const handler = () => play();
+    window.addEventListener("click", handler, { once: true });
+    window.addEventListener("touchstart", handler, { once: true });
+    return () => {
+      audio.pause();
+      window.removeEventListener("click", handler);
+      window.removeEventListener("touchstart", handler);
+    };
+  }, []);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-4 md:px-6 py-8 max-w-2xl mx-auto">

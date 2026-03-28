@@ -188,7 +188,7 @@ export function getLoyaltyTestNarrative(stats: ComputedStats): SlideNarrative {
 }
 
 export function getThinkingHoursNarrative(stats: ComputedStats): SlideNarrative {
-  const { estimatedThinkingTimeMs, avgResponseTimeMs } = stats;
+  const { estimatedThinkingTimeMs, avgResponseTimeMs: _avgResponseTimeMs } = stats;
 
   let archetypeLabel: string;
   let story: string;

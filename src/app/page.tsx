@@ -79,12 +79,12 @@ export default function Home() {
             <SlideContainer onComplete={handleSlidesComplete}>
               <GraveyardShift stats={stats} />
               <Delegator stats={stats} />
+              <TopProjects stats={stats} />
               <Arsenal stats={stats} />
               <TokenFurnace stats={stats} />
               <LoyaltyTest stats={stats} />
               <ThinkingHours stats={stats} />
               <CommitHistory stats={stats} />
-              <TopProjects stats={stats} />
               <Sharpshooter stats={stats} />
               <Streak stats={stats} />
               <StopReason stats={stats} />

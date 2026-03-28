@@ -130,42 +130,41 @@ export function computeStats(data: ParsedData): ComputedStats {
   const maxResponseTimeMs = responseTimes.length > 0 ? Math.max(...responseTimes) : 0;
 
   // Commit History
+  // Build slug→realPath lookup: history uses "/home/jjay786/dev/x", sessions use "-home-jjay786-dev-x"
+  const slugToPath: Record<string, string> = {};
   const projectSet = new Set<string>();
   const branchSet = new Set<string>();
   const projectActivity: Record<string, number> = {};
   for (const entry of history) {
     if (entry.project) {
+      const slug = entry.project.replaceAll("/", "-");
+      slugToPath[slug] = entry.project;
       projectSet.add(entry.project);
       projectActivity[entry.project] = (projectActivity[entry.project] || 0) + 1;
     }
   }
+  const resolveProject = (sessionPath: string): string => slugToPath[sessionPath] || sessionPath;
   const projectTokens: Record<string, number> = {};
   const projectSessions: Record<string, number> = {};
-  const projectMessages: Record<string, number> = {};
   for (const session of sessions) {
-    if (session.projectPath) {
-      projectSet.add(session.projectPath);
-      projectSessions[session.projectPath] = (projectSessions[session.projectPath] || 0) + 1;
+    const proj = session.projectPath ? resolveProject(session.projectPath) : null;
+    if (proj) {
+      projectSet.add(proj);
+      projectSessions[proj] = (projectSessions[proj] || 0) + 1;
     }
     for (const msg of session.messages) {
       if (msg.gitBranch && msg.gitBranch !== "HEAD") branchSet.add(msg.gitBranch);
-      if (session.projectPath && (msg.type === "user" || msg.type === "assistant")) {
-        projectMessages[session.projectPath] = (projectMessages[session.projectPath] || 0) + 1;
-      }
-      if (session.projectPath && msg.type === "assistant" && msg.message?.usage) {
+      if (proj && msg.type === "assistant" && msg.message?.usage) {
         const u = msg.message.usage;
-        projectTokens[session.projectPath] = (projectTokens[session.projectPath] || 0)
+        projectTokens[proj] = (projectTokens[proj] || 0)
           + (u.input_tokens || 0) + (u.output_tokens || 0) + (u.cache_read_input_tokens || 0);
       }
     }
   }
-  // Merge history-based projectActivity messages into projectMessages
-  for (const [proj, count] of Object.entries(projectActivity)) {
-    projectMessages[proj] = (projectMessages[proj] || 0) + count;
-  }
+  // Use history-based projectActivity for message counts (consistent with totalMessages)
   const topProjectStats = Array.from(projectSet).map((name) => ({
     name,
-    messages: projectMessages[name] || projectActivity[name] || 0,
+    messages: projectActivity[name] || 0,
     tokens: projectTokens[name] || 0,
     sessions: projectSessions[name] || 0,
   })).sort((a, b) => b.messages - a.messages).slice(0, 5);

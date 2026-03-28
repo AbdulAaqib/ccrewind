@@ -2,7 +2,7 @@
 
 > Spotify Wrapped, but for how you actually use Claude Code.
 
-Upload your `~/.claude` folder. Get a personalised story of your usage. Find out your archetype. Get your Claude Power Score. Everything runs in the browser — zero data leaves your machine.
+Upload your `~/.claude` folder. Get a personalised story of your usage. Find out your archetype. Get your Claude Power Score. Everything runs in the browser - zero data leaves your machine.
 
 **Live:** [ccrewind.vercel.app](https://ccrewind.vercel.app) &nbsp;|&nbsp; **Releases:** [github.com/Junaid2005/ccrewind/releases](https://github.com/Junaid2005/ccrewind/releases)
 
@@ -12,26 +12,26 @@ Upload your `~/.claude` folder. Get a personalised story of your usage. Find out
 
 ## What it does
 
-Claude Code Rewind analyses your local Claude Code history and turns it into a full-screen story experience — 14 slides, each with a stat, a narrative, an animated chart, and a mascot. It ends with a character reveal and a mega score out of 1000.
+Claude Code Rewind analyses your local Claude Code history and turns it into a full-screen story experience - 14 slides, each with a stat, a narrative, an animated chart, and a mascot. It ends with a character reveal and a mega score out of 1000.
 
 ### The slides
 
 | # | Slide | What it shows |
 |---|-------|---------------|
-| 1 | Graveyard Shift | When you code — 24h radial clock heatmap |
-| 2 | The Delegator | How much you use agents — force-directed bubble chart |
+| 1 | Graveyard Shift | When you code - 24h radial clock heatmap |
+| 2 | The Delegator | How much you use agents - force-directed bubble chart |
 | 3 | Top Projects | Your top 3 repos by messages, tokens, sessions |
-| 4 | The Arsenal | Which tools Claude used most — animated bars |
-| 5 | Token Furnace | Total tokens consumed — canvas slot machine reveal |
-| 6 | Loyalty Test | Which model you stick to — racing bars |
-| 7 | Thinking Hours | How long Claude thought on your behalf — EKG brainwave |
-| 8 | Commit History | Project activity over time — GitHub-style heatmap |
-| 9 | Sharpshooter | Prompt length vs follow-ups — scatter quadrant |
+| 4 | The Arsenal | Which tools Claude used most - animated bars |
+| 5 | Token Furnace | Total tokens consumed - canvas slot machine reveal |
+| 6 | Loyalty Test | Which model you stick to - racing bars |
+| 7 | Thinking Hours | How long Claude thought on your behalf - EKG brainwave |
+| 8 | Commit History | Project activity over time - GitHub-style heatmap |
+| 9 | Sharpshooter | Prompt length vs follow-ups - scatter quadrant |
 | 10 | The Streak | Consistency calendar |
 | 11 | Stop Reason | tool_use vs end_turn split |
-| 12 | Retry Spiral | How often you re-prompt — Archimedean spiral |
+| 12 | Retry Spiral | How often you re-prompt - Archimedean spiral |
 | 13 | Power Score | Claude Power Score out of 1000 |
-| 14 | Character Reveal | Your archetype — confetti, mascot, one-liner |
+| 14 | Character Reveal | Your archetype - confetti, mascot, one-liner |
 
 After the slides: a full-screen **Dashboard** with every stat in one screenshottable page.
 
@@ -53,7 +53,7 @@ Loyalty Bonus      100pts   single model usage
 Completion Rate    150pts   sessions vs active days
 Velocity Score     100pts   messages per session
 Topic Breadth      100pts   number of projects
-Night Bonus         50pts   🔒 easter egg — peak usage after midnight
+Night Bonus         50pts   🔒 easter egg - peak usage after midnight
 Streak Bonus       100pts   longest consecutive day streak
 ─────────────────────────
 Max                1000pts
@@ -111,7 +111,7 @@ Max                1000pts
 ### Parsing priority
 
 ```
-1. stats-cache.json     fastest — use for totals, model usage, hour counts
+1. stats-cache.json     fastest - use for totals, model usage, hour counts
 2. history.jsonl        user prompts, timestamps, project paths (real paths)
 3. projects/**/*.jsonl  tokens per message, tool calls, stop_reason, branches
 ```
@@ -155,7 +155,7 @@ Open [http://localhost:3000](http://localhost:3000) and drop your `~/.claude` fo
 | Windows | View → Show → Hidden items |
 | Linux | `Ctrl + H` in file manager |
 
-Your folder is at `~/.claude` — e.g. `/Users/yourname/.claude` or `/home/yourname/.claude`.
+Your folder is at `~/.claude` - e.g. `/Users/yourname/.claude` or `/home/yourname/.claude`.
 
 ---
 
@@ -243,32 +243,32 @@ npm run build         # type check + production build
 
 ### Observability
 
-We track what matters at the build and deploy layer — not at runtime.
+We track what matters at the build and deploy layer - not at runtime.
 
 | Signal | Where |
 |--------|-------|
-| Build status | GitHub Actions — every PR gets a pass/fail |
-| Test results | Jest — 49 assertions, printed in CI logs |
-| Type errors | TypeScript strict mode — build fails on any type error |
-| Format drift | Prettier check in CI — consistent style enforced across all contributors |
+| Build status | GitHub Actions - every PR gets a pass/fail |
+| Test results | Jest - 49 assertions, printed in CI logs |
+| Type errors | TypeScript strict mode - build fails on any type error |
+| Format drift | Prettier check in CI - consistent style enforced across all contributors |
 | Release changelog | Auto-generated from commits on every `v*` tag |
-| Deployment logs | Vercel dashboard — build output, edge runtime warnings, function logs per deployment |
+| Deployment logs | Vercel dashboard - build output, edge runtime warnings, function logs per deployment |
 
 Zero runtime telemetry is collected. All user data stays in the browser. Observability is entirely at the build and deploy layer, not in the product.
 
 ---
 
-## What this is — and where it goes
+## What this is - and where it goes
 
 ### The problem with Claude Code usage data
 
-There is no API for Claude Code usage data. No dashboard, no export button, no analytics endpoint. Unless you are an enterprise customer with admin access, the only record of your usage is the raw local files that Claude Code writes to `~/.claude` — `stats-cache.json`, `history.jsonl`, and per-session JSONL transcripts. Nobody has built anything on top of this yet.
+There is no API for Claude Code usage data. No dashboard, no export button, no analytics endpoint. Unless you are an enterprise customer with admin access, the only record of your usage is the raw local files that Claude Code writes to `~/.claude` - `stats-cache.json`, `history.jsonl`, and per-session JSONL transcripts. Nobody has built anything on top of this yet.
 
 Claude Code Rewind is a proof of concept that shows what is possible when you actually read those files.
 
 ### What we built
 
-A fun, story-driven experience. Spotify Wrapped for developers. The goal was to make people *feel* their data rather than read a table. Every metric has an archetype. Every stat has a one-liner. The charts are weird on purpose — radial clocks, Archimedean spirals, slot machines — because the default chart types are boring and the data deserves better.
+A fun, story-driven experience. Spotify Wrapped for developers. The goal was to make people *feel* their data rather than read a table. Every metric has an archetype. Every stat has a one-liner. The charts are weird on purpose - radial clocks, Archimedean spirals, slot machines - because the default chart types are boring and the data deserves better.
 
 It runs entirely in the browser. Zero backend, zero telemetry, zero infrastructure costs. You drop a folder, you get a story.
 
@@ -276,7 +276,7 @@ It runs entirely in the browser. Zero backend, zero telemetry, zero infrastructu
 
 This was version one. The fun version. The "what can you even do with this data" version.
 
-The natural next step is cost. Right now we show token counts — input, output, cache. What we don't show yet is what those tokens *cost*. Anthropic publishes per-model pricing, and every session file has the model name and exact token counts. The math is straightforward:
+The natural next step is cost. Right now we show token counts - input, output, cache. What we don't show yet is what those tokens *cost*. Anthropic publishes per-model pricing, and every session file has the model name and exact token counts. The math is straightforward:
 
 ```
 cost = (input_tokens × input_price) + (output_tokens × output_price)
@@ -284,7 +284,7 @@ cost = (input_tokens × input_price) + (output_tokens × output_price)
      + (cache_creation_tokens × cache_creation_price)
 ```
 
-With that, Claude Code Rewind becomes something closer to a spending dashboard — not just "you used 500M tokens" but "you spent £47 on ccrewind, £23 on your AI side project, £12 on university work." Per project, per week, per model. The data is all there. Nobody has surfaced it yet.
+With that, Claude Code Rewind becomes something closer to a spending dashboard - not just "you used 500M tokens" but "you spent £47 on ccrewind, £23 on your AI side project, £12 on university work." Per project, per week, per model. The data is all there. Nobody has surfaced it yet.
 
 **Planned extensions:**
 
@@ -293,11 +293,11 @@ With that, Claude Code Rewind becomes something closer to a spending dashboard �
 | Cost per project | See which repos are burning the most budget |
 | Cost per model | See what Opus vs Sonnet actually costs you in practice |
 | Weekly/monthly spend trends | Identify your most expensive sessions |
-| Cost efficiency score | Tokens per useful output — are you getting value? |
+| Cost efficiency score | Tokens per useful output - are you getting value? |
 | Team dashboards | Aggregate across multiple `~/.claude` exports (enterprise) |
 | Budget alerts | Warn when a project exceeds a token or cost threshold |
 
-The architecture is already there. The parser reads all the right fields. Adding cost is a config object of model prices and a multiplier at compute time — no new data sources needed.
+The architecture is already there. The parser reads all the right fields. Adding cost is a config object of model prices and a multiplier at compute time - no new data sources needed.
 
 For enterprise customers who *do* have API access to usage data, the same frontend could be powered by a real-time backend instead of a folder drop. The visualisation layer doesn't change. The data pipeline does.
 
@@ -308,8 +308,8 @@ For enterprise customers who *do* have API access to usage data, the same fronte
 | Contributor | Role |
 |-------------|------|
 | [Junaid](https://github.com/Junaid2005) | Engineering, product, data pipeline |
-| Abdul | Development, slides, product & vision |
-| Walid | Design, mascot GIFs, character art |
+| [Abdul](https://github.com/AbdulAaqib) | Development, slides, product & vision |
+| [Walid](https://github.com/samouneh) | Design, mascot GIFs, character art |
 
 ---
 

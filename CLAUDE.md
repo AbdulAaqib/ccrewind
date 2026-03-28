@@ -1,4 +1,4 @@
-# CC Rewind — Project
+# CC Rewind - Project
 
 ## What's Built
 
@@ -8,58 +8,58 @@ Next.js 16 + TypeScript + Tailwind v4 + Framer Motion + D3. Static export, deplo
 ```
 src/
   app/
-    page.tsx              — Main orchestrator (upload → slides → reveal)
-    layout.tsx            — Root layout, Google Fonts, viewport meta
-    globals.css           — Tailwind v4 @theme tokens, dark palette, grain texture
+    page.tsx              - Main orchestrator (upload → slides → reveal)
+    layout.tsx            - Root layout, Google Fonts, viewport meta
+    globals.css           - Tailwind v4 @theme tokens, dark palette, grain texture
   components/
     upload/
-      UploadScreen.tsx    — webkitdirectory folder picker, drag-drop, demo button, hidden folder instructions
+      UploadScreen.tsx    - webkitdirectory folder picker, drag-drop, demo button, hidden folder instructions
     slides/
-      SlideContainer.tsx  — Full-viewport slide system, scrollable content, progress bar, keyboard/tap nav
-      GraveyardShift.tsx  — Radial clock heatmap (D3 arc)
-      Delegator.tsx       — Force-directed bubble chart (main vs agents)
-      Arsenal.tsx         — Horizontal bar chart of tool usage
-      TokenFurnace.tsx    — Three vertical fuel gauges (input/output/cache)
-      LoyaltyTest.tsx     — Donut arc diagram of model usage
-      ThinkingHours.tsx   — Concentric ring visualization
-      CommitHistory.tsx   — GitHub contribution-style heatmap
-      Sharpshooter.tsx    — Scatter quadrant (prompt length vs msgs/session)
-      Streak.tsx          — Calendar grid of active days
-      StopReason.tsx      — Split bar with clip-path rounded corners (tool_use vs end_turn)
-      RetrySpiral.tsx     — Archimedean spiral visualization (RSI metric)
+      SlideContainer.tsx  - Full-viewport slide system, scrollable content, progress bar, keyboard/tap nav
+      GraveyardShift.tsx  - Radial clock heatmap (D3 arc)
+      Delegator.tsx       - Force-directed bubble chart (main vs agents)
+      Arsenal.tsx         - Horizontal bar chart of tool usage
+      TokenFurnace.tsx    - Three vertical fuel gauges (input/output/cache)
+      LoyaltyTest.tsx     - Donut arc diagram of model usage
+      ThinkingHours.tsx   - Concentric ring visualization
+      CommitHistory.tsx   - GitHub contribution-style heatmap
+      Sharpshooter.tsx    - Scatter quadrant (prompt length vs msgs/session)
+      Streak.tsx          - Calendar grid of active days
+      StopReason.tsx      - Split bar with clip-path rounded corners (tool_use vs end_turn)
+      RetrySpiral.tsx     - Archimedean spiral visualization (RSI metric)
     reveal/
-      CharacterReveal.tsx — Confetti, name slam, one-liner, ending line, mascot placeholder
-      PowerScore.tsx      — Animated counter, breakdown bars
+      CharacterReveal.tsx - Confetti, name slam, one-liner, ending line, mascot placeholder
+      PowerScore.tsx      - Animated counter, breakdown bars
   lib/
-    parser.ts             — Parses raw ~/.claude folder (stats-cache.json, history.jsonl, session JSONLs)
-    stats.ts              — Computes all slide metrics from parsed data (incl. RSI clustering)
-    narratives.ts         — Dynamic copy generation per slide (archetype labels, stories)
-    archetypes.ts         — 10 character definitions with weighted scoring
-    scoring.ts            — CPS (Claude Power Score) out of 1000, 9 components
-    demo.ts               — Deterministic demo data generator (seeded PRNG, 45 days, 187 sessions)
+    parser.ts             - Parses raw ~/.claude folder (stats-cache.json, history.jsonl, session JSONLs)
+    stats.ts              - Computes all slide metrics from parsed data (incl. RSI clustering)
+    narratives.ts         - Dynamic copy generation per slide (archetype labels, stories)
+    archetypes.ts         - 10 character definitions with weighted scoring
+    scoring.ts            - CPS (Claude Power Score) out of 1000, 9 components
+    demo.ts               - Deterministic demo data generator (seeded PRNG, 45 days, 187 sessions)
   types/
-    index.ts              — All TypeScript interfaces
+    index.ts              - All TypeScript interfaces
 ```
 
 ### Slide Flow (14 slides + reveal + dashboard)
-1. GraveyardShift — When you code (24h radial clock)
-2. Delegator — Delegation style (force-directed bubbles)
-3. TopProjects — Top 3 projects (podium bars, messages + tokens + sessions)
-4. Arsenal — Tool usage (horizontal bars)
-5. TokenFurnace — Token consumption (canvas slot machine, 3 reels)
-6. LoyaltyTest — Model loyalty (racing horizontal bars)
-7. ThinkingHours — Claude thinking time (canvas brainwave EKG)
-8. CommitHistory — Project activity (GitHub contribution heatmap)
-9. Sharpshooter — Prompt style (scatter quadrant, sniper shot animation)
-10. Streak — Consistency (calendar grid)
-11. StopReason — Session endings (split bar)
-12. RetrySpiral — Retry Spiral Index (Archimedean spiral)
-13. PowerScore — CPS out of 1000 (animated counter + breakdown)
-14. CharacterReveal — Archetype reveal (confetti, name, one-liner, mascot image)
+1. GraveyardShift - When you code (24h radial clock)
+2. Delegator - Delegation style (force-directed bubbles)
+3. TopProjects - Top 3 projects (podium bars, messages + tokens + sessions)
+4. Arsenal - Tool usage (horizontal bars)
+5. TokenFurnace - Token consumption (canvas slot machine, 3 reels)
+6. LoyaltyTest - Model loyalty (racing horizontal bars)
+7. ThinkingHours - Claude thinking time (canvas brainwave EKG)
+8. CommitHistory - Project activity (GitHub contribution heatmap)
+9. Sharpshooter - Prompt style (scatter quadrant, sniper shot animation)
+10. Streak - Consistency (calendar grid)
+11. StopReason - Session endings (split bar)
+12. RetrySpiral - Retry Spiral Index (Archimedean spiral)
+13. PowerScore - CPS out of 1000 (animated counter + breakdown)
+14. CharacterReveal - Archetype reveal (confetti, name, one-liner, mascot image)
 
 **Reveal phase (after slides):**
-- ShareCard — Character card, CPS, share button, Start Over
-- Dashboard — Full-screen mega stats page (screenshottable, no slide chrome)
+- ShareCard - Character card, CPS, share button, Start Over
+- Dashboard - Full-screen mega stats page (screenshottable, no slide chrome)
 
 ### Design System
 - Dark background: `#262624`
@@ -72,19 +72,19 @@ src/
 
 ### Data Source
 Users select their `~/.claude` folder via `webkitdirectory` browser input OR click "Try with demo data". Parsed entirely client-side:
-1. `stats-cache.json` — pre-aggregated daily activity, model usage, hour counts
-2. `history.jsonl` — user prompts with timestamps, project paths, session IDs
-3. `projects/<project>/<session>.jsonl` — full message transcripts (model, usage tokens, tool calls, stop_reason, isSidechain, gitBranch)
+1. `stats-cache.json` - pre-aggregated daily activity, model usage, hour counts
+2. `history.jsonl` - user prompts with timestamps, project paths, session IDs
+3. `projects/<project>/<session>.jsonl` - full message transcripts (model, usage tokens, tool calls, stop_reason, isSidechain, gitBranch)
 
 Upload screen includes hidden folder visibility instructions per OS (macOS: Cmd+Shift+., Windows: View→Hidden items, Linux: Ctrl+H).
 
 ### Key Metrics
-- **Retry Spiral Index (RSI)** — Clusters consecutive similar prompts (Jaccard similarity > 0.3, within 20min). RSI = avg attempts per cluster. Bands: Sniper (<1.5), Refiner (1.5–3.0), Loop Artist (>3.0).
-- **CPS (Claude Power Score)** — 9 components, max 1000. Precision, Depth, Consistency, Loyalty, Completion, Velocity, Breadth, Night Owl (easter egg), Streak.
+- **Retry Spiral Index (RSI)** - Clusters consecutive similar prompts (Jaccard similarity > 0.3, within 20min). RSI = avg attempts per cluster. Bands: Sniper (<1.5), Refiner (1.5–3.0), Loop Artist (>3.0).
+- **CPS (Claude Power Score)** - 9 components, max 1000. Precision, Depth, Consistency, Loyalty, Completion, Velocity, Breadth, Night Owl (easter egg), Streak.
 
 ### DevOps
-- CI: `.github/workflows/ci.yml` — runs on every push/PR to main: Prettier → Lint → Test → Build
-- Release: `.github/workflows/release.yml` — runs on `v*` tags: same checks → creates GitHub Release with auto-generated changelog
+- CI: `.github/workflows/ci.yml` - runs on every push/PR to main: Prettier → Lint → Test → Build
+- Release: `.github/workflows/release.yml` - runs on `v*` tags: same checks → creates GitHub Release with auto-generated changelog
 - Tests: 49 Jest tests across `src/__tests__/` (scoring, archetypes, narratives, stats)
 - Formatting: Prettier with `.prettierrc`, `npm run format` to fix, `npm run format:check` for CI
 - Linting: ESLint via `eslint-config-next`
@@ -99,7 +99,7 @@ stats.ts builds a `slugToPath` map at parse time so both sources key to the same
 
 ---
 
-# Claude Wrapped — Product Spec
+# Claude Wrapped - Product Spec
 
 ## Concept
 
@@ -109,21 +109,21 @@ Spotify Wrapped but for your Claude usage. Upload your ccusage export, get a per
 
 ## Flow
 
-**Screen 0 — Upload**
+**Screen 0 - Upload**
 Big centered drop zone. "Drop your ccusage export to find out who you really are."
 Accepts the ccusage JSON folder or single export file. Parse entirely in browser. Loading animation of Claude mascot cracking knuckles.
 
-**Screens 1–10 — The Stats**
+**Screens 1–10 - The Stats**
 Each screen is a full viewport slide, Instagram story style. Tap or click to advance. Each has:
 - A bold headline stat
 - A one or two line story written dynamically from the data
 - One clean chart
 - One gif or mascot animation
 
-**Screen 11 — The Archetype Reveal**
+**Screen 11 - The Archetype Reveal**
 Big dramatic reveal. Archetype name, description, mascot in full costume, shareable card.
 
-**Screen 12 — The Mega Score**
+**Screen 12 - The Mega Score**
 Claude Power Score out of 1000. Breakdown of how it was calculated. Shareable.
 
 ---
@@ -133,10 +133,10 @@ Claude Power Score out of 1000. Breakdown of how it was calculated. Shareable.
 Every slide follows this exact beat, like a story:
 
 1. **Dark screen, silence for half a second**
-2. **Headline archetype label drops in** — big, bold, one or two words. Not "your average prompt length is 47 words." Instead: "The Novelist." or "Spray and Pray."
-3. **One line of flavour copy** — written dynamically from the data, slightly unhinged
-4. **Gif fires** — mascot animation, full bleed or centred, 2 to 3 seconds
-5. **Graph animates in** — radial, heatmap, force-directed bubble, spiral, NOT a basic bar chart. Animate the draw. Every axis should feel like it was designed, not defaulted.
+2. **Headline archetype label drops in** - big, bold, one or two words. Not "your average prompt length is 47 words." Instead: "The Novelist." or "Spray and Pray."
+3. **One line of flavour copy** - written dynamically from the data, slightly unhinged
+4. **Gif fires** - mascot animation, full bleed or centred, 2 to 3 seconds
+5. **Graph animates in** - radial, heatmap, force-directed bubble, spiral, NOT a basic bar chart. Animate the draw. Every axis should feel like it was designed, not defaulted.
 6. Tap or click to advance
 
 No basic charts. Radial clocks, heatmaps, bubble constellations, gauge needles, order flow waterfalls. If it could be the default chart type in Excel, we do not use it.
@@ -148,10 +148,10 @@ Stats listed below are a starting point, not fixed. More to be added once ccusag
 ## Data Source
 
 Users upload their ~/.claude folder. Parsed entirely client side. Key files:
-- `history.jsonl` — one line per user prompt, has timestamp, sessionId, project path
-- `projects/<project>/<session>.jsonl` — full message transcripts, richest data
-- `projects/<project>/sessions-index.json` — session metadata, messageCount, created, modified
-- `stats-cache.json` — pre-computed dailyActivity array with messageCount, sessionCount, toolCallCount per day
+- `history.jsonl` - one line per user prompt, has timestamp, sessionId, project path
+- `projects/<project>/<session>.jsonl` - full message transcripts, richest data
+- `projects/<project>/sessions-index.json` - session metadata, messageCount, created, modified
+- `stats-cache.json` - pre-computed dailyActivity array with messageCount, sessionCount, toolCallCount per day
 
 Key fields available per message: timestamp (ISO 8601), type (user/assistant/system/progress), model, usage (input_tokens, output_tokens, cache_read_input_tokens), tool calls (name, count), isSidechain, durationMs (on system turn_duration events), stop_reason, gitBranch, cwd
 
@@ -165,7 +165,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide — The Graveyard Shift
+### Slide - The Graveyard Shift
 **Derived from:** timestamp hour distribution across all messages
 **Archetype labels:** The Night Shift Engineer / The Early Bird / The Lunch Break Coder
 **Story examples:**
@@ -177,7 +177,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide — The Delegator
+### Slide - The Delegator
 **Derived from:** isSidechain message ratio, Agent tool call count
 **Archetype labels:** The Delegator / The Lone Wolf / The Micromanager
 **Story examples:**
@@ -189,7 +189,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide — The Arsenal
+### Slide - The Arsenal
 **Derived from:** tool call counts by tool name (Bash, Edit, Read, Write, Grep, WebSearch, NotebookEdit)
 **Archetype labels:** The Bash Goblin / The Reader / The Web Surfer / The Notebook Scientist
 **Story examples:**
@@ -202,7 +202,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide — The Token Furnace
+### Slide - The Token Furnace
 **Derived from:** total output_tokens, cache_read_input_tokens, input_tokens across all assistant messages
 **Archetype labels:** The Furnace / The Economist / The Cache King
 **Story examples:**
@@ -214,7 +214,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide — The Loyalty Test
+### Slide - The Loyalty Test
 **Derived from:** model field on assistant messages, breakdown by claude-sonnet / claude-opus / claude-haiku
 **Archetype labels:** The Loyalist / The Model Hopper / The Opus Enjoyer / The Haiku Minimalist
 **Story examples:**
@@ -226,7 +226,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide — The Thinking Hours
+### Slide - The Thinking Hours
 **Derived from:** durationMs on system turn_duration events, total thinking time in hours
 **Archetype labels:** The Patient One / The Impatient / The Deep Thinker
 **Story examples:**
@@ -238,7 +238,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide — The Commit History
+### Slide - The Commit History
 **Derived from:** gitBranch field, cwd field, number of unique projects
 **Archetype labels:** The Monogamist / The Context Switcher / The Branch Collector
 **Story examples:**
@@ -250,7 +250,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide — The Sharpshooter
+### Slide - The Sharpshooter
 **Derived from:** avg user message length from history.jsonl display field, messages per session from sessions-index
 **Archetype labels:** The Sniper / The Novelist / The Rambler / The One-Liner
 **Story examples:**
@@ -262,7 +262,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide — The Streak
+### Slide - The Streak
 **Derived from:** dailyActivity array in stats-cache.json, consecutive days with sessions
 **Archetype labels:** The Consistent / The Binge Worker / The Weekender
 **Story examples:**
@@ -274,7 +274,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide — The Stop Reason
+### Slide - The Stop Reason
 **Derived from:** stop_reason field on assistant messages: tool_use vs end_turn ratio
 **Archetype labels:** The Iterative / The Decisive / The Tool Abuser
 **Story examples:**
@@ -297,7 +297,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide 2 — Night Owl vs Early Bird
+### Slide 2 - Night Owl vs Early Bird
 **Stat:** Distribution of messages by hour of day
 **Story examples:**
 - Peak between 11pm and 3am: "You do your best thinking when everyone else is asleep. Or you have a problem."
@@ -308,7 +308,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide 3 — Topic Fingerprint
+### Slide 3 - Topic Fingerprint
 **Stat:** Top 5 domains you talk to Claude about, derived from keyword clustering
 **Story examples:**
 - Mostly code: "You use Claude as a senior engineer who never judges your variable names."
@@ -319,7 +319,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide 4 — The Loyalty Index
+### Slide 4 - The Loyalty Index
 **Stat:** How many different Claude models you have used and how often you switch
 **Story examples:**
 - Only ever used one model: "Loyal to a fault. You found your person and you stayed."
@@ -330,7 +330,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide 5 — Abandonment Issues
+### Slide 5 - Abandonment Issues
 **Stat:** Percentage of conversations with only one or two messages before you left
 **Story examples:**
 - Under 20%: "You see things through. A rare quality."
@@ -341,7 +341,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide 6 — Clarification Anxiety
+### Slide 6 - Clarification Anxiety
 **Stat:** How often Claude asked you to clarify something across all conversations
 **Story examples:**
 - Very low: "You communicate with surgical precision. Claude always knows what you want."
@@ -352,7 +352,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide 7 — The Dependency Score
+### Slide 7 - The Dependency Score
 **Stat:** Average sessions per day over your usage history, trend over time
 **Story examples:**
 - Flat low usage: "Healthy boundaries. Claude respects this."
@@ -363,7 +363,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide 8 — Token Hunger
+### Slide 8 - Token Hunger
 **Stat:** Average response length across all your conversations
 **Story examples:**
 - Short responses: "You want answers, not essays. Efficient. Borderline terse."
@@ -374,7 +374,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide 9 — Philosopher vs Executor
+### Slide 9 - Philosopher vs Executor
 **Stat:** Ratio of open ended questions vs direct task commands
 **Story examples:**
 - Mostly tasks: "Write this. Fix that. Build this. You are here to ship."
@@ -385,7 +385,7 @@ Not fixed at ten. Add or cut based on what hits best on the day. Each slide need
 
 ---
 
-### Slide 10 — Velocity
+### Slide 10 - Velocity
 **Stat:** Average messages per session, your conversational trading frequency
 **Story examples:**
 - Low messages per session, many sessions: "In and out. High frequency. You scalp Claude."
@@ -452,20 +452,20 @@ Mascot: translucent, floating, fading out mid-sentence
 
 ---
 
-## The Mega Score — Claude Power Score (CPS)
+## The Mega Score - Claude Power Score (CPS)
 
 Score out of 1000. Shown on the final screen with a dramatic counter animation.
 
 Components:
-- Precision Index (Sharpshooter score) — 150pts
-- Depth Score (avg conversation length) — 150pts
-- Consistency (sessions over time, no huge gaps) — 100pts
-- Loyalty Bonus (sticking to one model or intentional switching) — 100pts
-- Completion Rate (inverse of abandon rate) — 150pts
-- Velocity Score (calibrated, not just raw speed) — 100pts
-- Topic Breadth (how many different domains) — 100pts
+- Precision Index (Sharpshooter score) - 150pts
+- Depth Score (avg conversation length) - 150pts
+- Consistency (sessions over time, no huge gaps) - 100pts
+- Loyalty Bonus (sticking to one model or intentional switching) - 100pts
+- Completion Rate (inverse of abandon rate) - 150pts
+- Velocity Score (calibrated, not just raw speed) - 100pts
+- Topic Breadth (how many different domains) - 100pts
 - Night Bonus (secret +50 for peak usage after midnight, Easter egg)
-- Streak Bonus (consecutive days with sessions) — 100pts
+- Streak Bonus (consecutive days with sessions) - 100pts
 
 Final screen shows score, archetype name, a one-line verdict, and a shareable card with all three.
 
@@ -474,7 +474,7 @@ Final screen shows score, archetype name, a one-line verdict, and a shareable ca
 ## Tech Notes
 
 - React via Bolt, deployed on Vercel, must be live and demoed on the day
-- All parsing client side, zero data leaves the browser — make this prominent on the upload screen, it is a feature not a footnote
+- All parsing client side, zero data leaves the browser - make this prominent on the upload screen, it is a feature not a footnote
 - Upload screen accepts the full ~/.claude folder drop or just the key files (history.jsonl, stats-cache.json, projects/)
 - Parse priority: stats-cache.json first (fastest, pre-aggregated), then sessions-index.json per project, then individual session JSONL files for deep stats
 - Framer Motion for slide transitions, stat counter animations, confetti
@@ -492,7 +492,7 @@ Wrapped-style full viewport slides. Dark background. One stat per screen. Bold n
 
 ---
 
-## The Final Slide — Your Claude Character
+## The Final Slide - Your Claude Character
 
 After the CPS reveal, one more slide. Full screen. Confetti cannon fires. This is the money shot.
 

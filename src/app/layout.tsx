@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Claude Code Rewind",
   description: "Spotify Wrapped but for your Claude Code usage. Upload your .claude folder, get your story.",
+  icons: { icon: "/favicon.svg" },
 };
 
 export const viewport: Viewport = {

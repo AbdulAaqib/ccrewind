@@ -33,6 +33,7 @@ function BrainwaveCanvas({ stats }: { stats: ComputedStats }) {
     let animId: number;
 
     function draw() {
+      if (!ctx) return;
       ctx.clearRect(0, 0, W, H);
       ctx.fillStyle = "#262624";
       ctx.fillRect(0, 0, W, H);

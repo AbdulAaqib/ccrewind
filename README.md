@@ -6,7 +6,8 @@ Upload your `~/.claude` folder. Get a personalised story of your usage. Find out
 
 **Live:** [ccrewind.vercel.app](https://ccrewind.vercel.app) &nbsp;|&nbsp; **Releases:** [github.com/Junaid2005/ccrewind/releases](https://github.com/Junaid2005/ccrewind/releases)
 
-![CI](https://github.com/Junaid2005/ccrewind/actions/workflows/ci.yml/badge.svg)
+[![CI](https://github.com/Junaid2005/ccrewind/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Junaid2005/ccrewind/actions/workflows/ci.yml)
+[![Vercel](https://therealsujitk-vercel-badge.vercel.app/?app=ccrewind)](https://ccrewind.vercel.app)
 
 ---
 
@@ -226,7 +227,7 @@ Releases: [github.com/Junaid2005/ccrewind/releases](https://github.com/Junaid200
 49 tests across 4 suites:
 
 ```
-src/__tests__/
+__tests__/
   scoring.test.ts      CPS calculation, component caps, night bonus, loyalty
   archetypes.test.ts   character assignment logic, Ghost/Torvalds detection
   narratives.test.ts   all archetype label tiers across all slides

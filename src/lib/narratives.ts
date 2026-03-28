@@ -130,22 +130,20 @@ export function getArsenalNarrative(stats: ComputedStats): SlideNarrative {
 }
 
 export function getTokenFurnaceNarrative(stats: ComputedStats): SlideNarrative {
-  const { totalOutputTokens, totalCacheReadTokens, totalTokens } = stats;
+  const { totalTokens } = stats;
 
   let archetypeLabel: string;
   let story: string;
 
-  const cacheRatio = totalTokens > 0 ? totalCacheReadTokens / totalTokens : 0;
-
-  if (cacheRatio > 0.7) {
-    archetypeLabel = "The Cache King";
-    story = `${Math.round(cacheRatio * 100)}% of your context was cache. You are suspiciously efficient. ${formatNumber(totalCacheReadTokens)} cached tokens is genuinely impressive.`;
-  } else if (totalOutputTokens > 500000) {
-    archetypeLabel = "The Furnace";
-    story = `You consumed ${formatNumber(totalOutputTokens)} output tokens. Claude wrote you a small library. Maybe a large one.`;
+  if (totalTokens >= 200_000_000) {
+    archetypeLabel = "The OpenAI";
+    story = `${formatNumber(totalTokens)} tokens. Burning through context like it is runway. Shipping fast, asking questions never.`;
+  } else if (totalTokens >= 10_000_000) {
+    archetypeLabel = "The Anthropic";
+    story = `${formatNumber(totalTokens)} tokens. Safety first. Tokens second. Somehow still impressive.`;
   } else {
-    archetypeLabel = "The Economist";
-    story = `${formatNumber(totalTokens)} total tokens. Steady burns. No spikes. You pace yourself.`;
+    archetypeLabel = "Apple";
+    story = `${formatNumber(totalTokens)} tokens. AI strategy? What AI strategy. You are pacing yourself. Intentionally. Probably.`;
   }
 
   return {

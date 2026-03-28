@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import * as d3 from "d3";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ComputedStats } from "@/types";
 import { getTokenFurnaceNarrative } from "@/lib/narratives";
 
@@ -13,79 +12,218 @@ function fmt(n: number): string {
   return n.toString();
 }
 
-export default function TokenFurnace({ stats }: { stats: ComputedStats }) {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const narrative = getTokenFurnaceNarrative(stats);
+function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arcTo(x + w, y, x + w, y + r, r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+  ctx.lineTo(x + r, y + h);
+  ctx.arcTo(x, y + h, x, y + h - r, r);
+  ctx.lineTo(x, y + r);
+  ctx.arcTo(x, y, x + r, y, r);
+  ctx.closePath();
+}
+
+const STRIP = ["1.2M","3.4M","7.8M","19M","999K","48M","2.1M","16M","5.5M","12M","33M","8.7M","21M","4.4M","66M"];
+
+function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComplete: () => void }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (!svgRef.current) return;
-    const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    const width = 360, height = 280;
-    svg.attr("viewBox", `0 0 ${width} ${height}`);
+    const total = stats.totalTokens;
+    const W = 400, H = 320;
+    canvas.width = W; canvas.height = H;
 
-    const gauges = [
-      { label: "Input", value: stats.totalInputTokens, color: "#ff6b35" },
-      { label: "Output", value: stats.totalOutputTokens, color: "#ffb59d" },
-      { label: "Cache", value: stats.totalCacheReadTokens, color: "#ffdbd0" },
+    const reelDefs = [
+      { label: "INPUT",  value: fmt(stats.totalInputTokens),     color: "#ff6b35", lockAt: 3200 },
+      { label: "OUTPUT", value: fmt(stats.totalOutputTokens),    color: "#ffb59d", lockAt: 5600 },
+      { label: "CACHE",  value: fmt(stats.totalCacheReadTokens), color: "#ffdbd0", lockAt: 8200 },
     ];
-    const maxVal = Math.max(...gauges.map((g) => g.value), 1);
-    const barWidth = 60;
-    const spacing = (width - gauges.length * barWidth) / (gauges.length + 1);
-    const maxBarHeight = 180;
-    const bottomY = height - 50;
 
-    gauges.forEach((gauge, i) => {
-      const x = spacing + i * (barWidth + spacing);
-      const barH = (gauge.value / maxVal) * maxBarHeight;
+    const REEL_W = 76, REEL_H = 90, GAP = 12;
+    const totalW = reelDefs.length * REEL_W + (reelDefs.length - 1) * GAP;
+    const startX = (W - totalW) / 2;
 
-      svg.append("rect").attr("x", x).attr("y", bottomY - maxBarHeight)
-        .attr("width", barWidth).attr("height", maxBarHeight).attr("rx", 8).attr("fill", "#2f2f2d");
+    // Layout: reels (90) + reel labels (20) + gap (16) + counter number (32) + counter label (18) = 176
+    // Box padding top/bottom: 22px each → box height = 220
+    const BOX_PAD = 22;
+    const CONTENT_H = REEL_H + 20 + 16 + 32 + 18; // 176
+    const BOX_H = CONTENT_H + BOX_PAD * 2;         // 220
+    const BOX_TOP = (H - BOX_H) / 2;               // vertically centred in canvas
+    const REEL_Y = BOX_TOP + BOX_PAD;
+    const ROW_H = 34;
 
-      svg.append("rect").attr("x", x).attr("y", bottomY).attr("width", barWidth).attr("height", 0)
-        .attr("rx", 8).attr("fill", gauge.color).attr("opacity", 0.9)
-        .transition().delay(400 + i * 200).duration(1000).ease(d3.easeCubicOut)
-        .attr("y", bottomY - barH).attr("height", barH);
+    const reels = reelDefs.map((def) => ({
+      ...def,
+      offset: 0,
+      speed: 18,
+      locked: false,
+      flashAlpha: 0,
+    }));
 
-      svg.append("text").attr("x", x + barWidth / 2).attr("y", bottomY - barH - 10)
-        .attr("text-anchor", "middle").attr("fill", gauge.color)
-        .attr("font-size", "13px").attr("font-family", "Plus Jakarta Sans").attr("font-weight", "800")
-        .attr("opacity", 0).text(fmt(gauge.value))
-        .transition().delay(1000 + i * 200).duration(400).attr("opacity", 1);
+    let shakeX = 0, shakeY = 0;
+    const startTime = performance.now();
+    let counterVal = 0;
+    let completed = false;
+    let animId: number;
 
-      svg.append("text").attr("x", x + barWidth / 2).attr("y", bottomY + 20)
-        .attr("text-anchor", "middle").attr("fill", "#97908a")
-        .attr("font-size", "10px").attr("font-family", "Plus Jakarta Sans").attr("font-weight", "700")
-        .text(gauge.label);
-    });
+    function draw(now: number) {
+      const elapsed = now - startTime;
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = "#262624";
+      ctx.fillRect(0, 0, W, H);
+
+      shakeX *= 0.7; shakeY *= 0.7;
+      ctx.save();
+      ctx.translate(shakeX, shakeY);
+
+      // machine body
+      ctx.fillStyle = "#2f2f2d";
+      roundRect(ctx, startX - 14, BOX_TOP, totalW + 28, BOX_H, 12);
+      ctx.fill();
+      ctx.strokeStyle = "#4a4946"; ctx.lineWidth = 2; ctx.stroke();
+
+      reels.forEach((reel, i) => {
+        const x = startX + i * (REEL_W + GAP);
+        const cy = REEL_Y + REEL_H / 2;
+
+        if (!reel.locked) {
+          const timeLeft = reel.lockAt - elapsed;
+          if (timeLeft < 1400) reel.speed = Math.max(0.5, reel.speed * 0.92);
+          reel.offset += reel.speed;
+        }
+
+        if (!reel.locked && elapsed >= reel.lockAt) {
+          reel.locked = true;
+          reel.speed = 0;
+          reel.flashAlpha = 1;
+          shakeX = (Math.random() - 0.5) * 14;
+          shakeY = (Math.random() - 0.5) * 10;
+        }
+
+        if (reel.flashAlpha > 0) reel.flashAlpha -= 0.035;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(x, REEL_Y, REEL_W, REEL_H);
+        ctx.clip();
+
+        ctx.fillStyle = "#1a1a18";
+        roundRect(ctx, x, REEL_Y, REEL_W, REEL_H, 8);
+        ctx.fill();
+
+        if (reel.locked) {
+          ctx.fillStyle = reel.color;
+          ctx.font = `800 20px 'Plus Jakarta Sans', sans-serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(reel.value, x + REEL_W / 2, cy);
+        } else {
+          const idx = Math.floor(reel.offset / ROW_H);
+          const rowOffset = reel.offset % ROW_H;
+
+          for (let r = -1; r <= 3; r++) {
+            const val = STRIP[(idx + r) % STRIP.length];
+            const ry = cy - ROW_H + r * ROW_H - rowOffset + ROW_H / 2;
+            const distFromCentre = Math.abs(ry - cy);
+            const alpha = Math.max(0, 1 - distFromCentre / (REEL_H * 0.6));
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = reel.color;
+            ctx.font = `800 17px 'Plus Jakarta Sans', sans-serif`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(val, x + REEL_W / 2, ry);
+          }
+          ctx.globalAlpha = 1;
+        }
+
+        ctx.restore();
+
+        if (reel.flashAlpha > 0) {
+          ctx.save();
+          roundRect(ctx, x, REEL_Y, REEL_W, REEL_H, 8);
+          ctx.clip();
+          ctx.fillStyle = `rgba(255,107,53,${reel.flashAlpha * 0.45})`;
+          ctx.fillRect(x, REEL_Y, REEL_W, REEL_H);
+          ctx.restore();
+        }
+
+        ctx.fillStyle = "#97908a";
+        ctx.font = `700 9px 'Plus Jakarta Sans', sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText(reel.label, x + REEL_W / 2, REEL_Y + REEL_H + 7);
+      });
+
+
+      ctx.restore();
+
+      // total counter after last reel
+      if (elapsed > reelDefs[2].lockAt + 500) {
+        counterVal = Math.min(counterVal + total / 55, total);
+        ctx.fillStyle = "#faf9f5";
+        ctx.font = `800 28px 'Plus Jakarta Sans', sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(fmt(Math.round(counterVal)), W / 2, REEL_Y + REEL_H + 20 + 16 + 16);
+        ctx.fillStyle = "#ff6b35";
+        ctx.font = `700 9px 'Plus Jakarta Sans', sans-serif`;
+        ctx.textBaseline = "top";
+        ctx.fillText("TOTAL TOKENS CONSUMED", W / 2, REEL_Y + REEL_H + 20 + 16 + 32 + 4);
+        if (!completed && counterVal >= total) {
+          completed = true;
+          onComplete();
+        }
+      }
+
+      animId = requestAnimationFrame(draw);
+    }
+
+    animId = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(animId);
   }, [stats]);
 
+  return <canvas ref={canvasRef} style={{ width: 400, height: 320 }} className="rounded-xl" />;
+}
+
+export default function TokenFurnace({ stats }: { stats: ComputedStats }) {
+  const narrative = getTokenFurnaceNarrative(stats);
+  const [done, setDone] = useState(false);
+
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-4 md:px-6 py-12 md:py-20 max-w-2xl mx-auto">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="flex flex-col items-center gap-2 mb-4">
+    <div className="w-full h-full flex flex-col items-center justify-center px-4 md:px-6 py-8 max-w-2xl mx-auto">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="mb-4">
         <span className="font-label text-[10px] font-bold tracking-[0.3em] uppercase text-primary">Token Consumption</span>
-        <h2 className="font-headline text-4xl md:text-7xl font-extrabold tracking-tight text-center text-glow">{narrative.archetypeLabel}</h2>
       </motion.div>
-      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.6 }}
-        className="font-body text-lg md:text-xl italic text-on-surface-variant text-center max-w-md mb-6">{narrative.story}</motion.p>
-      {/* GIF Mascot Placeholder */}
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="mb-6 w-full flex justify-center">
+        <SlotMachineCanvas stats={stats} onComplete={() => setDone(true)} />
+      </motion.div>
       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.7, duration: 0.5 }}
-        className="w-24 h-24 md:w-32 md:h-32 rounded-2xl border-2 border-dashed border-on-surface/10 flex items-center justify-center mb-4 md:mb-6">
+        transition={{ delay: 0.6, duration: 0.5 }}
+        className="w-20 h-20 rounded-2xl border-2 border-dashed border-on-surface/10 flex items-center justify-center mb-4">
         <span className="font-label text-[9px] tracking-widest uppercase text-on-surface/20">Mascot GIF</span>
       </motion.div>
-      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.8, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}>
-        <svg ref={svgRef} className="w-64 h-52 md:w-96 md:h-72" />
-      </motion.div>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }}
-        className="mt-4 text-center">
-        <span className="font-headline text-3xl font-extrabold text-primary">{narrative.stat}</span>
-        <span className="font-label text-[10px] uppercase tracking-widest text-on-surface/40 ml-2">{narrative.statLabel}</span>
-      </motion.div>
+      <AnimatePresence>
+        {done && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col items-center gap-2">
+            <h2 className="font-headline text-4xl md:text-6xl font-extrabold tracking-tight text-center text-glow">{narrative.archetypeLabel}</h2>
+            <p className="font-body text-base md:text-lg italic text-on-surface-variant text-center max-w-md">{narrative.story}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

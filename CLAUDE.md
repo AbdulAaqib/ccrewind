@@ -41,20 +41,25 @@ src/
     index.ts              — All TypeScript interfaces
 ```
 
-### Slide Flow (13 slides + reveal)
-1. GraveyardShift — When you code (24h clock)
-2. Delegator — Delegation style (bubble chart)
-3. Arsenal — Tool usage (horizontal bars)
-4. TokenFurnace — Token consumption (fuel gauges)
-5. LoyaltyTest — Model loyalty (donut arc)
-6. ThinkingHours — Claude thinking time (concentric rings)
-7. CommitHistory — Project activity (GitHub heatmap)
-8. Sharpshooter — Prompt style (scatter quadrant)
-9. Streak — Consistency (calendar grid)
-10. StopReason — Session endings (split bar)
-11. RetrySpiral — Retry Spiral Index (Archimedean spiral)
-12. PowerScore — CPS out of 1000 (animated counter + breakdown)
-13. CharacterReveal — Archetype reveal (confetti, name, one-liner)
+### Slide Flow (14 slides + reveal + dashboard)
+1. GraveyardShift — When you code (24h radial clock)
+2. Delegator — Delegation style (force-directed bubbles)
+3. TopProjects — Top 3 projects (podium bars, messages + tokens + sessions)
+4. Arsenal — Tool usage (horizontal bars)
+5. TokenFurnace — Token consumption (canvas slot machine, 3 reels)
+6. LoyaltyTest — Model loyalty (racing horizontal bars)
+7. ThinkingHours — Claude thinking time (canvas brainwave EKG)
+8. CommitHistory — Project activity (GitHub contribution heatmap)
+9. Sharpshooter — Prompt style (scatter quadrant, sniper shot animation)
+10. Streak — Consistency (calendar grid)
+11. StopReason — Session endings (split bar)
+12. RetrySpiral — Retry Spiral Index (Archimedean spiral)
+13. PowerScore — CPS out of 1000 (animated counter + breakdown)
+14. CharacterReveal — Archetype reveal (confetti, name, one-liner, mascot image)
+
+**Reveal phase (after slides):**
+- ShareCard — Character card, CPS, share button, Start Over
+- Dashboard — Full-screen mega stats page (screenshottable, no slide chrome)
 
 ### Design System
 - Dark background: `#262624`
@@ -77,11 +82,20 @@ Upload screen includes hidden folder visibility instructions per OS (macOS: Cmd+
 - **Retry Spiral Index (RSI)** — Clusters consecutive similar prompts (Jaccard similarity > 0.3, within 20min). RSI = avg attempts per cluster. Bands: Sniper (<1.5), Refiner (1.5–3.0), Loop Artist (>3.0).
 - **CPS (Claude Power Score)** — 9 components, max 1000. Precision, Depth, Consistency, Loyalty, Completion, Velocity, Breadth, Night Owl (easter egg), Streak.
 
+### DevOps
+- CI: `.github/workflows/ci.yml` — runs on every push/PR to main: Prettier → Lint → Test → Build
+- Release: `.github/workflows/release.yml` — runs on `v*` tags: same checks → creates GitHub Release with auto-generated changelog
+- Tests: 49 Jest tests across `src/__tests__/` (scoring, archetypes, narratives, stats)
+- Formatting: Prettier with `.prettierrc`, `npm run format` to fix, `npm run format:check` for CI
+- Linting: ESLint via `eslint-config-next`
+
+### Project name normalisation (important)
+history.jsonl stores project as real paths: `/home/user/dev/project`
+Session folder names are slugified: `-home-user-dev-project`
+stats.ts builds a `slugToPath` map at parse time so both sources key to the same project. Never merge the two formats directly.
+
 ### What's Not Done Yet
-- GIF integration (Walid making them, placeholders ready in every slide)
-- Shareable card export (html2canvas)
-- Share button functionality
-- Vercel deployment
+- GIF integration (Walid making them, mascot images already wired in via `/public/mascots/`)
 
 ---
 

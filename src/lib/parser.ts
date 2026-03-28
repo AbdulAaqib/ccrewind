@@ -53,10 +53,7 @@ export async function parseClaudeFolder(files: FileList): Promise<ParsedData> {
 
         const parts = file.webkitRelativePath.split("/");
         const projectsIdx = parts.indexOf("projects");
-        const projectPath =
-          projectsIdx >= 0 && projectsIdx + 1 < parts.length
-            ? parts[projectsIdx + 1]
-            : "unknown";
+        const projectPath = projectsIdx >= 0 && projectsIdx + 1 < parts.length ? parts[projectsIdx + 1] : "unknown";
 
         const sessionId = file.name.replace(".jsonl", "");
 

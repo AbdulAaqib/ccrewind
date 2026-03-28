@@ -156,9 +156,7 @@ export function generateDemoData(): ParsedData {
   const hourCounts: Record<string, number> = {};
 
   // Night owl profile: heavy 9pm-2am, moderate afternoon, light morning
-  const hourWeights = [
-    35, 28, 18, 8, 3, 1, 2, 5, 12, 18, 22, 25, 20, 24, 28, 30, 25, 22, 28, 35, 42, 55, 62, 48,
-  ];
+  const hourWeights = [35, 28, 18, 8, 3, 1, 2, 5, 12, 18, 22, 25, 20, 24, 28, 30, 25, 22, 28, 35, 42, 55, 62, 48];
 
   for (let h = 0; h < 24; h++) {
     hourCounts[h.toString()] = Math.round(hourWeights[h] * (1.5 + rand()));
@@ -186,16 +184,19 @@ export function generateDemoData(): ParsedData {
   }
 
   // --- Model usage ---
-  const modelUsage: Record<string, {
-    inputTokens: number;
-    outputTokens: number;
-    cacheReadInputTokens: number;
-    cacheCreationInputTokens: number;
-    webSearchRequests: number;
-    costUSD: number;
-    contextWindow: number;
-    maxOutputTokens: number;
-  }> = {
+  const modelUsage: Record<
+    string,
+    {
+      inputTokens: number;
+      outputTokens: number;
+      cacheReadInputTokens: number;
+      cacheCreationInputTokens: number;
+      webSearchRequests: number;
+      costUSD: number;
+      contextWindow: number;
+      maxOutputTokens: number;
+    }
+  > = {
     "claude-sonnet-4-20250514": {
       inputTokens: 12_450_000,
       outputTokens: 4_280_000,
@@ -212,7 +213,7 @@ export function generateDemoData(): ParsedData {
       cacheReadInputTokens: 8_200_000,
       cacheCreationInputTokens: 620_000,
       webSearchRequests: 3,
-      costUSD: 156.20,
+      costUSD: 156.2,
       contextWindow: 200000,
       maxOutputTokens: 32768,
     },
@@ -222,7 +223,7 @@ export function generateDemoData(): ParsedData {
       cacheReadInputTokens: 4_500_000,
       cacheCreationInputTokens: 180_000,
       webSearchRequests: 0,
-      costUSD: 4.80,
+      costUSD: 4.8,
       contextWindow: 200000,
       maxOutputTokens: 8192,
     },
@@ -360,9 +361,7 @@ export function generateDemoData(): ParsedData {
           gitBranch: branch,
           message: {
             role: "assistant",
-            content: [
-              { type: "text", text: "Done. The changes have been applied." },
-            ],
+            content: [{ type: "text", text: "Done. The changes have been applied." }],
             model,
             id: `msg_${uuid().substring(0, 12)}`,
             type: "message",

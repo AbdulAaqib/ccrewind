@@ -19,24 +19,24 @@ interface CrateCharacter {
 }
 
 const RARITY_COLORS: Record<Rarity, { border: string; glow: string; bg: string; label: string }> = {
-  common:    { border: "#8b98a5", glow: "rgba(139,152,165,0.3)", bg: "rgba(139,152,165,0.08)", label: "Common" },
-  uncommon:  { border: "#4b69ff", glow: "rgba(75,105,255,0.4)",  bg: "rgba(75,105,255,0.08)",  label: "Uncommon" },
-  rare:      { border: "#8847ff", glow: "rgba(136,71,255,0.4)",  bg: "rgba(136,71,255,0.08)",  label: "Rare" },
-  epic:      { border: "#d32ce6", glow: "rgba(211,44,230,0.4)",  bg: "rgba(211,44,230,0.08)",  label: "Epic" },
-  legendary: { border: "#f5c642", glow: "rgba(245,198,66,0.5)",  bg: "rgba(245,198,66,0.1)",   label: "Legendary" },
+  common: { border: "#8b98a5", glow: "rgba(139,152,165,0.3)", bg: "rgba(139,152,165,0.08)", label: "Common" },
+  uncommon: { border: "#4b69ff", glow: "rgba(75,105,255,0.4)", bg: "rgba(75,105,255,0.08)", label: "Uncommon" },
+  rare: { border: "#8847ff", glow: "rgba(136,71,255,0.4)", bg: "rgba(136,71,255,0.08)", label: "Rare" },
+  epic: { border: "#d32ce6", glow: "rgba(211,44,230,0.4)", bg: "rgba(211,44,230,0.08)", label: "Epic" },
+  legendary: { border: "#f5c642", glow: "rgba(245,198,66,0.5)", bg: "rgba(245,198,66,0.1)", label: "Legendary" },
 };
 
 const ALL_CHARACTERS: CrateCharacter[] = [
-  { name: "The Intern",    image: "/mascots/char-the-intern.png",                rarity: "common" },
-  { name: "The Ghost",     image: "/mascots/char-the-ghost.png",                 rarity: "common" },
-  { name: "The Operator",  image: "/mascots/char-the-operator.png",              rarity: "uncommon" },
-  { name: "The Degen",     image: "/mascots/char-the-degen.png",                 rarity: "uncommon" },
-  { name: "The Altman",    image: "/mascots/char-the-visionary.png",             rarity: "rare" },
-  { name: "The Musk",      image: "/mascots/char-the-chaos-agent.png",           rarity: "rare" },
-  { name: "The Carmack",   image: "/mascots/char-the-sensei.png",                rarity: "rare" },
-  { name: "The Hinton",    image: "/mascots/char-the-researcher.png",            rarity: "epic" },
-  { name: "The Torvalds",  image: "/mascots/char-the-night-shift-engineer.png",  rarity: "epic" },
-  { name: "The Quant",     image: "/mascots/char-the-quant.png",                 rarity: "legendary" },
+  { name: "The Intern", image: "/mascots/char-the-intern.png", rarity: "common" },
+  { name: "The Ghost", image: "/mascots/char-the-ghost.png", rarity: "common" },
+  { name: "The Operator", image: "/mascots/char-the-operator.png", rarity: "uncommon" },
+  { name: "The Degen", image: "/mascots/char-the-degen.png", rarity: "uncommon" },
+  { name: "The Altman", image: "/mascots/char-the-visionary.png", rarity: "rare" },
+  { name: "The Musk", image: "/mascots/char-the-chaos-agent.png", rarity: "rare" },
+  { name: "The Carmack", image: "/mascots/char-the-sensei.png", rarity: "rare" },
+  { name: "The Hinton", image: "/mascots/char-the-researcher.png", rarity: "epic" },
+  { name: "The Torvalds", image: "/mascots/char-the-night-shift-engineer.png", rarity: "epic" },
+  { name: "The Quant", image: "/mascots/char-the-quant.png", rarity: "legendary" },
 ];
 
 // Seeded shuffle for deterministic strip order
@@ -45,7 +45,7 @@ function seededShuffle<T>(arr: T[], seed: number): T[] {
   let s = seed;
   for (let i = result.length - 1; i > 0; i--) {
     s = (s * 1664525 + 1013904223) & 0xffffffff;
-    const j = ((s >>> 0) % (i + 1));
+    const j = (s >>> 0) % (i + 1);
     [result[i], result[j]] = [result[j], result[i]];
   }
   return result;
@@ -77,8 +77,8 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
 
   // Build the crate strip: ~60 cards, target character placed near the end
   const { strip, targetIndex } = useMemo(() => {
-    const targetChar = ALL_CHARACTERS.find(c => c.name === character.name) ?? ALL_CHARACTERS[0];
-    const others = ALL_CHARACTERS.filter(c => c.name !== character.name);
+    const targetChar = ALL_CHARACTERS.find((c) => c.name === character.name) ?? ALL_CHARACTERS[0];
+    const others = ALL_CHARACTERS.filter((c) => c.name !== character.name);
 
     // Build 6 loops of shuffled characters
     const cards: CrateCharacter[] = [];
@@ -106,12 +106,14 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
   const storyLine = useMemo(() => {
     const parts: string[] = [];
     if (stats.peakHour >= 22 || stats.peakHour <= 4) {
-      const nightMsgs = stats.hourDistribution.slice(22).reduce((a, b) => a + b, 0) +
+      const nightMsgs =
+        stats.hourDistribution.slice(22).reduce((a, b) => a + b, 0) +
         stats.hourDistribution.slice(0, 5).reduce((a, b) => a + b, 0);
       parts.push(`You sent ${nightMsgs} messages between midnight and 4am.`);
     }
     if (stats.totalMessages > 100) parts.push(`${stats.totalMessages.toLocaleString()} total messages.`);
-    if (stats.primaryModelPercentage > 0.8) parts.push(`${Math.round(stats.primaryModelPercentage * 100)}% loyal to one model.`);
+    if (stats.primaryModelPercentage > 0.8)
+      parts.push(`${Math.round(stats.primaryModelPercentage * 100)}% loyal to one model.`);
     if (stats.longestStreak > 3) parts.push(`${stats.longestStreak}-day streak.`);
     return parts.length > 0
       ? parts.slice(0, 3).join(" ") + ` You are ${character.name}.`
@@ -128,7 +130,7 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
 
     const containerW = containerRef.current.offsetWidth;
     // Scroll so the target card is centered in the container
-    const targetOffset = targetIndex * cardTotal - (containerW / 2) + (cardW / 2);
+    const targetOffset = targetIndex * cardTotal - containerW / 2 + cardW / 2;
 
     const el = stripRef.current;
     el.style.transition = "none";
@@ -150,7 +152,7 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
     return () => el.removeEventListener("transitionend", onEnd);
   }, [phase, targetIndex, cardW, cardTotal]);
 
-  const targetRarity = ALL_CHARACTERS.find(c => c.name === character.name)?.rarity ?? "common";
+  const targetRarity = ALL_CHARACTERS.find((c) => c.name === character.name)?.rarity ?? "common";
   const rarityStyle = RARITY_COLORS[targetRarity];
 
   return (
@@ -206,9 +208,14 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
                   style={{
                     width: size,
                     height: size,
-                    backgroundColor: [rarityStyle.border, rarityStyle.border, "#ff6b35", "#ffb59d", "#ffdbd0", "#faf9f5"][
-                      Math.floor(Math.random() * 6)
-                    ],
+                    backgroundColor: [
+                      rarityStyle.border,
+                      rarityStyle.border,
+                      "#ff6b35",
+                      "#ffb59d",
+                      "#ffdbd0",
+                      "#faf9f5",
+                    ][Math.floor(Math.random() * 6)],
                     borderRadius: Math.random() > 0.4 ? "50%" : "2px",
                   }}
                 />
@@ -361,7 +368,11 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
               >
                 <span
                   className="font-label text-[10px] font-extrabold tracking-[0.3em] uppercase px-4 py-1 rounded-full"
-                  style={{ color: rarityStyle.border, backgroundColor: rarityStyle.bg, border: `1px solid ${rarityStyle.border}40` }}
+                  style={{
+                    color: rarityStyle.border,
+                    backgroundColor: rarityStyle.bg,
+                    border: `1px solid ${rarityStyle.border}40`,
+                  }}
                 >
                   {RARITY_COLORS[targetRarity].label}
                 </span>
@@ -389,7 +400,7 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
                 style={{ boxShadow: `0 0 40px ${rarityStyle.glow}, 0 0 80px ${rarityStyle.glow}` }}
               >
                 <img
-                  src={ALL_CHARACTERS.find(c => c.name === character.name)?.image ?? "/mascots/character-reveal.png"}
+                  src={ALL_CHARACTERS.find((c) => c.name === character.name)?.image ?? "/mascots/character-reveal.png"}
                   alt={character.name}
                   className="w-full h-full object-cover"
                 />

@@ -96,10 +96,7 @@ export default function SlideContainer({ children, onComplete }: SlideContainerP
         </div>
         <div className="flex gap-1">
           {Array.from({ length: totalSlides }).map((_, i) => (
-            <div
-              key={i}
-              className="h-[2px] flex-1 rounded-full overflow-hidden bg-on-surface/10"
-            >
+            <div key={i} className="h-[2px] flex-1 rounded-full overflow-hidden bg-on-surface/10">
               <motion.div
                 className="h-full bg-primary"
                 initial={false}
@@ -131,9 +128,7 @@ export default function SlideContainer({ children, onComplete }: SlideContainerP
           }}
           className="absolute inset-0 overflow-y-auto"
         >
-          <div className="min-h-full flex items-center justify-center pt-16 pb-24">
-            {children[currentSlide]}
-          </div>
+          <div className="min-h-full flex items-center justify-center pt-16 pb-24">{children[currentSlide]}</div>
         </motion.div>
       </AnimatePresence>
 

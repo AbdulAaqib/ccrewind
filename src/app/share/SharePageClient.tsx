@@ -16,9 +16,7 @@ export default function SharePageClient({ encoded }: Props) {
       <div className="min-h-screen flex flex-col items-center justify-center px-4 gap-6">
         <div className="fixed inset-0 grain-texture" />
         <div className="relative z-10 flex flex-col items-center gap-6 text-center">
-          <h1 className="font-headline text-3xl font-extrabold text-on-surface">
-            Invalid Share Link
-          </h1>
+          <h1 className="font-headline text-3xl font-extrabold text-on-surface">Invalid Share Link</h1>
           <p className="font-body text-on-surface/50 italic">
             This link doesn&apos;t contain valid Claude Code Rewind data.
           </p>
@@ -69,7 +67,11 @@ export default function SharePageClient({ encoded }: Props) {
 
             <div className="flex flex-col items-center text-center gap-3 flex-1 justify-center">
               <div className="w-28 h-28 md:w-36 md:h-36 rounded-2xl overflow-hidden">
-                <img src="/mascots/character-reveal.png" alt="Character mascot" className="w-full h-full object-cover" />
+                <img
+                  src="/mascots/character-reveal.png"
+                  alt="Character mascot"
+                  className="w-full h-full object-cover"
+                />
               </div>
 
               <h2 className="font-headline text-3xl md:text-4xl font-extrabold tracking-tight text-on-surface leading-tight">
@@ -81,12 +83,8 @@ export default function SharePageClient({ encoded }: Props) {
               </p>
 
               <div className="flex items-center gap-2 mt-2">
-                <span className="font-headline text-4xl md:text-5xl font-extrabold text-primary">
-                  {data.cps}
-                </span>
-                <span className="font-label text-[10px] uppercase tracking-widest text-on-surface/40">
-                  CPS
-                </span>
+                <span className="font-headline text-4xl md:text-5xl font-extrabold text-primary">{data.cps}</span>
+                <span className="font-label text-[10px] uppercase tracking-widest text-on-surface/40">CPS</span>
               </div>
             </div>
 
@@ -101,9 +99,7 @@ export default function SharePageClient({ encoded }: Props) {
               ))}
             </div>
 
-            <p className="font-body text-xs italic text-primary/60 mt-3">
-              {data.endingLine}
-            </p>
+            <p className="font-body text-xs italic text-primary/60 mt-3">{data.endingLine}</p>
           </div>
         </div>
 

@@ -21,14 +21,25 @@ export default function TopProjects({ stats }: { stats: ComputedStats }) {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-4 md:px-6 py-12 md:py-20 max-w-2xl mx-auto">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="flex flex-col items-center gap-2 mb-4">
+        className="flex flex-col items-center gap-2 mb-4"
+      >
         <span className="font-label text-[10px] font-bold tracking-[0.3em] uppercase text-primary">Top Projects</span>
-        <h2 className="font-headline text-4xl md:text-7xl font-extrabold tracking-tight text-center text-glow">{narrative.archetypeLabel}</h2>
+        <h2 className="font-headline text-4xl md:text-7xl font-extrabold tracking-tight text-center text-glow">
+          {narrative.archetypeLabel}
+        </h2>
       </motion.div>
-      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.6 }}
-        className="font-body text-lg md:text-xl italic text-on-surface-variant text-center max-w-md mb-8">{narrative.story}</motion.p>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.6 }}
+        className="font-body text-lg md:text-xl italic text-on-surface-variant text-center max-w-md mb-8"
+      >
+        {narrative.story}
+      </motion.p>
 
       {/* Podium */}
       <div className="w-full max-w-lg flex flex-col gap-4">
@@ -45,10 +56,7 @@ export default function TopProjects({ stats }: { stats: ComputedStats }) {
             >
               {/* Project name row */}
               <div className="flex items-center gap-3">
-                <span
-                  className="font-headline text-lg md:text-xl font-extrabold shrink-0"
-                  style={{ color: MEDALS[i] }}
-                >
+                <span className="font-headline text-lg md:text-xl font-extrabold shrink-0" style={{ color: MEDALS[i] }}>
                   {MEDAL_LABELS[i]}
                 </span>
                 <span className="font-headline text-base md:text-lg font-bold text-on-surface truncate">{name}</span>
@@ -86,16 +94,26 @@ export default function TopProjects({ stats }: { stats: ComputedStats }) {
       </div>
 
       {/* Total projects footer */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }}
-        className="mt-8 flex items-center gap-6">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.8 }}
+        className="mt-8 flex items-center gap-6"
+      >
         <div className="text-center">
           <span className="font-headline text-2xl font-extrabold text-primary">{stats.projectCount}</span>
-          <span className="font-label text-[10px] uppercase tracking-widest text-on-surface/40 ml-1">Total Projects</span>
+          <span className="font-label text-[10px] uppercase tracking-widest text-on-surface/40 ml-1">
+            Total Projects
+          </span>
         </div>
         <div className="h-6 w-px bg-on-surface/10" />
         <div className="text-center">
-          <span className="font-headline text-2xl font-extrabold text-primary-fixed-dim">{fmt(stats.totalMessages)}</span>
-          <span className="font-label text-[10px] uppercase tracking-widest text-on-surface/40 ml-1">Total Messages</span>
+          <span className="font-headline text-2xl font-extrabold text-primary-fixed-dim">
+            {fmt(stats.totalMessages)}
+          </span>
+          <span className="font-label text-[10px] uppercase tracking-widest text-on-surface/40 ml-1">
+            Total Messages
+          </span>
         </div>
       </motion.div>
     </div>

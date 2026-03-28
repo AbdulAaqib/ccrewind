@@ -111,7 +111,11 @@ export default function ShareCard({ character, stats, cps }: Props) {
             <div className="flex flex-col items-center text-center gap-3 flex-1 justify-center">
               {/* Mascot placeholder */}
               <div className="w-28 h-28 md:w-36 md:h-36 rounded-2xl overflow-hidden">
-                <img src="/mascots/character-reveal.png" alt="Character mascot" className="w-full h-full object-cover" />
+                <img
+                  src="/mascots/character-reveal.png"
+                  alt="Character mascot"
+                  className="w-full h-full object-cover"
+                />
               </div>
 
               <h2 className="font-headline text-3xl md:text-4xl font-extrabold tracking-tight text-on-surface leading-tight">
@@ -124,12 +128,8 @@ export default function ShareCard({ character, stats, cps }: Props) {
 
               {/* CPS */}
               <div className="flex items-center gap-2 mt-2">
-                <span className="font-headline text-4xl md:text-5xl font-extrabold text-primary">
-                  {cps.total}
-                </span>
-                <span className="font-label text-[10px] uppercase tracking-widest text-on-surface/40">
-                  CPS
-                </span>
+                <span className="font-headline text-4xl md:text-5xl font-extrabold text-primary">{cps.total}</span>
+                <span className="font-label text-[10px] uppercase tracking-widest text-on-surface/40">CPS</span>
               </div>
             </div>
 
@@ -146,9 +146,7 @@ export default function ShareCard({ character, stats, cps }: Props) {
             </div>
 
             {/* Ending line */}
-            <p className="font-body text-xs italic text-primary/60 mt-3">
-              {character.endingLine}
-            </p>
+            <p className="font-body text-xs italic text-primary/60 mt-3">{character.endingLine}</p>
           </div>
         </div>
 
@@ -159,7 +157,16 @@ export default function ShareCard({ character, stats, cps }: Props) {
             disabled={downloading}
             className="flex-1 bg-primary hover:bg-primary-deep text-on-primary rounded-full px-6 py-3.5 font-label text-xs font-bold uppercase tracking-widest transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" y1="15" x2="12" y2="3" />
@@ -171,7 +178,16 @@ export default function ShareCard({ character, stats, cps }: Props) {
             onClick={handleCopyLink}
             className="flex-1 bg-surface-container-high hover:bg-surface-container-highest border border-on-surface/10 text-on-surface rounded-full px-6 py-3.5 font-label text-xs font-bold uppercase tracking-widest transition-all duration-200 hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
             </svg>

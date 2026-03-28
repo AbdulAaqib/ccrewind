@@ -126,7 +126,8 @@ export function computeStats(data: ParsedData): ComputedStats {
       }
     }
   }
-  const avgResponseTimeMs = responseTimes.length > 0 ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length : 0;
+  const avgResponseTimeMs =
+    responseTimes.length > 0 ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length : 0;
   const maxResponseTimeMs = responseTimes.length > 0 ? Math.max(...responseTimes) : 0;
 
   // Commit History
@@ -156,26 +157,36 @@ export function computeStats(data: ParsedData): ComputedStats {
       if (msg.gitBranch && msg.gitBranch !== "HEAD") branchSet.add(msg.gitBranch);
       if (proj && msg.type === "assistant" && msg.message?.usage) {
         const u = msg.message.usage;
-        projectTokens[proj] = (projectTokens[proj] || 0)
-          + (u.input_tokens || 0) + (u.output_tokens || 0) + (u.cache_read_input_tokens || 0);
+        projectTokens[proj] =
+          (projectTokens[proj] || 0) +
+          (u.input_tokens || 0) +
+          (u.output_tokens || 0) +
+          (u.cache_read_input_tokens || 0);
       }
     }
   }
   // Use history-based projectActivity for message counts (consistent with totalMessages)
-  const topProjectStats = Array.from(projectSet).map((name) => ({
-    name,
-    messages: projectActivity[name] || 0,
-    tokens: projectTokens[name] || 0,
-    sessions: projectSessions[name] || 0,
-  })).sort((a, b) => b.messages - a.messages).slice(0, 5);
+  const topProjectStats = Array.from(projectSet)
+    .map((name) => ({
+      name,
+      messages: projectActivity[name] || 0,
+      tokens: projectTokens[name] || 0,
+      sessions: projectSessions[name] || 0,
+    }))
+    .sort((a, b) => b.messages - a.messages)
+    .slice(0, 5);
 
   // Sharpshooter
   const promptLengths = history.map((h) => h.display?.length || 0);
-  const avgPromptLength = promptLengths.length > 0 ? promptLengths.reduce((a, b) => a + b, 0) / promptLengths.length : 0;
+  const avgPromptLength =
+    promptLengths.length > 0 ? promptLengths.reduce((a, b) => a + b, 0) / promptLengths.length : 0;
   const sortedLengths = [...promptLengths].sort((a, b) => a - b);
   const medianPromptLength = sortedLengths.length > 0 ? sortedLengths[Math.floor(sortedLengths.length / 2)] : 0;
-  const sessionMessageCounts = sessions.map((s) => s.messages.filter((m) => m.type === "user" || m.type === "assistant").length);
-  const avgMessagesPerSession = sessionMessageCounts.length > 0 ? sessionMessageCounts.reduce((a, b) => a + b, 0) / sessionMessageCounts.length : 0;
+  const sessionMessageCounts = sessions.map(
+    (s) => s.messages.filter((m) => m.type === "user" || m.type === "assistant").length
+  );
+  const avgMessagesPerSession =
+    sessionMessageCounts.length > 0 ? sessionMessageCounts.reduce((a, b) => a + b, 0) / sessionMessageCounts.length : 0;
 
   // Streak
   const dailyActivity: DailyActivity[] = statsCache?.dailyActivity || [];
@@ -271,8 +282,18 @@ export function computeStats(data: ParsedData): ComputedStats {
 }
 
 function jaccardSimilarity(a: string, b: string): number {
-  const wordsA = new Set(a.toLowerCase().split(/\s+/).filter(w => w.length > 2));
-  const wordsB = new Set(b.toLowerCase().split(/\s+/).filter(w => w.length > 2));
+  const wordsA = new Set(
+    a
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((w) => w.length > 2)
+  );
+  const wordsB = new Set(
+    b
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((w) => w.length > 2)
+  );
   if (wordsA.size === 0 || wordsB.size === 0) return 0;
   let intersection = 0;
   for (const w of wordsA) if (wordsB.has(w)) intersection++;
@@ -281,8 +302,9 @@ function jaccardSimilarity(a: string, b: string): number {
 }
 
 function computeRSI(history: HistoryEntry[]): { rsi: number; clusters: number; totalRetries: number } {
-  const meaningful = history.filter(h => (h.display?.length || 0) > 5);
-  if (meaningful.length < 2) return { rsi: 1.0, clusters: Math.max(1, meaningful.length), totalRetries: meaningful.length };
+  const meaningful = history.filter((h) => (h.display?.length || 0) > 5);
+  if (meaningful.length < 2)
+    return { rsi: 1.0, clusters: Math.max(1, meaningful.length), totalRetries: meaningful.length };
 
   const sorted = [...meaningful].sort((a, b) => a.timestamp - b.timestamp);
   const clusterSizes: number[] = [];

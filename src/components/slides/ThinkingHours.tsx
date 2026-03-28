@@ -21,8 +21,10 @@ function BrainwaveCanvas({ stats }: { stats: ComputedStats }) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const W = 400, H = 220;
-    canvas.width = W; canvas.height = H;
+    const W = 400,
+      H = 220;
+    canvas.width = W;
+    canvas.height = H;
 
     const fillRatio = Math.min(1, stats.estimatedThinkingTimeMs / 7_200_000);
     const amp = 18 + fillRatio * 52;
@@ -51,9 +53,10 @@ function BrainwaveCanvas({ stats }: { stats: ComputedStats }) {
       // wave
       ctx.beginPath();
       for (let x = 0; x <= W; x++) {
-        const envelope = Math.sin(x / W * Math.PI);
-        const y = cy + Math.sin((x * freq) + t) * amp * envelope;
-        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        const envelope = Math.sin((x / W) * Math.PI);
+        const y = cy + Math.sin(x * freq + t) * amp * envelope;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       }
       ctx.strokeStyle = "#ff6b35";
       ctx.lineWidth = 2.5;
@@ -68,9 +71,10 @@ function BrainwaveCanvas({ stats }: { stats: ComputedStats }) {
       grad.addColorStop(1, "rgba(255,107,53,0)");
       ctx.beginPath();
       for (let x = 0; x <= W; x++) {
-        const envelope = Math.sin(x / W * Math.PI);
-        const y = cy + Math.sin((x * freq) + t) * amp * envelope;
-        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        const envelope = Math.sin((x / W) * Math.PI);
+        const y = cy + Math.sin(x * freq + t) * amp * envelope;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       }
       ctx.lineTo(W, cy);
       ctx.lineTo(0, cy);
@@ -105,21 +109,40 @@ export default function ThinkingHours({ stats }: { stats: ComputedStats }) {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-4 md:px-6 py-12 md:py-20 max-w-2xl mx-auto">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="flex flex-col items-center gap-2 mb-4">
-        <span className="font-label text-[10px] font-bold tracking-[0.3em] uppercase text-primary">Claude&apos;s Thinking Time</span>
-        <h2 className="font-headline text-4xl md:text-7xl font-extrabold tracking-tight text-center text-glow">{narrative.archetypeLabel}</h2>
+        className="flex flex-col items-center gap-2 mb-4"
+      >
+        <span className="font-label text-[10px] font-bold tracking-[0.3em] uppercase text-primary">
+          Claude&apos;s Thinking Time
+        </span>
+        <h2 className="font-headline text-4xl md:text-7xl font-extrabold tracking-tight text-center text-glow">
+          {narrative.archetypeLabel}
+        </h2>
       </motion.div>
-      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.6 }}
-        className="font-body text-lg md:text-xl italic text-on-surface-variant text-center max-w-md mb-6">{narrative.story}</motion.p>
-      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.6 }}
+        className="font-body text-lg md:text-xl italic text-on-surface-variant text-center max-w-md mb-6"
+      >
+        {narrative.story}
+      </motion.p>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.7, duration: 0.5 }}
-        className="w-32 h-32 md:w-44 md:h-44 rounded-2xl overflow-hidden mb-4 md:mb-6">
+        className="w-32 h-32 md:w-44 md:h-44 rounded-2xl overflow-hidden mb-4 md:mb-6"
+      >
         <img src="/mascots/thinking-hours.png" alt="Thinking hours mascot" className="w-full h-full object-cover" />
       </motion.div>
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.8, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.8, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      >
         <BrainwaveCanvas stats={stats} />
       </motion.div>
     </div>

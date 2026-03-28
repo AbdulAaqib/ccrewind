@@ -8,7 +8,15 @@ interface Props {
   cps: CPSBreakdown;
 }
 
-function AnimatedCounter({ target, duration = 2000, delay = 0 }: { target: number; duration?: number; delay?: number }) {
+function AnimatedCounter({
+  target,
+  duration = 2000,
+  delay = 0,
+}: {
+  target: number;
+  duration?: number;
+  delay?: number;
+}) {
   const [value, setValue] = useState(0);
   const startTime = useRef<number | null>(null);
   const rafRef = useRef<number>(0);
@@ -84,9 +92,7 @@ export default function PowerScore({ cps }: Props) {
           <span className="font-headline text-6xl md:text-9xl font-extrabold text-primary text-glow">
             <AnimatedCounter target={cps.total} duration={2500} delay={800} />
           </span>
-          <p className="font-label text-sm uppercase tracking-widest text-on-surface/40 mt-2">
-            out of 1,000
-          </p>
+          <p className="font-label text-sm uppercase tracking-widest text-on-surface/40 mt-2">out of 1,000</p>
         </motion.div>
 
         {/* Breakdown bars */}

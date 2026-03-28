@@ -58,7 +58,15 @@ export interface ShareData {
 export function encodeShareData(data: ShareData): string {
   const idx = CHARACTER_NAMES.indexOf(data.name);
   const i = idx >= 0 ? idx : 0;
-  return [i, data.cps, data.totalMessages, data.longestStreak, data.peakHour, data.primaryModelPct, data.totalSessions].join(".");
+  return [
+    i,
+    data.cps,
+    data.totalMessages,
+    data.longestStreak,
+    data.peakHour,
+    data.primaryModelPct,
+    data.totalSessions,
+  ].join(".");
 }
 
 export function decodeShareData(encoded: string): ShareData | null {

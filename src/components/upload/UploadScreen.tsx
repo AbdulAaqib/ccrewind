@@ -40,9 +40,7 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
         const data = await parseClaudeFolder(files);
 
         if (!data.statsCache && data.history.length === 0 && data.sessions.length === 0) {
-          throw new Error(
-            "No Claude data found. Make sure you selected your ~/.claude folder."
-          );
+          throw new Error("No Claude data found. Make sure you selected your ~/.claude folder.");
         }
 
         clearInterval(interval);
@@ -302,7 +300,8 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
                 </div>
               </div>
               <p className="font-body text-[11px] italic text-on-surface/30 mt-3">
-                Your .claude folder is at <code className="font-mono text-on-surface/40">~/.claude</code> (your home directory).
+                Your .claude folder is at <code className="font-mono text-on-surface/40">~/.claude</code> (your home
+                directory).
               </p>
             </motion.div>
 

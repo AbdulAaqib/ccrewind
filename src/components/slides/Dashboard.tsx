@@ -35,7 +35,9 @@ function StatCell({ label, value, sub, delay }: { label: string; value: string; 
       transition={{ delay, duration: 0.4 }}
       className="flex flex-col items-center justify-center p-2 md:p-3"
     >
-      <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.2em] text-on-surface/40 mb-1">{label}</span>
+      <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.2em] text-on-surface/40 mb-1">
+        {label}
+      </span>
       <span className="font-headline text-xl md:text-2xl font-extrabold text-on-surface">{value}</span>
       {sub && <span className="font-body text-[9px] md:text-[10px] text-on-surface/30 mt-0.5">{sub}</span>}
     </motion.div>
@@ -49,15 +51,19 @@ function HourSparkline({ data }: { data: number[] }) {
     if (!ref.current) return;
     const svg = d3.select(ref.current);
     svg.selectAll("*").remove();
-    const W = 180, H = 40;
+    const W = 180,
+      H = 40;
     svg.attr("viewBox", `0 0 ${W} ${H}`);
     const max = Math.max(...data, 1);
     const barW = W / 24 - 1;
     data.forEach((v, i) => {
       const h = (v / max) * (H - 4);
-      svg.append("rect")
-        .attr("x", i * (barW + 1)).attr("y", H - h)
-        .attr("width", barW).attr("height", h)
+      svg
+        .append("rect")
+        .attr("x", i * (barW + 1))
+        .attr("y", H - h)
+        .attr("width", barW)
+        .attr("height", h)
         .attr("rx", 1)
         .attr("fill", v === Math.max(...data) ? "#ff6b35" : "#4a4946");
     });
@@ -73,7 +79,9 @@ function ToolBars({ tools }: { tools: Array<{ name: string; count: number }> }) 
     <div className="flex flex-col gap-1.5 w-full">
       {top.map((t) => (
         <div key={t.name} className="flex items-center gap-2">
-          <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface w-10 md:w-12 text-right shrink-0 truncate">{t.name}</span>
+          <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface w-10 md:w-12 text-right shrink-0 truncate">
+            {t.name}
+          </span>
           <div className="flex-1 h-3 md:h-3.5 bg-[#2f2f2d] rounded-full overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
@@ -83,7 +91,9 @@ function ToolBars({ tools }: { tools: Array<{ name: string; count: number }> }) 
               style={{ backgroundColor: t === top[0] ? "#ff6b35" : "#ffb59d" }}
             />
           </div>
-          <span className="font-label text-[8px] md:text-[9px] text-on-surface/30 w-8 md:w-10 shrink-0">{fmt(t.count)}</span>
+          <span className="font-label text-[8px] md:text-[9px] text-on-surface/30 w-8 md:w-10 shrink-0">
+            {fmt(t.count)}
+          </span>
         </div>
       ))}
     </div>
@@ -92,7 +102,9 @@ function ToolBars({ tools }: { tools: Array<{ name: string; count: number }> }) 
 
 // Mini model bars
 function ModelBars({ counts }: { counts: Record<string, number> }) {
-  const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  const entries = Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3);
   const total = entries.reduce((a, b) => a + b[1], 0);
   const colors = ["#ff6b35", "#ffb59d", "#ffdbd0"];
   return (
@@ -115,7 +127,7 @@ function ModelBars({ counts }: { counts: Record<string, number> }) {
 // Activity heatmap row
 function ActivityRow({ data }: { data: Array<{ date: string; messageCount: number }> }) {
   const recent = data.slice(-28);
-  const max = Math.max(...recent.map(d => d.messageCount), 1);
+  const max = Math.max(...recent.map((d) => d.messageCount), 1);
   return (
     <div className="flex gap-[2px]">
       {recent.map((d, i) => {
@@ -135,7 +147,6 @@ function ActivityRow({ data }: { data: Array<{ date: string; messageCount: numbe
 }
 
 export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: CPSBreakdown }) {
-  const topModel = stats.primaryModel.replace("claude-", "").replace(/-\d{8,}$/, "");
   const toolUseCount = stats.stopReasonCounts["tool_use"] ?? 0;
   const endTurnCount = stats.stopReasonCounts["end_turn"] ?? 0;
   const stopTotal = toolUseCount + endTurnCount;
@@ -148,7 +159,9 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
         transition={{ delay: 0.1, duration: 0.4 }}
         className="mb-3 md:mb-4 text-center"
       >
-        <span className="font-headline text-2xl md:text-3xl font-extrabold tracking-tight text-on-surface">Your Dashboard</span>
+        <span className="font-headline text-2xl md:text-3xl font-extrabold tracking-tight text-on-surface">
+          Your Dashboard
+        </span>
       </motion.div>
 
       <motion.div
@@ -163,7 +176,12 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
           <StatCell label="Messages" value={fmt(stats.totalMessages)} delay={0.35} />
           <StatCell label="Sessions" value={fmt(stats.totalSessions)} delay={0.4} />
           <StatCell label="Tokens" value={fmt(stats.totalTokens)} delay={0.45} />
-          <StatCell label="Days" value={stats.totalActiveDays.toString()} sub={`${stats.longestStreak}d streak`} delay={0.5} />
+          <StatCell
+            label="Days"
+            value={stats.totalActiveDays.toString()}
+            sub={`${stats.longestStreak}d streak`}
+            delay={0.5}
+          />
           <StatCell label="Est. Cost" value={`$${stats.estimatedCostUSD.toFixed(2)}`} delay={0.55} />
         </div>
 
@@ -171,17 +189,23 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
         <div className="grid grid-cols-2 divide-x divide-[#3d3d3a]/30 border-b border-[#3d3d3a]/30">
           {/* 24h Activity */}
           <div className="p-3 md:p-4">
-            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">24h Activity</span>
+            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">
+              24h Activity
+            </span>
             <HourSparkline data={stats.hourDistribution} />
             <div className="flex justify-between mt-1">
               <span className="font-label text-[7px] md:text-[8px] text-on-surface/25">12am</span>
-              <span className="font-label text-[7px] md:text-[8px] text-primary">peak {formatHour(stats.peakHour)}</span>
+              <span className="font-label text-[7px] md:text-[8px] text-primary">
+                peak {formatHour(stats.peakHour)}
+              </span>
               <span className="font-label text-[7px] md:text-[8px] text-on-surface/25">11pm</span>
             </div>
           </div>
           {/* Top Tools */}
           <div className="p-3 md:p-4">
-            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">Top Tools</span>
+            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">
+              Top Tools
+            </span>
             <ToolBars tools={stats.topTools} />
           </div>
         </div>
@@ -190,39 +214,62 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
         <div className="grid grid-cols-2 divide-x divide-[#3d3d3a]/30 border-b border-[#3d3d3a]/30">
           {/* Models */}
           <div className="p-3 md:p-4">
-            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">Model Usage</span>
+            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">
+              Model Usage
+            </span>
             <ModelBars counts={stats.modelCounts} />
             <div className="flex gap-2 mt-2 flex-wrap">
-              {Object.entries(stats.modelCounts).sort((a, b) => b[1] - a[1]).slice(0, 3).map((e, i) => {
-                const colors = ["#ff6b35", "#ffb59d", "#ffdbd0"];
-                const name = e[0].replace("claude-", "").replace(/-\d{8,}$/, "");
-                const total = Object.values(stats.modelCounts).reduce((a, b) => a + b, 0);
-                return (
-                  <div key={e[0]} className="flex items-center gap-1">
-                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: colors[i] }} />
-                    <span className="font-label text-[7px] md:text-[8px] text-on-surface/40">{name} {Math.round((e[1] / total) * 100)}%</span>
-                  </div>
-                );
-              })}
+              {Object.entries(stats.modelCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 3)
+                .map((e, i) => {
+                  const colors = ["#ff6b35", "#ffb59d", "#ffdbd0"];
+                  const name = e[0].replace("claude-", "").replace(/-\d{8,}$/, "");
+                  const total = Object.values(stats.modelCounts).reduce((a, b) => a + b, 0);
+                  return (
+                    <div key={e[0]} className="flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: colors[i] }} />
+                      <span className="font-label text-[7px] md:text-[8px] text-on-surface/40">
+                        {name} {Math.round((e[1] / total) * 100)}%
+                      </span>
+                    </div>
+                  );
+                })}
             </div>
           </div>
           {/* Quick Stats */}
           <div className="p-3 md:p-4 grid grid-cols-2 gap-y-2 gap-x-3">
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">Projects</span>
-              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">{stats.projectCount}</span>
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+                Projects
+              </span>
+              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
+                {stats.projectCount}
+              </span>
             </div>
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">Branches</span>
-              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">{stats.branchCount}</span>
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+                Branches
+              </span>
+              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
+                {stats.branchCount}
+              </span>
             </div>
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">Thinking</span>
-              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">{fmtDuration(stats.estimatedThinkingTimeMs)}</span>
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+                Thinking
+              </span>
+              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
+                {fmtDuration(stats.estimatedThinkingTimeMs)}
+              </span>
             </div>
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">Tool Calls</span>
-              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">{fmt(stats.totalToolCalls)}</span>
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+                Tool Calls
+              </span>
+              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
+                {fmt(stats.totalToolCalls)}
+              </span>
             </div>
           </div>
         </div>
@@ -231,33 +278,54 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
         <div className="grid grid-cols-2 divide-x divide-[#3d3d3a]/30">
           {/* Activity Heatmap */}
           <div className="p-3 md:p-4">
-            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">Last 28 Days</span>
+            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">
+              Last 28 Days
+            </span>
             <ActivityRow data={stats.dailyActivity} />
           </div>
           {/* More stats */}
           <div className="p-3 md:p-4 grid grid-cols-2 gap-y-2 gap-x-3">
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">Avg Prompt</span>
-              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">{Math.round(stats.avgPromptLength)}<span className="text-[9px] text-on-surface/30 ml-0.5">chars</span></span>
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+                Avg Prompt
+              </span>
+              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
+                {Math.round(stats.avgPromptLength)}
+                <span className="text-[9px] text-on-surface/30 ml-0.5">chars</span>
+              </span>
             </div>
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">Msgs/Session</span>
-              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">{stats.avgMessagesPerSession.toFixed(1)}</span>
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+                Msgs/Session
+              </span>
+              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
+                {stats.avgMessagesPerSession.toFixed(1)}
+              </span>
             </div>
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">Agents</span>
-              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">{stats.agentToolCalls}</span>
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+                Agents
+              </span>
+              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
+                {stats.agentToolCalls}
+              </span>
             </div>
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">Stop: Tool</span>
-              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">{stopTotal > 0 ? Math.round((toolUseCount / stopTotal) * 100) : 0}%</span>
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+                Stop: Tool
+              </span>
+              <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
+                {stopTotal > 0 ? Math.round((toolUseCount / stopTotal) * 100) : 0}%
+              </span>
             </div>
           </div>
         </div>
 
         {/* Row 5: Top Projects with estimated cost */}
         <div className="border-t border-[#3d3d3a]/30 p-3 md:p-4">
-          <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">Top Projects</span>
+          <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">
+            Top Projects
+          </span>
           <div className="flex flex-col gap-1.5">
             {stats.topProjectStats.slice(0, 5).map((proj, i) => {
               const name = proj.name.split("/").pop() || proj.name;
@@ -267,7 +335,9 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
               const projCost = totalTok > 0 ? (proj.tokens / totalTok) * stats.estimatedCostUSD : 0;
               return (
                 <div key={proj.name} className="flex items-center gap-2">
-                  <span className="font-label text-[8px] md:text-[9px] text-on-surface w-16 md:w-20 text-right shrink-0 truncate">{name}</span>
+                  <span className="font-label text-[8px] md:text-[9px] text-on-surface w-16 md:w-20 text-right shrink-0 truncate">
+                    {name}
+                  </span>
                   <div className="flex-1 h-3 md:h-3.5 bg-[#2f2f2d] rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
@@ -277,8 +347,12 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
                       style={{ backgroundColor: colors[i] }}
                     />
                   </div>
-                  <span className="font-label text-[8px] md:text-[9px] text-on-surface/30 w-10 shrink-0">{fmt(proj.messages)}</span>
-                  <span className="font-label text-[8px] md:text-[9px] text-primary/60 w-14 shrink-0 text-right">${projCost.toFixed(2)}</span>
+                  <span className="font-label text-[8px] md:text-[9px] text-on-surface/30 w-10 shrink-0">
+                    {fmt(proj.messages)}
+                  </span>
+                  <span className="font-label text-[8px] md:text-[9px] text-primary/60 w-14 shrink-0 text-right">
+                    ${projCost.toFixed(2)}
+                  </span>
                 </div>
               );
             })}
@@ -287,7 +361,9 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
 
         {/* Row 6: Token breakdown bar */}
         <div className="border-t border-[#3d3d3a]/30 p-3 md:p-4">
-          <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">Token Breakdown</span>
+          <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">
+            Token Breakdown
+          </span>
           <div className="flex gap-0.5 w-full h-5 md:h-6 rounded-full overflow-hidden mb-2">
             <motion.div
               initial={{ width: 0 }}
@@ -311,15 +387,21 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
           <div className="flex justify-between">
             <div className="flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-[#ff6b35]" />
-              <span className="font-label text-[7px] md:text-[8px] text-on-surface">Input {fmt(stats.totalInputTokens)}</span>
+              <span className="font-label text-[7px] md:text-[8px] text-on-surface">
+                Input {fmt(stats.totalInputTokens)}
+              </span>
             </div>
             <div className="flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-[#ffb59d]" />
-              <span className="font-label text-[7px] md:text-[8px] text-on-surface">Output {fmt(stats.totalOutputTokens)}</span>
+              <span className="font-label text-[7px] md:text-[8px] text-on-surface">
+                Output {fmt(stats.totalOutputTokens)}
+              </span>
             </div>
             <div className="flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-[#ffdbd0]" />
-              <span className="font-label text-[7px] md:text-[8px] text-on-surface">Cache {fmt(stats.totalCacheReadTokens)}</span>
+              <span className="font-label text-[7px] md:text-[8px] text-on-surface">
+                Cache {fmt(stats.totalCacheReadTokens)}
+              </span>
             </div>
           </div>
         </div>

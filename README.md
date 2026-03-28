@@ -1,6 +1,6 @@
 # Claude Code Rewind
 
-> Spotify Wrapped, but for how you actually use Claude Code.
+> There's no way to see your Claude Code usage. We changed that. Your developer archetype. Your token costs. Your Claude ELO. Nobody else has touched this data. Find out where you actually stand.
 
 Upload your `~/.claude` folder. Get a personalised story of your usage. Find out your archetype. Get your Claude Power Score. Everything runs in the browser - zero data leaves your machine.
 

@@ -91,18 +91,18 @@ export function computeStats(data: ParsedData): ComputedStats {
 
   // Estimated Cost (USD) — per-model pricing from Anthropic docs
   const MODEL_PRICING: Record<string, { input: number; output: number; cacheRead: number; cacheWrite: number }> = {
-    "opus-4-6":   { input: 5,    output: 25,   cacheRead: 0.50, cacheWrite: 6.25  },
-    "opus-4-5":   { input: 5,    output: 25,   cacheRead: 0.50, cacheWrite: 6.25  },
-    "opus-4-1":   { input: 15,   output: 75,   cacheRead: 1.50, cacheWrite: 18.75 },
-    "opus-4":     { input: 15,   output: 75,   cacheRead: 1.50, cacheWrite: 18.75 },
-    "opus-3":     { input: 15,   output: 75,   cacheRead: 1.50, cacheWrite: 18.75 },
-    "sonnet-4-6": { input: 3,    output: 15,   cacheRead: 0.30, cacheWrite: 3.75  },
-    "sonnet-4-5": { input: 3,    output: 15,   cacheRead: 0.30, cacheWrite: 3.75  },
-    "sonnet-4":   { input: 3,    output: 15,   cacheRead: 0.30, cacheWrite: 3.75  },
-    "sonnet-3-7": { input: 3,    output: 15,   cacheRead: 0.30, cacheWrite: 3.75  },
-    "haiku-4-5":  { input: 1,    output: 5,    cacheRead: 0.10, cacheWrite: 1.25  },
-    "haiku-3-5":  { input: 0.80, output: 4,    cacheRead: 0.08, cacheWrite: 1.00  },
-    "haiku-3":    { input: 0.25, output: 1.25, cacheRead: 0.03, cacheWrite: 0.30  },
+    "opus-4-6": { input: 5, output: 25, cacheRead: 0.5, cacheWrite: 6.25 },
+    "opus-4-5": { input: 5, output: 25, cacheRead: 0.5, cacheWrite: 6.25 },
+    "opus-4-1": { input: 15, output: 75, cacheRead: 1.5, cacheWrite: 18.75 },
+    "opus-4": { input: 15, output: 75, cacheRead: 1.5, cacheWrite: 18.75 },
+    "opus-3": { input: 15, output: 75, cacheRead: 1.5, cacheWrite: 18.75 },
+    "sonnet-4-6": { input: 3, output: 15, cacheRead: 0.3, cacheWrite: 3.75 },
+    "sonnet-4-5": { input: 3, output: 15, cacheRead: 0.3, cacheWrite: 3.75 },
+    "sonnet-4": { input: 3, output: 15, cacheRead: 0.3, cacheWrite: 3.75 },
+    "sonnet-3-7": { input: 3, output: 15, cacheRead: 0.3, cacheWrite: 3.75 },
+    "haiku-4-5": { input: 1, output: 5, cacheRead: 0.1, cacheWrite: 1.25 },
+    "haiku-3-5": { input: 0.8, output: 4, cacheRead: 0.08, cacheWrite: 1.0 },
+    "haiku-3": { input: 0.25, output: 1.25, cacheRead: 0.03, cacheWrite: 0.3 },
   };
 
   function matchPricing(modelId: string) {

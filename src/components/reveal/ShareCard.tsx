@@ -208,7 +208,6 @@ export default function ShareCard({ character, stats, cps }: Props) {
         >
           Start Over
         </button>
-
       </motion.div>
 
       {/* Fixed scroll-down indicator at bottom of screen */}
@@ -219,13 +218,16 @@ export default function ShareCard({ character, stats, cps }: Props) {
         className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center cursor-pointer bg-surface-dim/80 backdrop-blur-sm rounded-full px-5 py-2.5 border border-on-surface/10"
         onClick={() => document.getElementById("dashboard")?.scrollIntoView({ behavior: "smooth" })}
       >
-        <span className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface mb-1">
-          Your Dashboard
-        </span>
+        <span className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface mb-1">Your Dashboard</span>
         <motion.svg
           animate={{ y: [0, 5, 0] }}
           transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-          width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
           className="text-on-surface"
         >
           <path d="M7 13l5 5 5-5" />

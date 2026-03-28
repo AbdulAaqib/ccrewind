@@ -261,8 +261,8 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
                   setIsLoading(true);
                   setLoadingText("Loading demo data...");
                   fetch("/demo-data.json")
-                    .then(r => r.json())
-                    .then(data => {
+                    .then((r) => r.json())
+                    .then((data) => {
                       setLoadingText("Ready.");
                       setTimeout(() => onDataParsed(data), 400);
                     })

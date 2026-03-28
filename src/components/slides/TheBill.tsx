@@ -5,7 +5,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ComputedStats } from "@/types";
 import { getBillNarrative } from "@/lib/narratives";
 
-function AnimatedCounter({ target, duration = 2000, delay = 0, prefix = "" }: { target: number; duration?: number; delay?: number; prefix?: string }) {
+function AnimatedCounter({
+  target,
+  duration = 2000,
+  delay = 0,
+  prefix = "",
+}: {
+  target: number;
+  duration?: number;
+  delay?: number;
+  prefix?: string;
+}) {
   const [value, setValue] = useState(0);
   const startTime = useRef<number | null>(null);
   const rafRef = useRef<number>(0);
@@ -22,10 +32,18 @@ function AnimatedCounter({ target, duration = 2000, delay = 0, prefix = "" }: { 
       };
       rafRef.current = requestAnimationFrame(animate);
     }, delay);
-    return () => { clearTimeout(timeout); cancelAnimationFrame(rafRef.current); };
+    return () => {
+      clearTimeout(timeout);
+      cancelAnimationFrame(rafRef.current);
+    };
   }, [target, duration, delay]);
 
-  return <>{prefix}{value.toFixed(2)}</>;
+  return (
+    <>
+      {prefix}
+      {value.toFixed(2)}
+    </>
+  );
 }
 
 function shortModel(model: string): string {
@@ -33,7 +51,7 @@ function shortModel(model: string): string {
     .replace(/^claude-/, "")
     .replace(/-\d{8}$/, "")
     .split("-")
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");
 }
 
@@ -66,9 +84,7 @@ export default function TheBill({ stats }: { stats: ComputedStats }) {
         transition={{ delay: 0.2, duration: 0.5 }}
         className="mb-4"
       >
-        <span className="font-label text-[10px] font-bold tracking-[0.3em] uppercase text-primary">
-          The Bill
-        </span>
+        <span className="font-label text-[10px] font-bold tracking-[0.3em] uppercase text-primary">The Bill</span>
       </motion.div>
 
       {/* Big dollar amount */}
@@ -81,9 +97,7 @@ export default function TheBill({ stats }: { stats: ComputedStats }) {
         <span className="font-headline text-6xl md:text-9xl font-extrabold text-primary text-glow">
           <AnimatedCounter target={cost} duration={2500} delay={600} prefix="$" />
         </span>
-        <p className="font-label text-sm uppercase tracking-widest text-on-surface/40 mt-2">
-          estimated spend
-        </p>
+        <p className="font-label text-sm uppercase tracking-widest text-on-surface/40 mt-2">estimated spend</p>
       </motion.div>
 
       {/* Cost breakdown by model */}

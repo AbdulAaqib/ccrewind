@@ -88,8 +88,8 @@ export default function CommitHistory({ stats }: { stats: ComputedStats }) {
       {/* GIF Mascot Placeholder */}
       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.7, duration: 0.5 }}
-        className="w-24 h-24 md:w-32 md:h-32 rounded-2xl border-2 border-dashed border-on-surface/10 flex items-center justify-center mb-4 md:mb-6">
-        <span className="font-label text-[9px] tracking-widest uppercase text-on-surface/20">Mascot GIF</span>
+        className="w-32 h-32 md:w-44 md:h-44 rounded-2xl overflow-hidden mb-4 md:mb-6">
+        <img src="/mascots/commit-history.png" alt="Commit history mascot" className="w-full h-full object-cover" />
       </motion.div>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8, duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className="w-full max-w-lg overflow-x-auto">

@@ -68,10 +68,8 @@ export default function SharePageClient({ encoded }: Props) {
             </div>
 
             <div className="flex flex-col items-center text-center gap-3 flex-1 justify-center">
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl border-2 border-dashed border-on-surface/10 flex items-center justify-center">
-                <span className="font-label text-[8px] tracking-widest uppercase text-on-surface/20">
-                  Mascot
-                </span>
+              <div className="w-28 h-28 md:w-36 md:h-36 rounded-2xl overflow-hidden">
+                <img src="/mascots/character-reveal.png" alt="Character mascot" className="w-full h-full object-cover" />
               </div>
 
               <h2 className="font-headline text-3xl md:text-4xl font-extrabold tracking-tight text-on-surface leading-tight">

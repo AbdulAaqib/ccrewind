@@ -137,9 +137,9 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4, duration: 0.5 }}
-              className="w-28 h-28 md:w-40 md:h-40 rounded-2xl border-2 border-dashed border-on-surface/10 flex items-center justify-center mb-4 md:mb-6"
+              className="w-36 h-36 md:w-48 md:h-48 rounded-2xl overflow-hidden mb-4 md:mb-6"
             >
-              <span className="font-label text-[9px] tracking-widest uppercase text-on-surface/20">Mascot GIF</span>
+              <img src="/mascots/character-reveal.png" alt="Character reveal mascot" className="w-full h-full object-cover" />
             </motion.div>
           )}
         </AnimatePresence>

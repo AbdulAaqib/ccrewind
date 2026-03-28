@@ -55,7 +55,7 @@ export default function PowerScore({ cps }: Props) {
   }
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-6 py-20 max-w-2xl mx-auto relative">
+    <div className="w-full h-full flex flex-col items-center justify-center px-4 md:px-6 py-12 md:py-20 max-w-2xl mx-auto relative">
       <div className="fixed inset-0 grain-texture" />
 
       {/* Glow behind score */}
@@ -81,7 +81,7 @@ export default function PowerScore({ cps }: Props) {
           transition={{ delay: 0.5, type: "spring", stiffness: 150, damping: 12 }}
           className="text-center"
         >
-          <span className="font-headline text-8xl md:text-9xl font-extrabold text-primary text-glow">
+          <span className="font-headline text-6xl md:text-9xl font-extrabold text-primary text-glow">
             <AnimatedCounter target={cps.total} duration={2500} delay={800} />
           </span>
           <p className="font-label text-sm uppercase tracking-widest text-on-surface/40 mt-2">

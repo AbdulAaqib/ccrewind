@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { parseClaudeFolder } from "@/lib/parser";
+import { generateDemoData } from "@/lib/demo";
 import { ParsedData } from "@/types";
 
 interface UploadScreenProps {
@@ -91,7 +92,7 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 relative">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 md:px-6 py-8 relative">
       {/* Background grain */}
       <div className="fixed inset-0 grain-texture" />
 
@@ -142,7 +143,7 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col items-center gap-12 relative z-10 max-w-2xl w-full"
+            className="flex flex-col items-center gap-6 md:gap-12 relative z-10 max-w-2xl w-full"
           >
             {/* Header */}
             <div className="flex flex-col items-center gap-4">
@@ -181,7 +182,7 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
                 onDragLeave={handleDragLeave}
                 className={`
                   relative cursor-pointer rounded-2xl border-2 border-dashed
-                  transition-all duration-300 p-12 md:p-16
+                  transition-all duration-300 p-8 md:p-16
                   flex flex-col items-center gap-6 text-center
                   ${
                     isDragging
@@ -241,6 +242,77 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
                 onChange={handleInputChange}
                 className="hidden"
               />
+            </motion.div>
+
+            {/* Demo button */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.55 }}
+              className="w-full flex flex-col items-center gap-3 -mt-4"
+            >
+              <div className="flex items-center gap-3 w-full">
+                <span className="h-px flex-1 bg-on-surface/10" />
+                <span className="font-label text-[10px] font-bold tracking-[0.2em] uppercase text-on-surface/20">
+                  or
+                </span>
+                <span className="h-px flex-1 bg-on-surface/10" />
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsLoading(true);
+                  setLoadingText("Generating demo data...");
+                  setTimeout(() => {
+                    const demoData = generateDemoData();
+                    setLoadingText("Ready.");
+                    setTimeout(() => onDataParsed(demoData), 400);
+                  }, 800);
+                }}
+                className="bg-surface-container-high hover:bg-surface-container-highest border border-on-surface/10 text-on-surface rounded-full px-8 py-3 font-label text-xs font-bold uppercase tracking-widest transition-all duration-200 hover:scale-105 active:scale-95"
+              >
+                Try with demo data
+              </button>
+              <p className="font-body text-[11px] italic text-on-surface/30">
+                No Claude Code? See what CC Rewind looks like with sample data.
+              </p>
+            </motion.div>
+
+            {/* Hidden folder instructions */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="w-full bg-surface-container-low/50 border border-on-surface/5 rounded-xl px-5 py-4"
+            >
+              <p className="font-label text-[10px] font-bold tracking-[0.2em] uppercase text-on-surface/40 mb-3">
+                Can&apos;t see the .claude folder? Show hidden files first:
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="font-label text-[10px] font-bold text-primary/80 w-14">macOS</span>
+                  <code className="font-mono text-[11px] text-on-surface/60 bg-surface-container-high/50 px-2 py-0.5 rounded">
+                    Cmd + Shift + .
+                  </code>
+                  <span className="font-label text-[10px] text-on-surface/30">in Finder</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-label text-[10px] font-bold text-primary/80 w-14">Windows</span>
+                  <span className="font-label text-[10px] text-on-surface/50">
+                    File Explorer → View → Show → Hidden items
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-label text-[10px] font-bold text-primary/80 w-14">Linux</span>
+                  <code className="font-mono text-[11px] text-on-surface/60 bg-surface-container-high/50 px-2 py-0.5 rounded">
+                    Ctrl + H
+                  </code>
+                  <span className="font-label text-[10px] text-on-surface/30">in file manager</span>
+                </div>
+              </div>
+              <p className="font-body text-[11px] italic text-on-surface/30 mt-3">
+                Your .claude folder is at <code className="font-mono text-on-surface/40">~/.claude</code> (your home directory).
+              </p>
             </motion.div>
 
             {/* Privacy badge */}

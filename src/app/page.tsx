@@ -14,6 +14,7 @@ import CommitHistory from "@/components/slides/CommitHistory";
 import Sharpshooter from "@/components/slides/Sharpshooter";
 import Streak from "@/components/slides/Streak";
 import StopReason from "@/components/slides/StopReason";
+import RetrySpiral from "@/components/slides/RetrySpiral";
 import CharacterReveal from "@/components/reveal/CharacterReveal";
 import PowerScore from "@/components/reveal/PowerScore";
 import { ParsedData, ComputedStats, Character, CPSBreakdown } from "@/types";
@@ -83,6 +84,7 @@ export default function Home() {
               <Sharpshooter stats={stats} />
               <Streak stats={stats} />
               <StopReason stats={stats} />
+              <RetrySpiral stats={stats} />
               <PowerScore cps={cps} />
               <CharacterReveal character={character} stats={stats} cps={cps} />
             </SlideContainer>

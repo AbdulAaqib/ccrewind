@@ -306,6 +306,31 @@ export function getStreakNarrative(stats: ComputedStats): SlideNarrative {
   };
 }
 
+export function getRetrySpiralNarrative(stats: ComputedStats): SlideNarrative {
+  const { retrySpiral, retryClusters } = stats;
+
+  let archetypeLabel: string;
+  let story: string;
+
+  if (retrySpiral < 1.5) {
+    archetypeLabel = "The Sniper";
+    story = `RSI of ${retrySpiral}. You rarely need a second shot. ${retryClusters} tasks, almost all first-try. Terrifying.`;
+  } else if (retrySpiral <= 3.0) {
+    archetypeLabel = "The Refiner";
+    story = `RSI of ${retrySpiral}. You were one prompt away. Again and again and again. ${retryClusters} attempt clusters, each one a little closer.`;
+  } else {
+    archetypeLabel = "The Loop Artist";
+    story = `RSI of ${retrySpiral}. You live in the edit. ${retryClusters} clusters, averaging ${retrySpiral} attempts each. Shipping is optional.`;
+  }
+
+  return {
+    archetypeLabel,
+    story,
+    stat: retrySpiral.toString(),
+    statLabel: "Retry Spiral Index",
+  };
+}
+
 export function getStopReasonNarrative(stats: ComputedStats): SlideNarrative {
   const { toolUseRatio, endTurnRatio, stopReasonCounts } = stats;
   const totalStops = Object.values(stopReasonCounts).reduce((a, b) => a + b, 0);

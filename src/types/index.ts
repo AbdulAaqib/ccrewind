@@ -148,6 +148,9 @@ export interface ComputedStats {
   daysActive: number;
   longestSessionMessages: number;
   longestSessionDurationMs: number;
+  retrySpiral: number;
+  retryClusters: number;
+  totalRetries: number;
 }
 
 export interface Character {

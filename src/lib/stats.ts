@@ -1,4 +1,4 @@
-import { ParsedData, ComputedStats, DailyActivity } from "@/types";
+import { ParsedData, ComputedStats, DailyActivity, HistoryEntry } from "@/types";
 
 export function computeStats(data: ParsedData): ComputedStats {
   const { statsCache, history, sessions } = data;
@@ -187,6 +187,9 @@ export function computeStats(data: ParsedData): ComputedStats {
   const toolUseRatio = totalStopReasons > 0 ? (stopReasonCounts["tool_use"] || 0) / totalStopReasons : 0;
   const endTurnRatio = totalStopReasons > 0 ? (stopReasonCounts["end_turn"] || 0) / totalStopReasons : 0;
 
+  // Retry Spiral Index
+  const { rsi, clusters: retryClusters, totalRetries } = computeRSI(history);
+
   const totalSessions = statsCache?.totalSessions || sessions.length;
   const firstSessionDate = statsCache?.firstSessionDate || activeDates[0] || "";
   const lastSessionDate = activeDates[activeDates.length - 1] || "";
@@ -237,7 +240,49 @@ export function computeStats(data: ParsedData): ComputedStats {
     daysActive,
     longestSessionMessages: statsCache?.longestSession?.messageCount || 0,
     longestSessionDurationMs: statsCache?.longestSession?.duration || 0,
+    retrySpiral: rsi,
+    retryClusters,
+    totalRetries,
   };
+}
+
+function jaccardSimilarity(a: string, b: string): number {
+  const wordsA = new Set(a.toLowerCase().split(/\s+/).filter(w => w.length > 2));
+  const wordsB = new Set(b.toLowerCase().split(/\s+/).filter(w => w.length > 2));
+  if (wordsA.size === 0 || wordsB.size === 0) return 0;
+  let intersection = 0;
+  for (const w of wordsA) if (wordsB.has(w)) intersection++;
+  const union = wordsA.size + wordsB.size - intersection;
+  return union > 0 ? intersection / union : 0;
+}
+
+function computeRSI(history: HistoryEntry[]): { rsi: number; clusters: number; totalRetries: number } {
+  const meaningful = history.filter(h => (h.display?.length || 0) > 5);
+  if (meaningful.length < 2) return { rsi: 1.0, clusters: Math.max(1, meaningful.length), totalRetries: meaningful.length };
+
+  const sorted = [...meaningful].sort((a, b) => a.timestamp - b.timestamp);
+  const clusterSizes: number[] = [];
+  let currentSize = 1;
+
+  for (let i = 1; i < sorted.length; i++) {
+    const timeDiff = sorted[i].timestamp - sorted[i - 1].timestamp;
+    const textA = sorted[i - 1].display || "";
+    const textB = sorted[i].display || "";
+
+    const withinTime = timeDiff < 20 * 60 * 1000; // 20 minutes
+    const similarity = jaccardSimilarity(textA, textB);
+
+    if (withinTime && similarity > 0.3) {
+      currentSize++;
+    } else {
+      clusterSizes.push(currentSize);
+      currentSize = 1;
+    }
+  }
+  clusterSizes.push(currentSize);
+
+  const rsi = clusterSizes.reduce((a, b) => a + b, 0) / clusterSizes.length;
+  return { rsi: Math.round(rsi * 10) / 10, clusters: clusterSizes.length, totalRetries: sorted.length };
 }
 
 function computeStreaks(sortedDates: string[]): { longest: number; current: number } {

@@ -58,15 +58,21 @@ export default function Arsenal({ stats }: { stats: ComputedStats }) {
   }, [stats]);
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-6 py-20 max-w-2xl mx-auto">
+    <div className="w-full h-full flex flex-col items-center justify-center px-4 md:px-6 py-12 md:py-20 max-w-2xl mx-auto">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className="flex flex-col items-center gap-2 mb-4">
         <span className="font-label text-[10px] font-bold tracking-[0.3em] uppercase text-primary">Your Toolkit</span>
-        <h2 className="font-headline text-5xl md:text-7xl font-extrabold tracking-tight text-center text-glow">{narrative.archetypeLabel}</h2>
+        <h2 className="font-headline text-4xl md:text-7xl font-extrabold tracking-tight text-center text-glow">{narrative.archetypeLabel}</h2>
       </motion.div>
       <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.6 }}
-        className="font-body text-lg md:text-xl italic text-on-surface-variant text-center max-w-md mb-8">{narrative.story}</motion.p>
+        className="font-body text-lg md:text-xl italic text-on-surface-variant text-center max-w-md mb-6">{narrative.story}</motion.p>
+      {/* GIF Mascot Placeholder */}
+      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.7, duration: 0.5 }}
+        className="w-24 h-24 md:w-32 md:h-32 rounded-2xl border-2 border-dashed border-on-surface/10 flex items-center justify-center mb-4 md:mb-6">
+        <span className="font-label text-[9px] tracking-widest uppercase text-on-surface/20">Mascot GIF</span>
+      </motion.div>
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.8, duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className="w-full max-w-md">
         <svg ref={svgRef} className="w-full" />

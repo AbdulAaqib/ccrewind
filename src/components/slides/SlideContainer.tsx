@@ -80,13 +80,13 @@ export default function SlideContainer({ children, onComplete }: SlideContainerP
   };
 
   return (
-    <div className="fixed inset-0 bg-background overflow-hidden" onClick={handleClick}>
+    <div className="fixed inset-0 bg-background" onClick={handleClick}>
       {/* Background grain */}
-      <div className="fixed inset-0 grain-texture z-0" />
+      <div className="fixed inset-0 grain-texture z-0 pointer-events-none" />
 
       {/* Progress bar */}
-      <div className="fixed top-0 left-0 w-full z-50 px-4 pt-4">
-        <div className="flex items-center gap-3 mb-3">
+      <div className="fixed top-0 left-0 w-full z-50 px-4 pt-3 pb-2 bg-gradient-to-b from-background via-background/95 to-transparent pointer-events-none">
+        <div className="flex items-center gap-3 mb-2">
           <span className="font-label text-[10px] font-bold tracking-[0.2em] uppercase text-on-surface/40">
             CC Rewind
           </span>
@@ -129,14 +129,16 @@ export default function SlideContainer({ children, onComplete }: SlideContainerP
             x: { type: "spring", stiffness: 300, damping: 30 },
             opacity: { duration: 0.3 },
           }}
-          className="absolute inset-0 flex items-center justify-center"
+          className="absolute inset-0 overflow-y-auto"
         >
-          {children[currentSlide]}
+          <div className="min-h-full flex items-center justify-center pt-16 pb-24">
+            {children[currentSlide]}
+          </div>
         </motion.div>
       </AnimatePresence>
 
-      {/* Navigation hint */}
-      <div className="fixed bottom-0 left-0 w-full z-50 flex justify-between items-center px-6 pb-8 pt-4">
+      {/* Navigation buttons */}
+      <div className="fixed bottom-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-6 pb-5 md:pb-8 pt-4 bg-gradient-to-t from-background via-background/90 to-transparent">
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -144,8 +146,8 @@ export default function SlideContainer({ children, onComplete }: SlideContainerP
           }}
           disabled={currentSlide === 0}
           className={`
-            border rounded-full px-6 py-2.5 flex items-center gap-2
-            font-label text-xs font-bold uppercase tracking-widest
+            border rounded-full px-4 md:px-6 py-2 md:py-2.5 flex items-center gap-1.5 md:gap-2
+            font-label text-[10px] md:text-xs font-bold uppercase tracking-widest
             transition-all duration-150 active:scale-95
             ${
               currentSlide === 0
@@ -154,7 +156,7 @@ export default function SlideContainer({ children, onComplete }: SlideContainerP
             }
           `}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="15 18 9 12 15 6" />
           </svg>
           Back
@@ -165,10 +167,10 @@ export default function SlideContainer({ children, onComplete }: SlideContainerP
             e.stopPropagation();
             goNext();
           }}
-          className="bg-primary text-white rounded-full px-6 py-2.5 flex items-center gap-2 font-label text-xs font-bold uppercase tracking-widest hover:scale-105 transition-transform duration-300 active:scale-95 shadow-lg shadow-primary/20"
+          className="bg-primary text-white rounded-full px-4 md:px-6 py-2 md:py-2.5 flex items-center gap-1.5 md:gap-2 font-label text-[10px] md:text-xs font-bold uppercase tracking-widest hover:scale-105 transition-transform duration-300 active:scale-95 shadow-lg shadow-primary/20"
         >
           {currentSlide === totalSlides - 1 ? "Finish" : "Next"}
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="9 18 15 12 9 6" />
           </svg>
         </button>

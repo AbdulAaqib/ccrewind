@@ -45,7 +45,7 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
     : `You are ${character.name}.`;
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-6 py-20 relative overflow-hidden">
+    <div className="w-full h-full flex flex-col items-center justify-center px-4 md:px-6 py-12 md:py-20 relative overflow-hidden">
       {/* Background grain */}
       <div className="fixed inset-0 grain-texture" />
 
@@ -120,13 +120,27 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
                 damping: 12,
                 delay: 0.2,
               }}
-              className="font-body text-6xl md:text-8xl lg:text-9xl italic leading-tight mb-6"
+              className="font-body text-4xl md:text-8xl lg:text-9xl italic leading-tight mb-4 md:mb-6"
             >
               You are{" "}
               <span className="block not-italic font-semibold text-primary text-glow">
                 {character.name}
               </span>
             </motion.h1>
+          )}
+        </AnimatePresence>
+
+        {/* GIF Mascot Placeholder */}
+        <AnimatePresence>
+          {phase >= 1 && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+              className="w-28 h-28 md:w-40 md:h-40 rounded-2xl border-2 border-dashed border-on-surface/10 flex items-center justify-center mb-4 md:mb-6"
+            >
+              <span className="font-label text-[9px] tracking-widest uppercase text-on-surface/20">Mascot GIF</span>
+            </motion.div>
           )}
         </AnimatePresence>
 

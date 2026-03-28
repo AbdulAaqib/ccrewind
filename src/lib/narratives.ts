@@ -93,7 +93,7 @@ export function getArsenalNarrative(stats: ComputedStats): SlideNarrative {
 
   if (!topTool || totalToolCalls === 0) {
     return {
-      archetypeLabel: "The Conversationalist",
+      archetypeLabel: "The Court Jester",
       story: "Zero tool calls. You talk to Claude like a person. No commands, no automation. Pure conversation.",
       stat: "0",
       statLabel: "Tool Calls",
@@ -108,16 +108,16 @@ export function getArsenalNarrative(stats: ComputedStats): SlideNarrative {
     archetypeLabel = "The Bash Goblin";
     story = `${topTool.count} bash commands. You run commands first and ask questions never. The terminal is home.`;
   } else if (toolName === "Read" || toolName === "Grep") {
-    archetypeLabel = "The Reader";
+    archetypeLabel = "The Scroll Rat";
     story = `${topTool.count} reads and searches. You spend more time reading code than writing it. Suspicious.`;
   } else if (toolName === "Edit" || toolName === "Write") {
-    archetypeLabel = "The Writer";
+    archetypeLabel = "The Quill Boar";
     story = `${topTool.count} edits. Claude is your ghost-coder. You dictate, it writes.`;
   } else if (toolName === "WebSearch") {
-    archetypeLabel = "The Web Surfer";
+    archetypeLabel = "The Net Troll";
     story = `${topTool.count} web searches. You outsource your googling to Claude. Efficient or lazy. Jury is out.`;
   } else {
-    archetypeLabel = "The Toolsmith";
+    archetypeLabel = "The Iron Mole";
     story = `${topTool.count} calls to ${toolName}. ${totalToolCalls} total tool invocations. You keep Claude busy.`;
   }
 

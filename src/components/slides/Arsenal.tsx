@@ -18,7 +18,7 @@ export default function Arsenal({ stats }: { stats: ComputedStats }) {
     const tools = stats.topTools.slice(0, 8);
     if (tools.length === 0) return;
 
-    const margin = { top: 10, right: 20, bottom: 10, left: 90 };
+    const margin = { top: 10, right: 70, bottom: 10, left: 90 };
     const width = 400;
     const barHeight = 28, gap = 8;
     const height = tools.length * (barHeight + gap) + margin.top + margin.bottom;

@@ -18,24 +18,16 @@ export default function CommitHistory({ stats }: { stats: ComputedStats }) {
     const dates = stats.activeDates;
     if (dates.length === 0) return;
 
-    const cellSize = 14,
-      cellGap = 3,
+    const cellSize = 11,
+      cellGap = 2,
       total = cellSize + cellGap;
-    const startDate = new Date(dates[0]);
-    const endDate = new Date(dates[dates.length - 1]);
+    const LABEL_W = 22,
+      MONTH_H = 16;
+    const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    const allDays: string[] = [];
-    const d = new Date(startDate);
-    while (d <= endDate) {
-      allDays.push(d.toISOString().split("T")[0]);
-      d.setDate(d.getDate() + 1);
-    }
-    const displayDays = allDays.length > 70 ? allDays.slice(-70) : allDays;
     const activeSet = new Set(dates);
-
     const activityMap = new Map<string, number>();
     for (const day of stats.dailyActivity) activityMap.set(day.date, day.messageCount);
-    // Ensure every active date has varied activity so it renders with color
     for (const date of dates) {
       if (!activityMap.has(date)) {
         const seed = date.split("-").reduce((a, b) => a + parseInt(b), 0);
@@ -43,9 +35,26 @@ export default function CommitHistory({ stats }: { stats: ComputedStats }) {
       }
     }
 
+    // Build a 52-week grid ending today, starting on Monday
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const gridEnd = new Date(today);
+    const gridStart = new Date(today);
+    gridStart.setDate(gridStart.getDate() - 52 * 7);
+    // Snap gridStart back to the nearest Monday
+    const startDow = (gridStart.getDay() + 6) % 7; // 0=Mon
+    gridStart.setDate(gridStart.getDate() - startDow);
+
+    const displayDays: string[] = [];
+    const d = new Date(gridStart);
+    while (d <= gridEnd) {
+      displayDays.push(d.toISOString().split("T")[0]);
+      d.setDate(d.getDate() + 1);
+    }
+
     const weeksCount = Math.ceil(displayDays.length / 7);
-    const width = weeksCount * total + 40,
-      height = 7 * total + 30;
+    const width = LABEL_W + weeksCount * total;
+    const height = MONTH_H + 7 * total;
     svg.attr("viewBox", `0 0 ${width} ${height}`);
 
     const maxActivity = Math.max(...Array.from(activityMap.values()), 1);
@@ -53,12 +62,13 @@ export default function CommitHistory({ stats }: { stats: ComputedStats }) {
       .scaleSequential(d3.interpolateRgbBasis(["#2f2f2d", "#ff6b35", "#ffdbd0"]))
       .domain([0, maxActivity]);
 
-    const g = svg.append("g").attr("transform", "translate(30, 20)");
+    const g = svg.append("g").attr("transform", `translate(${LABEL_W}, ${MONTH_H})`);
 
+    // Day-of-week labels
     ["M", "", "W", "", "F", "", "S"].forEach((label, i) => {
       if (label) {
         g.append("text")
-          .attr("x", -8)
+          .attr("x", -5)
           .attr("y", i * total + cellSize / 2)
           .attr("text-anchor", "end")
           .attr("dominant-baseline", "middle")
@@ -69,22 +79,44 @@ export default function CommitHistory({ stats }: { stats: ComputedStats }) {
       }
     });
 
+    // Month labels — emit when the month changes at start of a week
+    let lastMonth = -1;
     displayDays.forEach((day, idx) => {
-      const dayOfWeek = (new Date(day).getDay() + 6) % 7;
-      const week = Math.floor(idx / 7);
+      const dow = idx % 7;
+      const weekIdx = Math.floor(idx / 7);
+      if (dow === 0) {
+        const month = new Date(day + "T12:00:00").getMonth();
+        if (month !== lastMonth) {
+          g.append("text")
+            .attr("x", weekIdx * total)
+            .attr("y", -4)
+            .attr("text-anchor", "start")
+            .attr("fill", "#97908a")
+            .attr("font-size", "8px")
+            .attr("font-family", "Plus Jakarta Sans")
+            .text(MONTHS[month]);
+          lastMonth = month;
+        }
+      }
+    });
+
+    // Cells — stagger delay capped so animation doesn't take forever
+    displayDays.forEach((day, idx) => {
+      const dow = idx % 7;
+      const weekIdx = Math.floor(idx / 7);
       const activity = activityMap.get(day) || 0;
       const isActive = activeSet.has(day);
 
       g.append("rect")
-        .attr("x", week * total)
-        .attr("y", dayOfWeek * total)
+        .attr("x", weekIdx * total)
+        .attr("y", dow * total)
         .attr("width", cellSize)
         .attr("height", cellSize)
-        .attr("rx", 3)
+        .attr("rx", 2)
         .attr("fill", "#2f2f2d")
         .attr("opacity", 0)
         .transition()
-        .delay(idx * 15)
+        .delay(Math.min(weekIdx * 20, 800))
         .duration(300)
         .attr("opacity", 1)
         .attr("fill", isActive ? colorScale(activity) : "#2f2f2d");

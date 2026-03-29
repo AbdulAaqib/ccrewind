@@ -241,7 +241,7 @@ export default function CharacterReveal({ character, stats, cps: _cps }: Props) 
           transition={{ delay: 0.1, duration: 0.4 }}
           className="mb-6"
         >
-          <p className="font-label text-sm font-bold tracking-[0.3em] uppercase text-on-surface/40">Your Archetype</p>
+          <p className="font-headline text-3xl md:text-5xl font-extrabold tracking-tight uppercase text-on-surface text-glow">Your Archetype</p>
         </motion.div>
 
         {/* Crate opening strip — visible during waiting, spinning, and landed */}

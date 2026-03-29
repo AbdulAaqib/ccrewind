@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, ReactNode } from "react";
+import { useState, useCallback, useEffect, useRef, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface SlideContainerProps {
@@ -12,6 +12,7 @@ export default function SlideContainer({ children, onComplete }: SlideContainerP
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(1);
   const totalSlides = children.length;
+  const touchStartX = useRef<number | null>(null);
 
   const goNext = useCallback(() => {
     if (currentSlide < totalSlides - 1) {
@@ -79,8 +80,27 @@ export default function SlideContainer({ children, onComplete }: SlideContainerP
     }),
   };
 
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (touchStartX.current === null) return;
+      const dx = e.changedTouches[0].clientX - touchStartX.current;
+      touchStartX.current = null;
+      if (Math.abs(dx) < 40) return; // too small, ignore
+      if (dx < 0) {
+        goNext();
+      } else {
+        goPrev();
+      }
+    },
+    [goNext, goPrev]
+  );
+
   return (
-    <div className="fixed inset-0 bg-background" onClick={handleClick}>
+    <div className="fixed inset-0 bg-background" onClick={handleClick} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
       {/* Background grain */}
       <div className="fixed inset-0 grain-texture z-0 pointer-events-none" />
 

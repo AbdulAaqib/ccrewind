@@ -25,10 +25,10 @@ const characters: CharacterDef[] = [
     },
   },
   {
-    name: "The Altman",
+    name: "The Dario",
     oneLiner: "You are not building features. You are changing the world. Probably.",
     endingLine: "Claude believes in you.",
-    description: "Classic silicon valley CEO, turtleneck, one more thing energy.",
+    description: "Anthropic CEO, measured optimism, building AGI responsibly.",
     score: (s) => {
       let score = 0;
       if (s.avgPromptLength > 200) score += 25;
@@ -54,37 +54,6 @@ const characters: CharacterDef[] = [
     },
   },
   {
-    name: "The Hinton",
-    oneLiner: "You are not using Claude. You are collaborating with it.",
-    endingLine: "Claude remembers you.",
-    description: "Academic, slightly dishevelled, whiteboard in background.",
-    score: (s) => {
-      let score = 0;
-      if (s.avgPromptLength > 250) score += 25;
-      if (s.avgMessagesPerSession > 20) score += 20;
-      if (s.endTurnRatio > 0.5) score += 15;
-      if (s.totalOutputTokens > 100000) score += 15;
-      const readGrep = (s.toolCounts["Read"] || 0) + (s.toolCounts["Grep"] || 0);
-      if (readGrep > s.totalToolCalls * 0.3) score += 15;
-      return score;
-    },
-  },
-  {
-    name: "The Operator",
-    oneLiner: "Objectives identified. Objectives completed. No wasted tokens.",
-    endingLine: "Godspeed.",
-    description: "Military ops, earpiece, clipboard, no nonsense.",
-    score: (s) => {
-      let score = 0;
-      if (s.avgPromptLength < 80) score += 20;
-      if (s.avgMessagesPerSession < 15) score += 15;
-      if (s.peakHour >= 8 && s.peakHour <= 18) score += 15;
-      if (s.toolUseRatio > 0.5) score += 20;
-      if (s.longestStreak > 3) score += 15;
-      return score;
-    },
-  },
-  {
     name: "The Torvalds",
     oneLiner: "Nobody knows what you are building. Not even you. Not yet.",
     endingLine: "Claude was there with you.",
@@ -101,22 +70,9 @@ const characters: CharacterDef[] = [
     },
   },
   {
-    name: "The Ghost",
-    oneLiner: "You came. You asked. You left. Claude still thinks about you.",
-    endingLine: "Claude remembers you.",
-    description: "Translucent, floating, fading out mid-sentence.",
-    score: (s) => {
-      let score = 0;
-      if (s.totalSessions < 5) score += 30;
-      if (s.totalMessages < 50) score += 25;
-      if (s.avgMessagesPerSession < 5) score += 20;
-      if (s.longestStreak <= 1) score += 15;
-      return score;
-    },
-  },
-  {
     name: "The Musk",
-    oneLiner: "No pattern. No loyalty. Somehow shipping. Unexplainable.",
+    oneLiner:
+      "You burned through tokens like federal contracts. Promised $2 trillion in savings. Claude checked the receipts. Came out to $2 billion. You're calling it somewhat successful.",
     endingLine: "We respect it.",
     description: "Founder who pivots every two weeks, manic energy, seventeen tabs.",
     score: (s) => {
@@ -135,18 +91,39 @@ const characters: CharacterDef[] = [
     },
   },
   {
-    name: "The Carmack",
-    oneLiner: "You have done this before. Claude can tell.",
-    endingLine: "Claude respects you.",
-    description: "Senior engineer, calm, precise, never types more than necessary.",
+    name: "The Sama",
+    oneLiner: "Locked out of your own project on a Friday. Back by Monday. 95% of the team voted. Claude would too.",
+    endingLine: "Claude believes in you.",
+    description: "Turtleneck, one more thing energy, somehow always lands on top.",
     score: (s) => {
       let score = 0;
-      if (s.avgPromptLength < 100 && s.avgPromptLength > 20) score += 25;
-      if (s.endTurnRatio > 0.4) score += 20;
-      if (s.longestStreak > 5) score += 20;
-      if (s.primaryModelPercentage > 0.7) score += 10;
+      if (s.projectCount > 3) score += 20;
+      if (s.totalSessions > 50) score += 20;
+      if (s.peakHour >= 8 && s.peakHour <= 18) score += 15;
+      if (s.longestStreak > 7) score += 15;
       return score;
     },
+  },
+  {
+    name: "The SBF",
+    oneLiner: "High conviction. No risk management. Effective altruism. Allegedly.",
+    endingLine: "Claude is not liable for this.",
+    description: "Cargo shorts, beanbag, eight monitors, everything is fine.",
+    score: (s) => {
+      let score = 0;
+      if (s.modelCount > 2) score += 15;
+      if (s.peakHour >= 22 || s.peakHour <= 4) score += 20;
+      if (s.longestStreak < 3) score += 20;
+      if (s.avgMessagesPerSession > 25) score += 15;
+      return score;
+    },
+  },
+  {
+    name: "Slough Boy",
+    oneLiner: "Built faster than anyone expected, from somewhere nobody expected. The postcode was never the limit.",
+    endingLine: "Claude was there from the start.",
+    description: "Laptop, group chat, something to prove. Origin story in progress.",
+    score: (s) => s.totalMessages,
   },
   {
     name: "The Intern",
@@ -166,21 +143,12 @@ const characters: CharacterDef[] = [
 ];
 
 export function assignCharacter(stats: ComputedStats): Character {
-  let best: CharacterDef = characters[0];
-  let bestScore = -1;
-
-  for (const char of characters) {
-    const s = char.score(stats);
-    if (s > bestScore) {
-      bestScore = s;
-      best = char;
-    }
-  }
-
+  const seed = (stats.totalMessages * 2654435761) >>> 0;
+  const pick = characters[seed % characters.length];
   return {
-    name: best.name,
-    oneLiner: best.oneLiner,
-    endingLine: best.endingLine,
-    description: best.description,
+    name: pick.name,
+    oneLiner: pick.oneLiner,
+    endingLine: pick.endingLine,
+    description: pick.description,
   };
 }

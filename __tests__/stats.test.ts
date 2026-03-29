@@ -118,9 +118,10 @@ describe("computeStats", () => {
     expect(stats.longestStreak).toBe(0);
   });
 
-  it("reads totalMessages from statsCache", () => {
+  it("counts totalMessages from session JSONLs (user+assistant)", () => {
     const stats = computeStats(richData);
-    expect(stats.totalMessages).toBe(65);
+    // 1 user + 2 assistant messages in the session data
+    expect(stats.totalMessages).toBe(3);
   });
 
   it("reads totalSessions from statsCache", () => {
@@ -144,8 +145,9 @@ describe("computeStats", () => {
   it("computes projectActivity from history", () => {
     const stats = computeStats(richData);
     expect(stats.projectCount).toBeGreaterThanOrEqual(2);
-    expect(stats.projectActivity["/home/user/project-a"]).toBe(2);
-    expect(stats.projectActivity["/home/user/project-b"]).toBe(1);
+    // projectActivity now counts user+assistant messages from session JSONLs
+    // Session s1 has 3 messages (1 user + 2 assistant) in project-a
+    expect(stats.projectActivity["/home/user/project-a"]).toBe(3);
   });
 
   it("detects branch from session messages", () => {

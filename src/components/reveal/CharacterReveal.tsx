@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Character, ComputedStats, CPSBreakdown } from "@/types";
+import { getCharacterImage } from "@/lib/characterImages";
 
 interface Props {
   character: Character;
@@ -10,7 +11,7 @@ interface Props {
   cps: CPSBreakdown;
 }
 
-type Rarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
+type Rarity = "common" | "uncommon" | "rare" | "legendary" | "mythical";
 
 interface CrateCharacter {
   name: string;
@@ -20,23 +21,22 @@ interface CrateCharacter {
 
 const RARITY_COLORS: Record<Rarity, { border: string; glow: string; bg: string; label: string }> = {
   common: { border: "#8b98a5", glow: "rgba(139,152,165,0.3)", bg: "rgba(139,152,165,0.08)", label: "Common" },
-  uncommon: { border: "#4b69ff", glow: "rgba(75,105,255,0.4)", bg: "rgba(75,105,255,0.08)", label: "Uncommon" },
-  rare: { border: "#8847ff", glow: "rgba(136,71,255,0.4)", bg: "rgba(136,71,255,0.08)", label: "Rare" },
-  epic: { border: "#d32ce6", glow: "rgba(211,44,230,0.4)", bg: "rgba(211,44,230,0.08)", label: "Epic" },
-  legendary: { border: "#f5c642", glow: "rgba(245,198,66,0.5)", bg: "rgba(245,198,66,0.1)", label: "Legendary" },
+  uncommon: { border: "#4caf50", glow: "rgba(76,175,80,0.4)", bg: "rgba(76,175,80,0.08)", label: "Uncommon" },
+  rare: { border: "#4b69ff", glow: "rgba(75,105,255,0.5)", bg: "rgba(75,105,255,0.08)", label: "Rare" },
+  legendary: { border: "#f5c642", glow: "rgba(245,198,66,0.6)", bg: "rgba(245,198,66,0.1)", label: "Legendary" },
+  mythical: { border: "#b347ff", glow: "rgba(179,71,255,0.65)", bg: "rgba(179,71,255,0.08)", label: "Mythical" },
 };
 
 const ALL_CHARACTERS: CrateCharacter[] = [
   { name: "The Intern", image: "/mascots/char-the-intern.png", rarity: "common" },
-  { name: "The Ghost", image: "/mascots/char-the-ghost.png", rarity: "common" },
-  { name: "The Operator", image: "/mascots/char-the-operator.png", rarity: "uncommon" },
-  { name: "The Degen", image: "/mascots/char-the-degen.png", rarity: "uncommon" },
-  { name: "The Altman", image: "/mascots/char-the-visionary.png", rarity: "rare" },
+  { name: "The Degen", image: "/mascots/char-the-degen.png", rarity: "common" },
+  { name: "The SBF", image: "/mascots/char-the-ghost.png", rarity: "uncommon" },
+  { name: "The Sama", image: "/mascots/char-the-sensei.png", rarity: "uncommon" },
+  { name: "The Quant", image: "/mascots/char-the-quant.png", rarity: "rare" },
   { name: "The Musk", image: "/mascots/char-the-chaos-agent.png", rarity: "rare" },
-  { name: "The Carmack", image: "/mascots/char-the-sensei.png", rarity: "rare" },
-  { name: "The Hinton", image: "/mascots/char-the-researcher.png", rarity: "epic" },
-  { name: "The Torvalds", image: "/mascots/char-the-night-shift-engineer.png", rarity: "epic" },
-  { name: "The Quant", image: "/mascots/char-the-quant.png", rarity: "legendary" },
+  { name: "The Dario", image: "/mascots/char-the-visionary.png", rarity: "legendary" },
+  { name: "The Torvalds", image: "/mascots/char-the-night-shift-engineer.png", rarity: "legendary" },
+  { name: "Slough Boy", image: "/mascots/char-the-researcher.png", rarity: "mythical" },
 ];
 
 // Seeded shuffle for deterministic strip order
@@ -60,7 +60,7 @@ function getCardW() {
   return window.innerWidth >= 768 ? CARD_W_LG : CARD_W_SM;
 }
 
-export default function CharacterReveal({ character, stats, cps }: Props) {
+export default function CharacterReveal({ character, stats, cps: _cps }: Props) {
   const [phase, setPhase] = useState<"waiting" | "spinning" | "landed" | "reveal">("waiting");
   const stripRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -241,9 +241,7 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
           transition={{ delay: 0.1, duration: 0.4 }}
           className="mb-6"
         >
-          <h1 className="font-headline text-4xl md:text-7xl font-extrabold tracking-tight text-on-surface text-glow">
-            Your Archetype
-          </h1>
+          <p className="font-label text-sm font-bold tracking-[0.3em] uppercase text-on-surface/40">Your Archetype</p>
         </motion.div>
 
         {/* Crate opening strip — visible during waiting, spinning, and landed */}
@@ -367,34 +365,18 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
               transition={{ duration: 0.5 }}
               className="flex flex-col items-center"
             >
-              {/* Rarity badge */}
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="mb-3"
-              >
-                <span
-                  className="font-label text-[10px] font-extrabold tracking-[0.3em] uppercase px-4 py-1 rounded-full"
-                  style={{
-                    color: rarityStyle.border,
-                    backgroundColor: rarityStyle.bg,
-                    border: `1px solid ${rarityStyle.border}40`,
-                  }}
-                >
-                  {RARITY_COLORS[targetRarity].label}
-                </span>
-              </motion.div>
-
               {/* Character name */}
               <motion.h1
                 initial={{ opacity: 0, y: 40, scale: 0.8 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ type: "spring", stiffness: 150, damping: 12, delay: 0.2 }}
-                className="font-body text-4xl md:text-8xl lg:text-9xl italic leading-tight mb-4 md:mb-6"
+                className="font-body leading-tight mb-4 md:mb-6"
               >
-                You are{" "}
-                <span className="block not-italic font-semibold text-glow" style={{ color: rarityStyle.border }}>
+                <span className="block text-2xl md:text-4xl italic text-on-surface/50 mb-1">You are</span>
+                <span
+                  className="block text-5xl md:text-8xl lg:text-9xl not-italic font-semibold"
+                  style={{ color: rarityStyle.border, textShadow: `0 0 40px ${rarityStyle.glow}` }}
+                >
                   {character.name}
                 </span>
               </motion.h1>
@@ -408,7 +390,7 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
                 style={{ boxShadow: `0 0 40px ${rarityStyle.glow}, 0 0 80px ${rarityStyle.glow}` }}
               >
                 <img
-                  src={ALL_CHARACTERS.find((c) => c.name === character.name)?.image ?? "/mascots/character-reveal.png"}
+                  src={getCharacterImage(character.name)}
                   alt={character.name}
                   className="w-full h-full object-cover"
                 />
@@ -419,7 +401,7 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.6 }}
-                className="font-body text-xl md:text-2xl italic text-on-surface/80 max-w-lg mb-6"
+                className="font-body text-xl md:text-2xl italic text-on-surface/80 max-w-2xl mb-6"
               >
                 &ldquo;{character.oneLiner}&rdquo;
               </motion.p>
@@ -429,23 +411,10 @@ export default function CharacterReveal({ character, stats, cps }: Props) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8, duration: 0.6 }}
-                className="font-label text-sm text-on-surface/50 max-w-md mb-8"
+                className="font-label text-sm text-on-surface/50 max-w-2xl mb-8"
               >
                 {storyLine}
               </motion.p>
-
-              {/* CPS badge */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1, type: "spring", stiffness: 200, damping: 15 }}
-                className="flex items-center gap-4 bg-surface-container-low/80 border border-on-surface/5 rounded-2xl px-8 py-4 mb-8"
-              >
-                <div className="text-center">
-                  <span className="font-headline text-4xl font-extrabold text-primary">{cps.total}</span>
-                  <p className="font-label text-[10px] uppercase tracking-widest text-on-surface/40">Elo</p>
-                </div>
-              </motion.div>
 
               {/* Ending line */}
               <motion.div

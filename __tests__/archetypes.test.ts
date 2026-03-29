@@ -50,6 +50,7 @@ const baseStats: ComputedStats = {
   retryClusters: 50,
   totalRetries: 90,
   topProjectStats: [{ name: "/home/user/project-a", messages: 500, tokens: 1_000_000, sessions: 40 }],
+  username: "",
 };
 
 describe("assignCharacter", () => {
@@ -63,48 +64,34 @@ describe("assignCharacter", () => {
     expect(char.name.length).toBeGreaterThan(0);
   });
 
-  it("assigns The Ghost to near-zero usage", () => {
-    const ghostStats = {
+  it("handles near-zero usage without crashing", () => {
+    const lowStats = {
       ...baseStats,
       totalSessions: 2,
       totalMessages: 10,
       avgMessagesPerSession: 3,
       longestStreak: 1,
     };
-    const char = assignCharacter(ghostStats);
-    expect(char.name).toBe("The Ghost");
+    const char = assignCharacter(lowStats);
+    expect(char).toHaveProperty("name");
+    expect(char.name.length).toBeGreaterThan(0);
   });
 
-  it("assigns The Torvalds to heavy night usage", () => {
-    const nightDist = new Array(24).fill(0);
-    nightDist[1] = 200;
-    nightDist[2] = 200;
-    nightDist[3] = 200;
-    const nightOwlStats = {
-      ...baseStats,
-      hourDistribution: nightDist,
-      peakHour: 2,
-      avgMessagesPerSession: 20,
-      totalToolCalls: 100,
-    };
-    const char = assignCharacter(nightOwlStats);
-    expect(char.name).toBe("The Torvalds");
+  it("is deterministic for the same totalMessages", () => {
+    const charA = assignCharacter(baseStats);
+    const charB = assignCharacter(baseStats);
+    expect(charA.name).toBe(charB.name);
   });
 
-  it("returns a different character depending on stats", () => {
+  it("returns a different character for different totalMessages", () => {
+    // totalMessages=1 -> Slough Boy, totalMessages=2 -> The Dario
     const charA = assignCharacter({
       ...baseStats,
-      totalSessions: 2,
-      totalMessages: 5,
-      avgMessagesPerSession: 2,
-      longestStreak: 0,
+      totalMessages: 1,
     });
     const charB = assignCharacter({
       ...baseStats,
-      avgPromptLength: 50,
-      peakHour: 12,
-      longestStreak: 8,
-      endTurnRatio: 0.6,
+      totalMessages: 2,
     });
     expect(charA.name).not.toBe(charB.name);
   });
@@ -112,14 +99,13 @@ describe("assignCharacter", () => {
   it("character names are from the known set", () => {
     const validNames = [
       "The Quant",
-      "The Altman",
+      "The Dario",
       "The Degen",
-      "The Hinton",
-      "The Operator",
       "The Torvalds",
-      "The Ghost",
       "The Musk",
-      "The Carmack",
+      "The Sama",
+      "The SBF",
+      "Slough Boy",
       "The Intern",
     ];
     const char = assignCharacter(baseStats);

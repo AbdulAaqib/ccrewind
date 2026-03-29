@@ -34,13 +34,13 @@ Claude Code Rewind analyses your local Claude Code history and turns it into a f
 | 13 | Power Score | Claude Power Score out of 1000 |
 | 14 | Character Reveal | Your archetype - confetti, mascot, one-liner |
 
-After the slides: a full-screen **Dashboard** with every stat in one screenshottable page.
+After the slides: a **ShareCard** carousel with 6 downloadable cards (character + 5 stats variants), a full-screen **Dashboard** with every stat in one screenshottable page, and a cinematic **Credits** page.
 
 ### The archetypes
 
-10 characters assigned by weighted scoring across your usage patterns:
+9 characters assigned by hash-based selection from your usage patterns:
 
-> The Quant · The Altman · The Degen · The Hinton · The Operator · The Torvalds · The Ghost · The Musk · The Carmack · The Intern
+> The Quant · The Dario · The Degen · The Torvalds · The Musk · The Sama · The SBF · Slough Boy · The Intern
 
 ### Claude Power Score (CPS)
 
@@ -122,7 +122,11 @@ Max                1000pts
 `history.jsonl` stores project as real paths: `/home/user/dev/ccrewind`
 Session folder names are slugified: `-home-user-dev-ccrewind`
 
-`stats.ts` builds a `slugToPath` lookup at parse time so both sources merge under one key. Per-project message counts use history only (consistent with `totalMessages`). Tokens and session counts come from session files via the resolved path.
+`stats.ts` builds a `slugToPath` lookup at parse time so both sources merge under one key. Both `totalMessages` and per-project message counts use session JSONLs (user + assistant messages). Tokens and session counts come from session files via the resolved path.
+
+### Sharing
+
+The share flow generates a compact URL (`/share?d=...`) encoding 13 dot-separated stats + a username suffix. The share page renders two cards side by side (character card + dev stats card) with credits at the bottom. Cards can also be downloaded as PNG via `html-to-image`.
 
 ### Tech stack
 
@@ -229,7 +233,7 @@ Releases: [github.com/Junaid2005/ccrewind/releases](https://github.com/Junaid200
 ```
 __tests__/
   scoring.test.ts      CPS calculation, component caps, night bonus, loyalty
-  archetypes.test.ts   character assignment logic, Ghost/Torvalds detection
+  archetypes.test.ts   character assignment logic, determinism, known name set
   narratives.test.ts   all archetype label tiers across all slides
   stats.test.ts        parser output, slug→path normalisation, token counts
 ```

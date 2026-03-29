@@ -149,13 +149,16 @@ export function computeStats(data: ParsedData): ComputedStats {
   const modelCounts: Record<string, number> = {};
   if (statsCache?.modelUsage) {
     for (const [model, usage] of Object.entries(statsCache.modelUsage)) {
+      if (!model.startsWith("claude-")) continue;
       modelCounts[model] = usage.outputTokens || 0;
     }
   }
   for (const session of sessions) {
     for (const msg of session.messages) {
       if (msg.type === "assistant" && msg.message?.model) {
-        modelCounts[msg.message.model] = (modelCounts[msg.message.model] || 0) + 1;
+        const model = msg.message.model;
+        if (!model.startsWith("claude-")) continue;
+        modelCounts[model] = (modelCounts[model] || 0) + 1;
       }
     }
   }
@@ -192,12 +195,12 @@ export function computeStats(data: ParsedData): ComputedStats {
   const projectSet = new Set<string>();
   const branchSet = new Set<string>();
   const projectActivity: Record<string, number> = {};
+  // Build slug→realPath from history so we can resolve session folder names
   for (const entry of history) {
     if (entry.project) {
       const slug = entry.project.replaceAll("/", "-");
       slugToPath[slug] = entry.project;
       projectSet.add(entry.project);
-      projectActivity[entry.project] = (projectActivity[entry.project] || 0) + 1;
     }
   }
   const resolveProject = (sessionPath: string): string => slugToPath[sessionPath] || sessionPath;
@@ -211,6 +214,10 @@ export function computeStats(data: ParsedData): ComputedStats {
     }
     for (const msg of session.messages) {
       if (msg.gitBranch && msg.gitBranch !== "HEAD") branchSet.add(msg.gitBranch);
+      // Count user+assistant messages per project (same method as totalMsgCount)
+      if (proj && (msg.type === "user" || msg.type === "assistant")) {
+        projectActivity[proj] = (projectActivity[proj] || 0) + 1;
+      }
       if (proj && msg.type === "assistant" && msg.message?.usage) {
         const u = msg.message.usage;
         projectTokens[proj] =
@@ -221,7 +228,6 @@ export function computeStats(data: ParsedData): ComputedStats {
       }
     }
   }
-  // Use history-based projectActivity for message counts (consistent with totalMessages)
   const topProjectStats = Array.from(projectSet)
     .map((name) => ({
       name,
@@ -289,7 +295,7 @@ export function computeStats(data: ParsedData): ComputedStats {
     hourDistribution,
     peakHour,
     peakHourCount,
-    totalMessages: statsCache?.totalMessages || totalMsgCount,
+    totalMessages: totalMsgCount || statsCache?.totalMessages || 0,
     sidechainMessages,
     sidechainRatio,
     agentToolCalls,
@@ -336,6 +342,7 @@ export function computeStats(data: ParsedData): ComputedStats {
     topProjectStats,
     estimatedCostUSD: Math.round(estimatedCostUSD * 100) / 100,
     costByModel,
+    username: extractUsername(history, sessions),
   };
 }
 
@@ -420,4 +427,24 @@ function computeStreaks(sortedDates: string[]): { longest: number; current: numb
   }
 
   return { longest, current };
+}
+
+function extractUsername(history: HistoryEntry[], sessions: { messages: { cwd?: string }[] }[]): string {
+  // Try cwd from sessions first, then project paths from history
+  for (const session of sessions) {
+    for (const msg of session.messages) {
+      if (msg.cwd) {
+        // /home/username/... or /Users/username/...
+        const match = msg.cwd.match(/^\/(?:home|Users)\/([^/]+)/);
+        if (match) return match[1];
+      }
+    }
+  }
+  for (const entry of history) {
+    if (entry.project) {
+      const match = entry.project.match(/^\/(?:home|Users)\/([^/]+)/);
+      if (match) return match[1];
+    }
+  }
+  return "";
 }

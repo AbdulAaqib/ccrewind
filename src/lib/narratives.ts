@@ -239,37 +239,38 @@ export function getCommitHistoryNarrative(stats: ComputedStats): SlideNarrative 
 
 export function getSharpshooterNarrative(stats: ComputedStats): SlideNarrative {
   const { avgPromptLength, avgMessagesPerSession } = stats;
+  const wordsPerMessage = Math.round(avgPromptLength / 5);
 
   let archetypeLabel: string;
   let story: string;
 
-  const isShort = avgPromptLength < 80;
-  const isLong = avgPromptLength > 200;
+  const isShort = wordsPerMessage < 16;
+  const isLong = wordsPerMessage > 40;
   const fewFollowUps = avgMessagesPerSession < 10;
   const manyFollowUps = avgMessagesPerSession > 25;
 
   if (isShort && fewFollowUps) {
     archetypeLabel = "The Sniper";
-    story = `${Math.round(avgPromptLength)} chars average. ${Math.round(avgMessagesPerSession)} messages per session. You came. You asked one thing. You left. Surgical.`;
+    story = `${wordsPerMessage} words per message. ${Math.round(avgMessagesPerSession)} messages per session. You came. You asked one thing. You left. Surgical.`;
   } else if (isLong && manyFollowUps) {
     archetypeLabel = "The Novelist";
-    story = `${Math.round(avgPromptLength)} chars per prompt. ${Math.round(avgMessagesPerSession)} messages per session. You write briefs. Claude writes back. You write more. This is your relationship now.`;
+    story = `${wordsPerMessage} words per message. ${Math.round(avgMessagesPerSession)} messages per session. You write briefs. Claude writes back. You write more. This is your relationship now.`;
   } else if (isShort && manyFollowUps) {
     archetypeLabel = "The Rambler";
-    story = `Short prompts but ${Math.round(avgMessagesPerSession)} messages per session. You start small and spiral. Classic.`;
+    story = `${wordsPerMessage} words a message but ${Math.round(avgMessagesPerSession)} messages per session. You start small and spiral. Classic.`;
   } else if (isLong && fewFollowUps) {
     archetypeLabel = "The Over-Preparer";
-    story = `${Math.round(avgPromptLength)} chars average. You front-load everything. A true over-preparer. One shot, fully loaded.`;
+    story = `${wordsPerMessage} words per message. You front-load everything. A true over-preparer. One shot, fully loaded.`;
   } else {
     archetypeLabel = "The Balanced";
-    story = `${Math.round(avgPromptLength)} chars, ${Math.round(avgMessagesPerSession)} messages per session. Somewhere between a sniper and a novelist. Balanced.`;
+    story = `${wordsPerMessage} words per message. ${Math.round(avgMessagesPerSession)} messages per session. Somewhere between a sniper and a novelist.`;
   }
 
   return {
     archetypeLabel,
     story,
-    stat: Math.round(avgPromptLength).toString(),
-    statLabel: "Avg Prompt Length (chars)",
+    stat: wordsPerMessage.toString(),
+    statLabel: "Words per Message",
   };
 }
 

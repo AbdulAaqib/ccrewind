@@ -62,7 +62,12 @@ function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComp
     const reelDefs = [
       { label: "INPUT", value: fmt(stats.totalInputTokens), color: "#ff6b35", lockAt: 3200 },
       { label: "OUTPUT", value: fmt(stats.totalOutputTokens), color: "#ffb59d", lockAt: 5600 },
-      { label: "CACHE", value: fmt(stats.totalCacheReadTokens), color: "#ffdbd0", lockAt: 8200 },
+      {
+        label: "CACHE",
+        value: fmt(stats.totalCacheReadTokens + stats.totalCacheCreationTokens),
+        color: "#ffdbd0",
+        lockAt: 8200,
+      },
     ];
 
     const REEL_W = 76,
@@ -225,6 +230,7 @@ export default function TokenFurnace({ stats }: { stats: ComputedStats }) {
   useEffect(() => {
     const audio = new Audio("/sounds/slot_machine.mp3");
     audio.preload = "auto";
+    audio.volume = 0.3;
     audioRef.current = audio;
     // Play on mount (slot machine starts immediately)
     const play = () => {

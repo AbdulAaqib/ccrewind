@@ -154,6 +154,7 @@ export interface ComputedStats {
   topProjectStats: Array<{ name: string; messages: number; tokens: number; sessions: number }>;
   estimatedCostUSD: number;
   costByModel: Array<{ model: string; cost: number }>;
+  username: string;
 }
 
 export interface Character {

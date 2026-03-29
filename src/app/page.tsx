@@ -14,13 +14,12 @@ import CommitHistory from "@/components/slides/CommitHistory";
 import TopProjects from "@/components/slides/TopProjects";
 import Sharpshooter from "@/components/slides/Sharpshooter";
 import Streak from "@/components/slides/Streak";
-import StopReason from "@/components/slides/StopReason";
-import RetrySpiral from "@/components/slides/RetrySpiral";
 import TheBill from "@/components/slides/TheBill";
 import Dashboard from "@/components/slides/Dashboard";
 import CharacterReveal from "@/components/reveal/CharacterReveal";
 import PowerScore from "@/components/reveal/PowerScore";
 import ShareCard from "@/components/reveal/ShareCard";
+import CreditsPage from "@/components/reveal/CreditsPage";
 import { ParsedData, ComputedStats, Character, CPSBreakdown } from "@/types";
 import { computeStats } from "@/lib/stats";
 import { assignCharacter } from "@/lib/archetypes";
@@ -74,19 +73,17 @@ export default function Home() {
             transition={{ duration: 0.3 }}
           >
             <SlideContainer onComplete={handleSlidesComplete}>
-              <GraveyardShift stats={stats} />
-              <Delegator stats={stats} />
               <TopProjects stats={stats} />
               <Arsenal stats={stats} />
               <TokenFurnace stats={stats} />
+              <GraveyardShift stats={stats} />
+              <TheBill stats={stats} />
+              <Delegator stats={stats} />
               <LoyaltyTest stats={stats} />
               <ThinkingHours stats={stats} />
               <CommitHistory stats={stats} />
               <Sharpshooter stats={stats} />
               <Streak stats={stats} />
-              <StopReason stats={stats} />
-              <RetrySpiral stats={stats} />
-              <TheBill stats={stats} />
               <PowerScore cps={cps} />
               <CharacterReveal character={character} stats={stats} cps={cps} />
             </SlideContainer>
@@ -105,6 +102,7 @@ export default function Home() {
             <div id="dashboard">
               <Dashboard stats={stats} cps={cps} />
             </div>
+            <CreditsPage />
           </motion.div>
         )}
       </AnimatePresence>

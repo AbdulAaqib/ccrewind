@@ -35,11 +35,11 @@ function StatCell({ label, value, sub, delay }: { label: string; value: string; 
       transition={{ delay, duration: 0.4 }}
       className="flex flex-col items-center justify-center p-2 md:p-3"
     >
-      <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.2em] text-on-surface/40 mb-1">
+      <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.2em] text-on-surface/60 mb-1">
         {label}
       </span>
       <span className="font-headline text-xl md:text-2xl font-extrabold text-on-surface">{value}</span>
-      {sub && <span className="font-body text-[9px] md:text-[10px] text-on-surface/30 mt-0.5">{sub}</span>}
+      {sub && <span className="font-body text-[9px] md:text-[10px] text-on-surface/55 mt-0.5">{sub}</span>}
     </motion.div>
   );
 }
@@ -91,7 +91,7 @@ function ToolBars({ tools }: { tools: Array<{ name: string; count: number }> }) 
               style={{ backgroundColor: t === top[0] ? "#ff6b35" : "#ffb59d" }}
             />
           </div>
-          <span className="font-label text-[8px] md:text-[9px] text-on-surface/30 w-8 md:w-10 shrink-0">
+          <span className="font-label text-[8px] md:text-[9px] text-on-surface/55 w-8 md:w-10 shrink-0">
             {fmt(t.count)}
           </span>
         </div>
@@ -168,10 +168,10 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
-        className="w-full max-w-4xl bg-[#1e1e1c] rounded-2xl border border-[#3d3d3a]/50 overflow-hidden"
+        className="w-full max-w-4xl bg-[#111110] rounded-2xl border border-[#3d3d3a]/70 overflow-hidden"
       >
         {/* Row 1: Hero Stats */}
-        <div className="grid grid-cols-6 divide-x divide-[#3d3d3a]/30 border-b border-[#3d3d3a]/30">
+        <div className="grid grid-cols-6 divide-x divide-[#3d3d3a]/60 border-b border-[#3d3d3a]/60">
           <StatCell label="Elo" value={cps.total.toString()} sub="/ 1,000" delay={0.3} />
           <StatCell label="Messages" value={fmt(stats.totalMessages)} delay={0.35} />
           <StatCell label="Sessions" value={fmt(stats.totalSessions)} delay={0.4} />
@@ -186,24 +186,24 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
         </div>
 
         {/* Row 2: Activity + Tools */}
-        <div className="grid grid-cols-2 divide-x divide-[#3d3d3a]/30 border-b border-[#3d3d3a]/30">
+        <div className="grid grid-cols-2 divide-x divide-[#3d3d3a]/60 border-b border-[#3d3d3a]/60">
           {/* 24h Activity */}
           <div className="p-3 md:p-4">
-            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">
+            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/60 block mb-2">
               24h Activity
             </span>
             <HourSparkline data={stats.hourDistribution} />
             <div className="flex justify-between mt-1">
-              <span className="font-label text-[7px] md:text-[8px] text-on-surface/25">12am</span>
+              <span className="font-label text-[7px] md:text-[8px] text-on-surface/45">12am</span>
               <span className="font-label text-[7px] md:text-[8px] text-primary">
                 peak {formatHour(stats.peakHour)}
               </span>
-              <span className="font-label text-[7px] md:text-[8px] text-on-surface/25">11pm</span>
+              <span className="font-label text-[7px] md:text-[8px] text-on-surface/45">11pm</span>
             </div>
           </div>
           {/* Top Tools */}
           <div className="p-3 md:p-4">
-            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">
+            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/60 block mb-2">
               Top Tools
             </span>
             <ToolBars tools={stats.topTools} />
@@ -211,10 +211,10 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
         </div>
 
         {/* Row 3: Models + Stats Grid */}
-        <div className="grid grid-cols-2 divide-x divide-[#3d3d3a]/30 border-b border-[#3d3d3a]/30">
+        <div className="grid grid-cols-2 divide-x divide-[#3d3d3a]/60 border-b border-[#3d3d3a]/60">
           {/* Models */}
           <div className="p-3 md:p-4">
-            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">
+            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/60 block mb-2">
               Model Usage
             </span>
             <ModelBars counts={stats.modelCounts} />
@@ -229,7 +229,7 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
                   return (
                     <div key={e[0]} className="flex items-center gap-1">
                       <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: colors[i] }} />
-                      <span className="font-label text-[7px] md:text-[8px] text-on-surface/40">
+                      <span className="font-label text-[7px] md:text-[8px] text-on-surface/60">
                         {name} {Math.round((e[1] / total) * 100)}%
                       </span>
                     </div>
@@ -240,7 +240,7 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
           {/* Quick Stats */}
           <div className="p-3 md:p-4 grid grid-cols-2 gap-y-2 gap-x-3">
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/55 block">
                 Projects
               </span>
               <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
@@ -248,7 +248,7 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
               </span>
             </div>
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/55 block">
                 Branches
               </span>
               <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
@@ -256,7 +256,7 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
               </span>
             </div>
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/55 block">
                 Thinking
               </span>
               <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
@@ -264,7 +264,7 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
               </span>
             </div>
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/55 block">
                 Tool Calls
               </span>
               <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
@@ -275,10 +275,10 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
         </div>
 
         {/* Row 4: Heatmap + Bottom Stats */}
-        <div className="grid grid-cols-2 divide-x divide-[#3d3d3a]/30">
+        <div className="grid grid-cols-2 divide-x divide-[#3d3d3a]/60">
           {/* Activity Heatmap */}
           <div className="p-3 md:p-4">
-            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">
+            <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/60 block mb-2">
               Last 28 Days
             </span>
             <ActivityRow data={stats.dailyActivity} />
@@ -286,16 +286,16 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
           {/* More stats */}
           <div className="p-3 md:p-4 grid grid-cols-2 gap-y-2 gap-x-3">
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/55 block">
                 Avg Prompt
               </span>
               <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
                 {Math.round(stats.avgPromptLength)}
-                <span className="text-[9px] text-on-surface/30 ml-0.5">chars</span>
+                <span className="text-[9px] text-on-surface/55 ml-0.5">chars</span>
               </span>
             </div>
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/55 block">
                 Msgs/Session
               </span>
               <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
@@ -303,7 +303,7 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
               </span>
             </div>
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/55 block">
                 Agents
               </span>
               <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
@@ -311,7 +311,7 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
               </span>
             </div>
             <div>
-              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/30 block">
+              <span className="font-label text-[7px] md:text-[8px] uppercase tracking-wider text-on-surface/55 block">
                 Stop: Tool
               </span>
               <span className="font-headline text-sm md:text-base font-extrabold text-on-surface">
@@ -322,8 +322,8 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
         </div>
 
         {/* Row 5: Top Projects with estimated cost */}
-        <div className="border-t border-[#3d3d3a]/30 p-3 md:p-4">
-          <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">
+        <div className="border-t border-[#3d3d3a]/60 p-3 md:p-4">
+          <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/60 block mb-2">
             Top Projects
           </span>
           <div className="flex flex-col gap-1.5">
@@ -347,8 +347,8 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
                       style={{ backgroundColor: colors[i] }}
                     />
                   </div>
-                  <span className="font-label text-[8px] md:text-[9px] text-on-surface/30 w-10 shrink-0">
-                    {fmt(proj.messages)}
+                  <span className="font-label text-[8px] md:text-[9px] text-on-surface/55 w-16 shrink-0">
+                    {fmt(proj.messages)} msgs
                   </span>
                   <span className="font-label text-[8px] md:text-[9px] text-primary/60 w-14 shrink-0 text-right">
                     ${projCost.toFixed(2)}
@@ -360,8 +360,8 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
         </div>
 
         {/* Row 6: Token breakdown bar */}
-        <div className="border-t border-[#3d3d3a]/30 p-3 md:p-4">
-          <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/40 block mb-2">
+        <div className="border-t border-[#3d3d3a]/60 p-3 md:p-4">
+          <span className="font-label text-[8px] md:text-[9px] uppercase tracking-[0.15em] text-on-surface/60 block mb-2">
             Token Breakdown
           </span>
           <div className="flex gap-0.5 w-full h-5 md:h-6 rounded-full overflow-hidden mb-2">

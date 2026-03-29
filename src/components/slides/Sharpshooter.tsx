@@ -24,12 +24,15 @@ export default function Sharpshooter({ stats }: { stats: ComputedStats }) {
     svg.attr("viewBox", `0 0 ${width} ${height}`);
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const maxPL = Math.max(stats.avgPromptLength * 2, 300);
-    const maxMPS = Math.max(stats.avgMessagesPerSession * 2, 40);
-    const xScale = d3.scaleLinear().domain([0, maxPL]).range([0, innerW]);
+    const wordsPerMessage = stats.avgPromptLength / 5;
+    // Dividers sit at the visual center. Scale domain is chosen so the user's
+    // dot lands in the correct quadrant relative to the narrative thresholds.
+    const threshX = 16; // short < 16 words, long >= 16
+    const threshY = 25; // few < 25 msgs/session, many >= 25
+    const maxWPM = wordsPerMessage < threshX ? threshX * 2 : wordsPerMessage * 1.5;
+    const maxMPS = stats.avgMessagesPerSession < threshY ? threshY * 2 : stats.avgMessagesPerSession * 1.5;
+    const xScale = d3.scaleLinear().domain([0, maxWPM]).range([0, innerW]);
     const yScale = d3.scaleLinear().domain([0, maxMPS]).range([innerH, 0]);
-    const midX = maxPL / 2,
-      midY = maxMPS / 2;
 
     // Quadrant labels
     const ql = [
@@ -50,19 +53,19 @@ export default function Sharpshooter({ stats }: { stats: ComputedStats }) {
         .text(q.label);
     });
 
-    // Grid
+    // Grid — dividers at visual center so the 2x2 always looks balanced
     g.append("line")
-      .attr("x1", xScale(midX))
+      .attr("x1", innerW / 2)
       .attr("y1", 0)
-      .attr("x2", xScale(midX))
+      .attr("x2", innerW / 2)
       .attr("y2", innerH)
       .attr("stroke", "#3d3d3a")
       .attr("stroke-dasharray", "4,4");
     g.append("line")
       .attr("x1", 0)
-      .attr("y1", yScale(midY))
+      .attr("y1", innerH / 2)
       .attr("x2", innerW)
-      .attr("y2", yScale(midY))
+      .attr("y2", innerH / 2)
       .attr("stroke", "#3d3d3a")
       .attr("stroke-dasharray", "4,4");
 
@@ -74,7 +77,7 @@ export default function Sharpshooter({ stats }: { stats: ComputedStats }) {
       .attr("fill", "#97908a")
       .attr("font-size", "9px")
       .attr("font-family", "Plus Jakarta Sans")
-      .text("Avg Prompt Length →");
+      .text("Words/Message");
     g.append("text")
       .attr("transform", "rotate(-90)")
       .attr("x", -innerH / 2)
@@ -83,9 +86,9 @@ export default function Sharpshooter({ stats }: { stats: ComputedStats }) {
       .attr("fill", "#97908a")
       .attr("font-size", "9px")
       .attr("font-family", "Plus Jakarta Sans")
-      .text("Messages / Session →");
+      .text("Messages / Session");
 
-    const dotX = xScale(Math.min(stats.avgPromptLength, maxPL));
+    const dotX = xScale(Math.min(wordsPerMessage, maxWPM));
     const dotY = yScale(Math.min(stats.avgMessagesPerSession, maxMPS));
 
     // Crosshair — zooms in slowly on target

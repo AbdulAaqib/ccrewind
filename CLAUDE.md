@@ -30,12 +30,17 @@ src/
     reveal/
       CharacterReveal.tsx - Confetti, name slam, one-liner, ending line, mascot placeholder
       PowerScore.tsx      - Animated counter, breakdown bars
+      ShareCard.tsx       - 3D carousel of character + 5 stats card variants, download/share buttons
+      StatsCard.tsx       - 5 stats card variants (dev terminal, receipt, token report, session log, model card)
+      CreditsPage.tsx     - Cinematic credits page with team LinkedIn/GitHub links
   lib/
     parser.ts             - Parses raw ~/.claude folder (stats-cache.json, history.jsonl, session JSONLs)
-    stats.ts              - Computes all slide metrics from parsed data (incl. RSI clustering)
+    stats.ts              - Computes all slide metrics from parsed data (incl. RSI clustering, username extraction)
     narratives.ts         - Dynamic copy generation per slide (archetype labels, stories)
-    archetypes.ts         - 10 character definitions with weighted scoring
+    archetypes.ts         - 9 character definitions with hash-based assignment
     scoring.ts            - CPS (Claude Power Score) out of 1000, 9 components
+    share.ts              - Compact share URL encoding/decoding (dot-delimited numbers + username)
+    characterImages.ts    - Maps character names to mascot image paths
     demo.ts               - Deterministic demo data generator (seeded PRNG, 45 days, 187 sessions)
   types/
     index.ts              - All TypeScript interfaces
@@ -58,8 +63,15 @@ src/
 14. CharacterReveal - Archetype reveal (confetti, name, one-liner, mascot image)
 
 **Reveal phase (after slides):**
-- ShareCard - Character card, CPS, share button, Start Over
+- ShareCard - 3D carousel with character card + 5 stats card variants, download (html-to-image), share link, Start Over
 - Dashboard - Full-screen mega stats page (screenshottable, no slide chrome)
+- CreditsPage - Cinematic team credits with LinkedIn/GitHub links
+
+**Share page (`/share?d=...`):**
+- Two cards side by side (character + dev stats), responsive grid
+- Credits at bottom
+- Share URL encodes 13 dot-separated numbers + `|username` suffix
+- Tab title shows `{username}'s Claude Code Rewind`
 
 ### Design System
 - Dark background: `#262624`
@@ -85,7 +97,7 @@ Upload screen includes hidden folder visibility instructions per OS (macOS: Cmd+
 ### DevOps
 - CI: `.github/workflows/ci.yml` - runs on every push/PR to main: Prettier → Lint → Test → Build
 - Release: `.github/workflows/release.yml` - runs on `v*` tags: same checks → creates GitHub Release with auto-generated changelog
-- Tests: 49 Jest tests across `src/__tests__/` (scoring, archetypes, narratives, stats)
+- Tests: 49 Jest tests across `__tests__/` (scoring, archetypes, narratives, stats)
 - Formatting: Prettier with `.prettierrc`, `npm run format` to fix, `npm run format:check` for CI
 - Linting: ESLint via `eslint-config-next`
 
@@ -93,6 +105,18 @@ Upload screen includes hidden folder visibility instructions per OS (macOS: Cmd+
 history.jsonl stores project as real paths: `/home/user/dev/project`
 Session folder names are slugified: `-home-user-dev-project`
 stats.ts builds a `slugToPath` map at parse time so both sources key to the same project. Never merge the two formats directly.
+
+### Message counting
+`totalMessages` and per-project message counts both use session JSONLs, counting user + assistant messages only. Falls back to `statsCache.totalMessages` if no session data available.
+
+### Token counting
+Total tokens = input + output + cache read + cache creation. This is consistent across StatsCard, TokenFurnace, Dashboard, and share page. Cache in share URL and UI always means `cacheRead + cacheCreation`.
+
+### Username extraction
+`stats.ts` extracts username from `cwd`/project paths by parsing `/home/<username>/` or `/Users/<username>/`. Zero friction — no user input needed. Used in share page tab title and card header.
+
+### Download rendering (html-to-image)
+`html-to-image` (`toPng`) miscalculates text width when CSS `letter-spacing` is applied. All elements with `tracking-*` classes in downloadable cards must have `whitespace-nowrap` to prevent broken text layout in screenshots.
 
 ### What's Not Done Yet
 - GIF integration (Walid making them, mascot images already wired in via `/public/mascots/`)

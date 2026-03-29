@@ -100,7 +100,12 @@ export default function SlideContainer({ children, onComplete }: SlideContainerP
   );
 
   return (
-    <div className="fixed inset-0 bg-background" onClick={handleClick} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+    <div
+      className="fixed inset-0 bg-background"
+      onClick={handleClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Background grain */}
       <div className="fixed inset-0 grain-texture z-0 pointer-events-none" />
 

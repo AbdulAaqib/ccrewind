@@ -44,18 +44,23 @@ function generateCountdownStrip(finalValue: number, lockAtMs: number): string[] 
   const decelStartMs = 1400;
   const decay = 0.92;
 
-  const fullSpeedPx = Math.max(0, lockAtMs - decelStartMs) / msPerFrame * initialSpeed;
+  const fullSpeedPx = (Math.max(0, lockAtMs - decelStartMs) / msPerFrame) * initialSpeed;
   const decelFrames = decelStartMs / msPerFrame;
-  const decelPx = initialSpeed * (1 - Math.pow(decay, decelFrames)) / (1 - decay);
+  const decelPx = (initialSpeed * (1 - Math.pow(decay, decelFrames))) / (1 - decay);
   const steps = Math.ceil((fullSpeedPx + decelPx) / ROW_H) + 6; // +6 row buffer
 
   const startMultiplier =
-    finalValue >= 1_000_000_000 ? 0.0005
-    : finalValue >= 100_000_000 ? 0.001
-    : finalValue >= 10_000_000 ? 0.003
-    : finalValue >= 1_000_000 ? 0.005
-    : finalValue >= 100_000 ? 0.01
-    : 0.05;
+    finalValue >= 1_000_000_000
+      ? 0.0005
+      : finalValue >= 100_000_000
+        ? 0.001
+        : finalValue >= 10_000_000
+          ? 0.003
+          : finalValue >= 1_000_000
+            ? 0.005
+            : finalValue >= 100_000
+              ? 0.01
+              : 0.05;
 
   return Array.from({ length: steps }, (_, i) => {
     const t = i / (steps - 1);
@@ -80,8 +85,20 @@ function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComp
     canvas.height = H;
 
     const reelDefs = [
-      { label: "INPUT", value: fmt(stats.totalInputTokens), color: "#ff6b35", lockAt: 3200, strip: generateCountdownStrip(stats.totalInputTokens, 3200) },
-      { label: "OUTPUT", value: fmt(stats.totalOutputTokens), color: "#ffb59d", lockAt: 5600, strip: generateCountdownStrip(stats.totalOutputTokens, 5600) },
+      {
+        label: "INPUT",
+        value: fmt(stats.totalInputTokens),
+        color: "#ff6b35",
+        lockAt: 3200,
+        strip: generateCountdownStrip(stats.totalInputTokens, 3200),
+      },
+      {
+        label: "OUTPUT",
+        value: fmt(stats.totalOutputTokens),
+        color: "#ffb59d",
+        lockAt: 5600,
+        strip: generateCountdownStrip(stats.totalOutputTokens, 5600),
+      },
       {
         label: "CACHE",
         value: fmt(stats.totalCacheReadTokens + stats.totalCacheCreationTokens),
@@ -104,7 +121,6 @@ function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComp
     const BOX_H = CONTENT_H + BOX_PAD * 2; // 220
     const BOX_TOP = (H - BOX_H) / 2; // vertically centred in canvas
     const REEL_Y = BOX_TOP + BOX_PAD;
-
 
     const reels = reelDefs.map((def) => ({
       ...def,

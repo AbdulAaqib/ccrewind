@@ -48,11 +48,15 @@ export default function ShareCard({ character, stats, cps }: Props) {
               const buf = await fetch(url).then((r) => r.arrayBuffer());
               const mime = url.includes(".woff2") ? "font/woff2" : "font/woff";
               embedded = embedded.replace(url, `data:${mime};base64,${arrayBufferToBase64(buf)}`);
-            } catch (e) { console.warn("font embed failed", e); }
+            } catch (e) {
+              console.warn("font embed failed", e);
+            }
           })
         );
         fontEmbedCSSRef.current = embedded;
-      } catch (e) { console.warn("font prefetch failed", e); }
+      } catch (e) {
+        console.warn("font prefetch failed", e);
+      }
     }
     prefetchFonts();
   }, []);
@@ -307,7 +311,9 @@ export default function ShareCard({ character, stats, cps }: Props) {
         <div
           className="relative w-full max-w-[320px] md:max-w-[360px] mx-auto mb-4"
           style={{ perspective: "1200px", height: "min(55vh, 480px)" }}
-          onTouchStart={(e: TouchEvent<HTMLDivElement>) => { carouselTouchStartX.current = e.touches[0].clientX; }}
+          onTouchStart={(e: TouchEvent<HTMLDivElement>) => {
+            carouselTouchStartX.current = e.touches[0].clientX;
+          }}
           onTouchEnd={(e: TouchEvent<HTMLDivElement>) => {
             if (carouselTouchStartX.current === null) return;
             const dx = e.changedTouches[0].clientX - carouselTouchStartX.current;
@@ -329,11 +335,11 @@ export default function ShareCard({ character, stats, cps }: Props) {
             })}
           </div>
         </div>
-
       </motion.div>
 
       {/* Fixed bottom bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-20 flex flex-col items-center gap-2 pb-5 pt-6"
+      <div
+        className="fixed bottom-0 left-0 right-0 z-20 flex flex-col items-center gap-2 pb-5 pt-6"
         style={{ background: "linear-gradient(to top, #262624 55%, rgba(38,38,36,0.7) 85%, transparent)" }}
       >
         {/* Navigation */}
@@ -385,7 +391,16 @@ export default function ShareCard({ character, stats, cps }: Props) {
             disabled={downloading}
             className="flex-1 bg-primary hover:bg-primary-deep text-on-primary rounded-full px-4 py-2 font-label text-[9px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-1.5"
           >
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" y1="15" x2="12" y2="3" />
@@ -396,7 +411,16 @@ export default function ShareCard({ character, stats, cps }: Props) {
             onClick={handleCopyLink}
             className="flex-1 bg-surface-container-high hover:bg-surface-container-highest border border-on-surface/10 text-on-surface rounded-full px-4 py-2 font-label text-[9px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5"
           >
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
             </svg>
@@ -410,7 +434,16 @@ export default function ShareCard({ character, stats, cps }: Props) {
             className="flex items-center gap-1.5 font-label text-[10px] font-bold tracking-widest uppercase text-on-surface/30 hover:text-on-surface/60 transition-all cursor-pointer"
           >
             Start Over
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
               <path d="M3 3v5h5" />
             </svg>
@@ -420,7 +453,16 @@ export default function ShareCard({ character, stats, cps }: Props) {
             className="flex items-center gap-1.5 font-label text-[10px] font-bold tracking-widest uppercase text-on-surface/30 hover:text-on-surface/60 transition-all cursor-pointer"
           >
             Dashboard
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M12 5v14M5 12l7 7 7-7" />
             </svg>
           </button>
@@ -429,7 +471,16 @@ export default function ShareCard({ character, stats, cps }: Props) {
             className="flex items-center gap-1.5 font-label text-[10px] font-bold tracking-widest uppercase text-on-surface/30 hover:text-on-surface/60 transition-all cursor-pointer"
           >
             Credits
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M12 5v14M5 12l7 7 7-7" />
             </svg>
           </button>

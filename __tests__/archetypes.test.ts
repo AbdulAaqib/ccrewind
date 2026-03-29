@@ -84,14 +84,14 @@ describe("assignCharacter", () => {
   });
 
   it("returns a different character for different totalMessages", () => {
-    // totalMessages=1 -> Slough Boy, totalMessages=2 -> The Dario
+    // Characters are assigned by rounding to nearest 100, so use values 100 apart
     const charA = assignCharacter({
       ...baseStats,
-      totalMessages: 1,
+      totalMessages: 100,
     });
     const charB = assignCharacter({
       ...baseStats,
-      totalMessages: 2,
+      totalMessages: 200,
     });
     expect(charA.name).not.toBe(charB.name);
   });

@@ -143,7 +143,8 @@ const characters: CharacterDef[] = [
 ];
 
 export function assignCharacter(stats: ComputedStats): Character {
-  const seed = (stats.totalMessages * 2654435761) >>> 0;
+  const rounded = Math.round(stats.totalMessages / 100) * 100;
+  const seed = (rounded * 2654435761) >>> 0;
   const pick = characters[seed % characters.length];
   return {
     name: pick.name,

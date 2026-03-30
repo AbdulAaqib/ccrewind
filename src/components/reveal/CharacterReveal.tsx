@@ -31,11 +31,11 @@ const ALL_CHARACTERS: CrateCharacter[] = [
   { name: "The Intern", image: "/mascots/char-the-intern.png", rarity: "common" },
   { name: "The Degen", image: "/mascots/char-the-degen.png", rarity: "common" },
   { name: "The SBF", image: "/mascots/char-the-ghost.png", rarity: "uncommon" },
-  { name: "The Sama", image: "/mascots/char-the-sensei.png", rarity: "uncommon" },
+  { name: "The Sama", image: "/mascots/char-the-operator.png", rarity: "uncommon" },
   { name: "The Quant", image: "/mascots/char-the-quant.png", rarity: "rare" },
   { name: "The Musk", image: "/mascots/char-the-chaos-agent.png", rarity: "rare" },
   { name: "The Dario", image: "/mascots/char-the-visionary.png", rarity: "legendary" },
-  { name: "The Torvalds", image: "/mascots/char-the-night-shift-engineer.png", rarity: "legendary" },
+  { name: "The Karpathy", image: "/mascots/char-the-night-shift-engineer.png", rarity: "legendary" },
   { name: "Slough Boy", image: "/mascots/char-the-researcher.png", rarity: "mythical" },
 ];
 

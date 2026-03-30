@@ -101,7 +101,7 @@ describe("assignCharacter", () => {
       "The Quant",
       "The Dario",
       "The Degen",
-      "The Torvalds",
+      "The Karpathy",
       "The Musk",
       "The Sama",
       "The SBF",

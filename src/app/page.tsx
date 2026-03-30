@@ -102,7 +102,9 @@ export default function Home() {
             <div id="dashboard">
               <Dashboard stats={stats} cps={cps} />
             </div>
-            <CreditsPage />
+            <div id="credits">
+              <CreditsPage />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

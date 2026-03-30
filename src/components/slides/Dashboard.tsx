@@ -129,14 +129,14 @@ function ActivityRow({ data }: { data: Array<{ date: string; messageCount: numbe
   const recent = data.slice(-28);
   const max = Math.max(...recent.map((d) => d.messageCount), 1);
   return (
-    <div className="flex gap-[2px]">
+    <div className="flex gap-[2px] flex-wrap">
       {recent.map((d, i) => {
         const intensity = d.messageCount / max;
         const color = intensity === 0 ? "#2f2f2d" : `rgba(255,107,53,${0.2 + intensity * 0.8})`;
         return (
           <div
             key={i}
-            className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-[2px]"
+            className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-[2px]"
             style={{ backgroundColor: color }}
             title={`${d.date}: ${d.messageCount} msgs`}
           />
@@ -168,10 +168,10 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
-        className="w-full max-w-4xl bg-[#111110] rounded-2xl border border-[#3d3d3a]/70 overflow-hidden"
+        className="w-full max-w-4xl bg-[#1c1c1a] rounded-2xl border border-[#3d3d3a]/70 overflow-hidden"
       >
         {/* Row 1: Hero Stats */}
-        <div className="grid grid-cols-6 divide-x divide-[#3d3d3a]/60 border-b border-[#3d3d3a]/60">
+        <div className="grid grid-cols-3 md:grid-cols-6 divide-x divide-[#3d3d3a]/60 border-b border-[#3d3d3a]/60">
           <StatCell label="Elo" value={cps.total.toString()} sub="/ 1,000" delay={0.3} />
           <StatCell label="Messages" value={fmt(stats.totalMessages)} delay={0.35} />
           <StatCell label="Sessions" value={fmt(stats.totalSessions)} delay={0.4} />
@@ -347,10 +347,10 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
                       style={{ backgroundColor: colors[i] }}
                     />
                   </div>
-                  <span className="font-label text-[8px] md:text-[9px] text-on-surface/55 w-16 shrink-0">
+                  <span className="font-label text-[8px] md:text-[9px] text-on-surface/55 w-12 md:w-16 shrink-0">
                     {fmt(proj.messages)} msgs
                   </span>
-                  <span className="font-label text-[8px] md:text-[9px] text-primary/60 w-14 shrink-0 text-right">
+                  <span className="font-label text-[8px] md:text-[9px] text-primary/60 w-10 md:w-14 shrink-0 text-right">
                     ${projCost.toFixed(2)}
                   </span>
                 </div>

@@ -12,6 +12,14 @@ function fmt(n: number): string {
   return n.toString();
 }
 
+// Higher precision for the scrolling strip so each frame looks distinct
+function fmtStrip(n: number): string {
+  if (n >= 1_000_000_000) return `${(n / 1_000_000_000).toFixed(3)}B`;
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(3)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return n.toString();
+}
+
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
@@ -26,23 +34,40 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
   ctx.closePath();
 }
 
-const STRIP = [
-  "1.2M",
-  "3.4M",
-  "7.8M",
-  "19M",
-  "999K",
-  "48M",
-  "2.1M",
-  "16M",
-  "5.5M",
-  "12M",
-  "33M",
-  "8.7M",
-  "21M",
-  "4.4M",
-  "66M",
-];
+const ROW_H = 34;
+
+function generateCountdownStrip(finalValue: number, lockAtMs: number): string[] {
+  // Calculate exactly how many rows the reel will scroll before locking,
+  // so the strip ends precisely on the real value with no cycling mismatch.
+  const msPerFrame = 1000 / 60;
+  const initialSpeed = 18;
+  const decelStartMs = 1400;
+  const decay = 0.92;
+
+  const fullSpeedPx = (Math.max(0, lockAtMs - decelStartMs) / msPerFrame) * initialSpeed;
+  const decelFrames = decelStartMs / msPerFrame;
+  const decelPx = (initialSpeed * (1 - Math.pow(decay, decelFrames))) / (1 - decay);
+  const steps = Math.ceil((fullSpeedPx + decelPx) / ROW_H) + 6; // +6 row buffer
+
+  const startMultiplier =
+    finalValue >= 1_000_000_000
+      ? 0.0005
+      : finalValue >= 100_000_000
+        ? 0.001
+        : finalValue >= 10_000_000
+          ? 0.003
+          : finalValue >= 1_000_000
+            ? 0.005
+            : finalValue >= 100_000
+              ? 0.01
+              : 0.05;
+
+  return Array.from({ length: steps }, (_, i) => {
+    const t = i / (steps - 1);
+    const multiplier = startMultiplier * Math.pow(1 / startMultiplier, t);
+    return fmtStrip(Math.round(finalValue * multiplier));
+  });
+}
 
 function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComplete: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -60,13 +85,26 @@ function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComp
     canvas.height = H;
 
     const reelDefs = [
-      { label: "INPUT", value: fmt(stats.totalInputTokens), color: "#ff6b35", lockAt: 3200 },
-      { label: "OUTPUT", value: fmt(stats.totalOutputTokens), color: "#ffb59d", lockAt: 5600 },
+      {
+        label: "INPUT",
+        value: fmt(stats.totalInputTokens),
+        color: "#ff6b35",
+        lockAt: 3200,
+        strip: generateCountdownStrip(stats.totalInputTokens, 3200),
+      },
+      {
+        label: "OUTPUT",
+        value: fmt(stats.totalOutputTokens),
+        color: "#ffb59d",
+        lockAt: 5600,
+        strip: generateCountdownStrip(stats.totalOutputTokens, 5600),
+      },
       {
         label: "CACHE",
         value: fmt(stats.totalCacheReadTokens + stats.totalCacheCreationTokens),
         color: "#ffdbd0",
         lockAt: 8200,
+        strip: generateCountdownStrip(stats.totalCacheReadTokens + stats.totalCacheCreationTokens, 8200),
       },
     ];
 
@@ -83,7 +121,6 @@ function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComp
     const BOX_H = CONTENT_H + BOX_PAD * 2; // 220
     const BOX_TOP = (H - BOX_H) / 2; // vertically centred in canvas
     const REEL_Y = BOX_TOP + BOX_PAD;
-    const ROW_H = 34;
 
     const reels = reelDefs.map((def) => ({
       ...def,
@@ -160,8 +197,8 @@ function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComp
           const rowOffset = reel.offset % ROW_H;
 
           for (let r = -1; r <= 3; r++) {
-            const val = STRIP[(idx + r) % STRIP.length];
-            const ry = cy - ROW_H + r * ROW_H - rowOffset + ROW_H / 2;
+            const val = reel.strip[Math.max(0, Math.min(idx + r, reel.strip.length - 1))];
+            const ry = cy - ROW_H + r * ROW_H + rowOffset + ROW_H / 2;
             const distFromCentre = Math.abs(ry - cy);
             const alpha = Math.max(0, 1 - distFromCentre / (REEL_H * 0.6));
             ctx.globalAlpha = alpha;
@@ -219,7 +256,11 @@ function SlotMachineCanvas({ stats, onComplete }: { stats: ComputedStats; onComp
     return () => cancelAnimationFrame(animId);
   }, [stats]);
 
-  return <canvas ref={canvasRef} style={{ width: 400, height: 320 }} className="rounded-xl" />;
+  return (
+    <div style={{ width: "min(400px, calc(100vw - 2rem))", aspectRatio: "400 / 320" }}>
+      <canvas ref={canvasRef} style={{ width: "100%", height: "100%" }} className="rounded-xl" />
+    </div>
+  );
 }
 
 export default function TokenFurnace({ stats }: { stats: ComputedStats }) {
@@ -230,7 +271,7 @@ export default function TokenFurnace({ stats }: { stats: ComputedStats }) {
   useEffect(() => {
     const audio = new Audio("/sounds/slot_machine.mp3");
     audio.preload = "auto";
-    audio.volume = 0.3;
+    audio.volume = 0.07;
     audioRef.current = audio;
     // Play on mount (slot machine starts immediately)
     const play = () => {

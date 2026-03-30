@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useEffect, TouchEvent } from "react";
 import { motion } from "framer-motion";
 import { Character, ComputedStats, CPSBreakdown } from "@/types";
 import { ShareData, buildShareURL } from "@/lib/share";
@@ -18,11 +18,48 @@ const STATS_VARIANTS = [1, 2, 3, 4, 5] as const;
 // Total carousel items: character card (index 0) + 5 stats variants
 const TOTAL = 1 + STATS_VARIANTS.length;
 
+function arrayBufferToBase64(buf: ArrayBuffer): string {
+  let binary = "";
+  const bytes = new Uint8Array(buf);
+  for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+
 export default function ShareCard({ character, stats, cps }: Props) {
   const activeCardRef = useRef<HTMLDivElement>(null);
+  const fontEmbedCSSRef = useRef<string>("");
+  const carouselTouchStartX = useRef<number | null>(null);
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
+
+  // Pre-fetch and base64-embed Google Fonts on mount so toPng doesn't hit CORS
+  useEffect(() => {
+    async function prefetchFonts() {
+      try {
+        const cssUrl =
+          "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap";
+        const css = await fetch(cssUrl).then((r) => r.text());
+        const urls = [...css.matchAll(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+)\)/g)].map((m) => m[1]);
+        let embedded = css;
+        await Promise.all(
+          urls.map(async (url) => {
+            try {
+              const buf = await fetch(url).then((r) => r.arrayBuffer());
+              const mime = url.includes(".woff2") ? "font/woff2" : "font/woff";
+              embedded = embedded.replace(url, `data:${mime};base64,${arrayBufferToBase64(buf)}`);
+            } catch (e) {
+              console.warn("font embed failed", e);
+            }
+          })
+        );
+        fontEmbedCSSRef.current = embedded;
+      } catch (e) {
+        console.warn("font prefetch failed", e);
+      }
+    }
+    prefetchFonts();
+  }, []);
 
   const shareData: ShareData = {
     name: character.name,
@@ -60,24 +97,82 @@ export default function ShareCard({ character, stats, cps }: Props) {
   }, []);
 
   const handleDownload = useCallback(async () => {
-    if (!activeCardRef.current || downloading) return;
+    if (downloading) return;
     setDownloading(true);
-    try {
-      const dataUrl = await toPng(activeCardRef.current, {
-        pixelRatio: 2,
-        backgroundColor: "#262624",
-        skipFonts: true,
-        filter: (node: HTMLElement) => {
-          if (node.tagName === "LINK" && (node as HTMLLinkElement).href?.includes("fonts.googleapis")) return false;
-          return true;
-        },
+
+    const opts = {
+      pixelRatio: 2,
+      backgroundColor: "#262624",
+      fontEmbedCSS: fontEmbedCSSRef.current,
+      filter: (node: HTMLElement) => {
+        // Skip external Google Fonts link to prevent CORS cssRules error
+        if (node.tagName === "LINK" && (node as HTMLLinkElement).href?.includes("fonts.googleapis")) return false;
+        return true;
+      },
+    };
+    const loadImg = (src: string): Promise<HTMLImageElement> =>
+      new Promise((res) => {
+        const img = new Image();
+        img.onload = () => res(img);
+        img.src = src;
       });
+
+    try {
+      // 1. Cycle through each card in the real carousel and capture it
+      const savedIdx = activeIdx;
+      const cardUrls: string[] = [];
+      for (let i = 0; i < TOTAL; i++) {
+        setActiveIdx(i);
+        await new Promise((r) => setTimeout(r, 500)); // wait for React re-render + fonts
+        if (activeCardRef.current) {
+          cardUrls.push(await toPng(activeCardRef.current, opts));
+        }
+      }
+      setActiveIdx(savedIdx);
+
+      // 2. Capture dashboard
+      const dashEl = document.getElementById("dashboard");
+      const dashUrl = dashEl ? await toPng(dashEl, opts) : null;
+
+      // 3. Stitch cards + dashboard onto one canvas
+      const cardImgs = await Promise.all(cardUrls.map(loadImg));
+      const dashImg = dashUrl ? await loadImg(dashUrl) : null;
+
+      const CW = cardImgs[0]?.naturalWidth ?? 536;
+      const CH = cardImgs[0]?.naturalHeight ?? 804;
+      const COLS = 3;
+      const ROWS = Math.ceil(TOTAL / COLS);
+      const GAP = 16;
+      const PAD = 24;
+
+      const canvasW = PAD * 2 + COLS * CW + (COLS - 1) * GAP;
+      const dashDrawW = canvasW - PAD * 2;
+      const dashDrawH = dashImg ? Math.round((dashImg.naturalHeight * dashDrawW) / dashImg.naturalWidth) : 0;
+      const cardsH = PAD * 2 + ROWS * CH + (ROWS - 1) * GAP;
+      const canvasH = cardsH + (dashDrawH ? GAP + dashDrawH + PAD : 0);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = canvasW;
+      canvas.height = canvasH;
+      const ctx = canvas.getContext("2d")!;
+      ctx.fillStyle = "#262624";
+      ctx.fillRect(0, 0, canvasW, canvasH);
+
+      cardImgs.forEach((img, idx) => {
+        const col = idx % COLS;
+        const row = Math.floor(idx / COLS);
+        ctx.drawImage(img, PAD + col * (CW + GAP), PAD + row * (CH + GAP), CW, CH);
+      });
+
+      if (dashImg) {
+        ctx.drawImage(dashImg, PAD, cardsH + GAP, dashDrawW, dashDrawH);
+      }
+
+      // 4. Download as one PNG
+      const finalUrl = canvas.toDataURL("image/png");
       const link = document.createElement("a");
-      link.href = dataUrl;
-      link.download =
-        activeIdx === 0
-          ? `cc-rewind-${character.name.toLowerCase().replace(/\s+/g, "-")}.png`
-          : `cc-rewind-stats-${activeIdx}.png`;
+      link.href = finalUrl;
+      link.download = `cc-rewind-${character.name.toLowerCase().replace(/\s+/g, "-")}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -192,9 +287,9 @@ export default function ShareCard({ character, stats, cps }: Props) {
   ];
 
   return (
-    <div className="flex flex-col items-center px-4 md:px-6 py-8 pb-32 relative min-h-screen">
+    <div className="flex flex-col items-center px-4 md:px-6 py-6 pb-40 relative min-h-screen">
       <div className="fixed inset-0 grain-texture" />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(600px,100vw)] h-[min(600px,100vw)] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -214,8 +309,19 @@ export default function ShareCard({ character, stats, cps }: Props) {
 
         {/* Carousel ring */}
         <div
-          className="relative w-full max-w-[400px] mx-auto mb-8"
-          style={{ perspective: "1200px", height: "min(85vh, 660px)" }}
+          className="relative w-full max-w-[320px] md:max-w-[360px] mx-auto mb-4"
+          style={{ perspective: "1200px", height: "min(55vh, 480px)" }}
+          onTouchStart={(e: TouchEvent<HTMLDivElement>) => {
+            carouselTouchStartX.current = e.touches[0].clientX;
+          }}
+          onTouchEnd={(e: TouchEvent<HTMLDivElement>) => {
+            if (carouselTouchStartX.current === null) return;
+            const dx = e.changedTouches[0].clientX - carouselTouchStartX.current;
+            carouselTouchStartX.current = null;
+            if (Math.abs(dx) < 40) return;
+            if (dx < 0) setActiveIdx((i) => (i + 1) % TOTAL);
+            else setActiveIdx((i) => (i - 1 + TOTAL) % TOTAL);
+          }}
         >
           <div className="relative w-full h-full" style={{ transformStyle: "preserve-3d" }}>
             {carouselItems.map((item, i) => {
@@ -229,14 +335,20 @@ export default function ShareCard({ character, stats, cps }: Props) {
             })}
           </div>
         </div>
+      </motion.div>
 
+      {/* Fixed bottom bar */}
+      <div
+        className="fixed bottom-0 left-0 right-0 z-20 flex flex-col items-center gap-2 pb-5 pt-6"
+        style={{ background: "linear-gradient(to top, #262624 55%, rgba(38,38,36,0.7) 85%, transparent)" }}
+      >
         {/* Navigation */}
-        <div className="flex items-center gap-4 mb-6">
+        <div className="flex items-center gap-4">
           <button
             onClick={() => setActiveIdx((i) => (i - 1 + TOTAL) % TOTAL)}
-            className="w-10 h-10 rounded-full border border-on-surface/10 flex items-center justify-center text-on-surface/40 hover:text-on-surface hover:border-on-surface/30 transition-all"
+            className="w-8 h-8 rounded-full border border-on-surface/10 flex items-center justify-center text-on-surface/40 hover:text-on-surface hover:border-on-surface/30 transition-all"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
@@ -246,37 +358,42 @@ export default function ShareCard({ character, stats, cps }: Props) {
               <button
                 key={i}
                 onClick={() => setActiveIdx(i)}
-                className="transition-all duration-300"
-                style={{
-                  width: i === activeIdx ? 24 : 8,
-                  height: 8,
-                  borderRadius: 4,
-                  backgroundColor: i === activeIdx ? "#ff6b35" : "rgba(255,255,255,0.15)",
-                }}
-              />
+                className="transition-all duration-300 flex items-center justify-center p-2"
+                style={{ WebkitTapHighlightColor: "transparent" }}
+              >
+                <span
+                  className="block transition-all duration-300"
+                  style={{
+                    width: i === activeIdx ? 24 : 8,
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: i === activeIdx ? "#ff6b35" : "rgba(255,255,255,0.15)",
+                  }}
+                />
+              </button>
             ))}
           </div>
 
           <button
             onClick={() => setActiveIdx((i) => (i + 1) % TOTAL)}
-            className="w-10 h-10 rounded-full border border-on-surface/10 flex items-center justify-center text-on-surface/40 hover:text-on-surface hover:border-on-surface/30 transition-all"
+            className="w-8 h-8 rounded-full border border-on-surface/10 flex items-center justify-center text-on-surface/40 hover:text-on-surface hover:border-on-surface/30 transition-all"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M9 18l6-6-6-6" />
             </svg>
           </button>
         </div>
 
         {/* Action buttons */}
-        <div className="flex gap-3 w-full max-w-[400px] mb-4">
+        <div className="flex gap-2 w-full max-w-[320px]">
           <button
             onClick={handleDownload}
             disabled={downloading}
-            className="flex-1 bg-primary hover:bg-primary-deep text-on-primary rounded-full px-5 py-3 font-label text-[10px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+            className="flex-1 bg-primary hover:bg-primary-deep text-on-primary rounded-full px-4 py-2 font-label text-[9px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-1.5"
           >
             <svg
-              width="14"
-              height="14"
+              width="11"
+              height="11"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -292,11 +409,11 @@ export default function ShareCard({ character, stats, cps }: Props) {
           </button>
           <button
             onClick={handleCopyLink}
-            className="flex-1 bg-surface-container-high hover:bg-surface-container-highest border border-on-surface/10 text-on-surface rounded-full px-5 py-3 font-label text-[10px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+            className="flex-1 bg-surface-container-high hover:bg-surface-container-highest border border-on-surface/10 text-on-surface rounded-full px-4 py-2 font-label text-[9px] font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5"
           >
             <svg
-              width="14"
-              height="14"
+              width="11"
+              height="11"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -311,13 +428,64 @@ export default function ShareCard({ character, stats, cps }: Props) {
           </button>
         </div>
 
-        <button
-          onClick={() => window.location.reload()}
-          className="font-label text-sm font-bold tracking-widest uppercase text-on-surface/30 hover:text-on-surface/60 transition-all cursor-pointer mt-2"
-        >
-          Start Over
-        </button>
-      </motion.div>
+        <div className="flex items-center gap-5">
+          <button
+            onClick={() => window.location.reload()}
+            className="flex items-center gap-1.5 font-label text-[10px] font-bold tracking-widest uppercase text-on-surface/30 hover:text-on-surface/60 transition-all cursor-pointer"
+          >
+            Start Over
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <path d="M3 3v5h5" />
+            </svg>
+          </button>
+          <button
+            onClick={() => document.getElementById("dashboard")?.scrollIntoView({ behavior: "smooth" })}
+            className="flex items-center gap-1.5 font-label text-[10px] font-bold tracking-widest uppercase text-on-surface/30 hover:text-on-surface/60 transition-all cursor-pointer"
+          >
+            Dashboard
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 5v14M5 12l7 7 7-7" />
+            </svg>
+          </button>
+          <button
+            onClick={() => document.getElementById("credits")?.scrollIntoView({ behavior: "smooth" })}
+            className="flex items-center gap-1.5 font-label text-[10px] font-bold tracking-widest uppercase text-on-surface/30 hover:text-on-surface/60 transition-all cursor-pointer"
+          >
+            Credits
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 5v14M5 12l7 7 7-7" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

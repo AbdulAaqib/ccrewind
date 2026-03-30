@@ -518,19 +518,6 @@ export default function ShareCard({ character, stats, cps }: Props) {
             className="flex items-center gap-1.5 font-label text-[10px] font-bold tracking-widest uppercase text-on-surface/30 hover:text-on-surface/60 transition-all cursor-pointer"
           >
             Start Over
-            <svg
-              width="10"
-              height="10"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-              <path d="M3 3v5h5" />
-            </svg>
           </button>
           <button
             onClick={() => {
@@ -540,19 +527,6 @@ export default function ShareCard({ character, stats, cps }: Props) {
             className="flex items-center gap-1.5 font-label text-[10px] font-bold tracking-widest uppercase text-on-surface/30 hover:text-on-surface/60 transition-all cursor-pointer"
           >
             Dashboard
-            <svg
-              width="10"
-              height="10"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ transform: pastDashboard ? "rotate(180deg)" : "none", transition: "transform 0.3s" }}
-            >
-              <path d="M12 5v14M5 12l7 7 7-7" />
-            </svg>
           </button>
           <button
             onClick={() => {
@@ -562,19 +536,6 @@ export default function ShareCard({ character, stats, cps }: Props) {
             className="flex items-center gap-1.5 font-label text-[10px] font-bold tracking-widest uppercase text-on-surface/30 hover:text-on-surface/60 transition-all cursor-pointer"
           >
             Credits
-            <svg
-              width="10"
-              height="10"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ transform: pastCredits ? "rotate(180deg)" : "none", transition: "transform 0.3s" }}
-            >
-              <path d="M12 5v14M5 12l7 7 7-7" />
-            </svg>
           </button>
         </div>
       </div>

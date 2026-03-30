@@ -40,7 +40,7 @@ After the slides: a **ShareCard** carousel with 6 downloadable cards (character 
 
 9 characters assigned by hash-based selection from your usage patterns:
 
-> The Quant · The Dario · The Degen · The Torvalds · The Musk · The Sama · The SBF · Slough Boy · The Intern
+> The Quant · The Dario · The Degen · The Karpathy · The Musk · The Sama · The SBF · Slough Boy · The Intern
 
 ### Claude Power Score (CPS)
 

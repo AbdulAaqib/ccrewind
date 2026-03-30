@@ -54,10 +54,11 @@ const characters: CharacterDef[] = [
     },
   },
   {
-    name: "The Torvalds",
-    oneLiner: "Nobody knows what you are building. Not even you. Not yet.",
-    endingLine: "Claude was there with you.",
-    description: "3am kernel hacker, energy drink graveyard, dark mode everything.",
+    name: "The Karpathy",
+    oneLiner:
+      "You mass-produced vibe coders before vibe coding had a name. Your YouTube history is a grad school curriculum.",
+    endingLine: "Claude learned from the best.",
+    description: "Late-night deep learner, terminal open, notebook running, loss curve descending.",
     score: (s) => {
       let score = 0;
       if (s.peakHour >= 22 || s.peakHour <= 4) score += 35;

@@ -4,7 +4,7 @@ const CHARACTER_NAMES = [
   "The Quant",
   "The Dario",
   "The Degen",
-  "The Torvalds",
+  "The Karpathy",
   "The Musk",
   "The Sama",
   "The SBF",
@@ -16,7 +16,8 @@ const CHARACTER_ONELINERS: Record<string, string> = {
   "The Quant": "You treat Claude like a co-located server. Low latency, high conviction.",
   "The Dario": "You are not building features. You are changing the world. Probably.",
   "The Degen": "No risk management. No sleep. Absolute conviction. We respect it.",
-  "The Torvalds": "Nobody knows what you are building. Not even you. Not yet.",
+  "The Karpathy":
+    "You mass-produced vibe coders before vibe coding had a name. Your YouTube history is a grad school curriculum.",
   "The Musk":
     "You burned through tokens like federal contracts. Promised $2 trillion in savings. Claude checked the receipts. Came out to $2 billion. You're calling it somewhat successful.",
   "The Sama": "Locked out of your own project on a Friday. Back by Monday. 95% of the team voted. Claude would too.",
@@ -29,7 +30,7 @@ const CHARACTER_ENDINGS: Record<string, string> = {
   "The Quant": "Godspeed.",
   "The Dario": "Claude believes in you.",
   "The Degen": "We respect it.",
-  "The Torvalds": "Claude was there with you.",
+  "The Karpathy": "Claude learned from the best.",
   "The Musk": "We respect it.",
   "The Sama": "Claude believes in you.",
   "The SBF": "Claude is not liable for this.",

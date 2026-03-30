@@ -39,6 +39,8 @@ export default function ShareCard({ character, stats, cps }: Props) {
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
+  const [pastDashboard, setPastDashboard] = useState(false);
+  const [pastCredits, setPastCredits] = useState(false);
   const rarityStyle = getRarityForCharacter(character.name);
   const rarity = ALL_CHARACTERS.find((c) => c.name === character.name)?.rarity ?? "common";
 
@@ -105,8 +107,19 @@ export default function ShareCard({ character, stats, cps }: Props) {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
+  useEffect(() => {
+    const onScroll = () => {
+      const dashEl = document.getElementById("dashboard");
+      const credEl = document.getElementById("credits");
+      if (dashEl) setPastDashboard(window.scrollY + window.innerHeight / 2 > dashEl.offsetTop);
+      if (credEl) setPastCredits(window.scrollY + window.innerHeight / 2 > credEl.offsetTop);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const handleDownload = useCallback(async () => {
-    if (downloading) return;
+    if (downloading || !activeCardRef.current) return;
     setDownloading(true);
 
     const opts = {
@@ -114,74 +127,17 @@ export default function ShareCard({ character, stats, cps }: Props) {
       backgroundColor: "#262624",
       fontEmbedCSS: fontEmbedCSSRef.current,
       filter: (node: HTMLElement) => {
-        // Skip external Google Fonts link to prevent CORS cssRules error
         if (node.tagName === "LINK" && (node as HTMLLinkElement).href?.includes("fonts.googleapis")) return false;
         return true;
       },
     };
-    const loadImg = (src: string): Promise<HTMLImageElement> =>
-      new Promise((res) => {
-        const img = new Image();
-        img.onload = () => res(img);
-        img.src = src;
-      });
 
     try {
-      // 1. Cycle through each card in the real carousel and capture it
-      const savedIdx = activeIdx;
-      const cardUrls: string[] = [];
-      for (let i = 0; i < TOTAL; i++) {
-        setActiveIdx(i);
-        await new Promise((r) => setTimeout(r, 500)); // wait for React re-render + fonts
-        if (activeCardRef.current) {
-          cardUrls.push(await toPng(activeCardRef.current, opts));
-        }
-      }
-      setActiveIdx(savedIdx);
-
-      // 2. Capture dashboard
-      const dashEl = document.getElementById("dashboard");
-      const dashUrl = dashEl ? await toPng(dashEl, opts) : null;
-
-      // 3. Stitch cards + dashboard onto one canvas
-      const cardImgs = await Promise.all(cardUrls.map(loadImg));
-      const dashImg = dashUrl ? await loadImg(dashUrl) : null;
-
-      const CW = cardImgs[0]?.naturalWidth ?? 536;
-      const CH = cardImgs[0]?.naturalHeight ?? 804;
-      const COLS = 3;
-      const ROWS = Math.ceil(TOTAL / COLS);
-      const GAP = 16;
-      const PAD = 24;
-
-      const canvasW = PAD * 2 + COLS * CW + (COLS - 1) * GAP;
-      const dashDrawW = canvasW - PAD * 2;
-      const dashDrawH = dashImg ? Math.round((dashImg.naturalHeight * dashDrawW) / dashImg.naturalWidth) : 0;
-      const cardsH = PAD * 2 + ROWS * CH + (ROWS - 1) * GAP;
-      const canvasH = cardsH + (dashDrawH ? GAP + dashDrawH + PAD : 0);
-
-      const canvas = document.createElement("canvas");
-      canvas.width = canvasW;
-      canvas.height = canvasH;
-      const ctx = canvas.getContext("2d")!;
-      ctx.fillStyle = "#262624";
-      ctx.fillRect(0, 0, canvasW, canvasH);
-
-      cardImgs.forEach((img, idx) => {
-        const col = idx % COLS;
-        const row = Math.floor(idx / COLS);
-        ctx.drawImage(img, PAD + col * (CW + GAP), PAD + row * (CH + GAP), CW, CH);
-      });
-
-      if (dashImg) {
-        ctx.drawImage(dashImg, PAD, cardsH + GAP, dashDrawW, dashDrawH);
-      }
-
-      // 4. Download as one PNG
-      const finalUrl = canvas.toDataURL("image/png");
+      const cardName = activeIdx === 0 ? "character" : `stats-${activeIdx}`;
+      const url = await toPng(activeCardRef.current, opts);
       const link = document.createElement("a");
-      link.href = finalUrl;
-      link.download = `cc-rewind-${character.name.toLowerCase().replace(/\s+/g, "-")}.png`;
+      link.href = url;
+      link.download = `cc-rewind-${character.name.toLowerCase().replace(/\s+/g, "-")}-${cardName}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -463,15 +419,9 @@ export default function ShareCard({ character, stats, cps }: Props) {
             })}
           </div>
         </div>
-      </motion.div>
 
-      {/* Fixed bottom bar */}
-      <div
-        className="fixed bottom-0 left-0 right-0 z-20 flex flex-col items-center gap-2 pb-5 pt-6"
-        style={{ background: "linear-gradient(to top, #262624 55%, rgba(38,38,36,0.7) 85%, transparent)" }}
-      >
-        {/* Navigation */}
-        <div className="flex items-center gap-4">
+        {/* Navigation — below cards */}
+        <div className="relative z-10 flex items-center gap-4 mt-6">
           <button
             onClick={() => setActiveIdx((i) => (i - 1 + TOTAL) % TOTAL)}
             className="w-8 h-8 rounded-full border border-on-surface/10 flex items-center justify-center text-on-surface/40 hover:text-on-surface hover:border-on-surface/30 transition-all"
@@ -511,7 +461,13 @@ export default function ShareCard({ character, stats, cps }: Props) {
             </svg>
           </button>
         </div>
+      </motion.div>
 
+      {/* Fixed bottom bar */}
+      <div
+        className="fixed bottom-0 left-0 right-0 z-20 flex flex-col items-center gap-2 pb-5 pt-6"
+        style={{ background: "linear-gradient(to top, #262624 55%, rgba(38,38,36,0.7) 85%, transparent)" }}
+      >
         {/* Action buttons */}
         <div className="flex gap-2 w-full max-w-[320px]">
           <button
@@ -577,7 +533,10 @@ export default function ShareCard({ character, stats, cps }: Props) {
             </svg>
           </button>
           <button
-            onClick={() => document.getElementById("dashboard")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() => {
+              if (pastDashboard) window.scrollTo({ top: 0, behavior: "smooth" });
+              else document.getElementById("dashboard")?.scrollIntoView({ behavior: "smooth" });
+            }}
             className="flex items-center gap-1.5 font-label text-[10px] font-bold tracking-widest uppercase text-on-surface/30 hover:text-on-surface/60 transition-all cursor-pointer"
           >
             Dashboard
@@ -590,12 +549,16 @@ export default function ShareCard({ character, stats, cps }: Props) {
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
+              style={{ transform: pastDashboard ? "rotate(180deg)" : "none", transition: "transform 0.3s" }}
             >
               <path d="M12 5v14M5 12l7 7 7-7" />
             </svg>
           </button>
           <button
-            onClick={() => document.getElementById("credits")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() => {
+              if (pastCredits) window.scrollTo({ top: 0, behavior: "smooth" });
+              else document.getElementById("credits")?.scrollIntoView({ behavior: "smooth" });
+            }}
             className="flex items-center gap-1.5 font-label text-[10px] font-bold tracking-widest uppercase text-on-surface/30 hover:text-on-surface/60 transition-all cursor-pointer"
           >
             Credits
@@ -608,6 +571,7 @@ export default function ShareCard({ character, stats, cps }: Props) {
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
+              style={{ transform: pastCredits ? "rotate(180deg)" : "none", transition: "transform 0.3s" }}
             >
               <path d="M12 5v14M5 12l7 7 7-7" />
             </svg>

@@ -11,7 +11,7 @@ interface Props {
   cps: CPSBreakdown;
 }
 
-type Rarity = "common" | "uncommon" | "rare" | "legendary" | "mythical";
+export type Rarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
 
 interface CrateCharacter {
   name: string;
@@ -19,24 +19,24 @@ interface CrateCharacter {
   rarity: Rarity;
 }
 
-const RARITY_COLORS: Record<Rarity, { border: string; glow: string; bg: string; label: string }> = {
+export const RARITY_COLORS: Record<Rarity, { border: string; glow: string; bg: string; label: string }> = {
   common: { border: "#8b98a5", glow: "rgba(139,152,165,0.3)", bg: "rgba(139,152,165,0.08)", label: "Common" },
   uncommon: { border: "#4caf50", glow: "rgba(76,175,80,0.4)", bg: "rgba(76,175,80,0.08)", label: "Uncommon" },
   rare: { border: "#4b69ff", glow: "rgba(75,105,255,0.5)", bg: "rgba(75,105,255,0.08)", label: "Rare" },
+  epic: { border: "#b347ff", glow: "rgba(179,71,255,0.65)", bg: "rgba(179,71,255,0.08)", label: "Epic" },
   legendary: { border: "#f5c642", glow: "rgba(245,198,66,0.6)", bg: "rgba(245,198,66,0.1)", label: "Legendary" },
-  mythical: { border: "#b347ff", glow: "rgba(179,71,255,0.65)", bg: "rgba(179,71,255,0.08)", label: "Mythical" },
 };
 
-const ALL_CHARACTERS: CrateCharacter[] = [
+export const ALL_CHARACTERS: CrateCharacter[] = [
   { name: "The Intern", image: "/mascots/char-the-intern.png", rarity: "common" },
   { name: "The Degen", image: "/mascots/char-the-degen.png", rarity: "common" },
   { name: "The SBF", image: "/mascots/char-the-ghost.png", rarity: "uncommon" },
   { name: "The Sama", image: "/mascots/char-the-operator.png", rarity: "uncommon" },
   { name: "The Quant", image: "/mascots/char-the-quant.png", rarity: "rare" },
   { name: "The Musk", image: "/mascots/char-the-chaos-agent.png", rarity: "rare" },
-  { name: "The Dario", image: "/mascots/char-the-visionary.png", rarity: "legendary" },
-  { name: "The Karpathy", image: "/mascots/char-the-night-shift-engineer.png", rarity: "legendary" },
-  { name: "Slough Boy", image: "/mascots/char-the-researcher.png", rarity: "mythical" },
+  { name: "The Dario", image: "/mascots/char-the-visionary.png", rarity: "epic" },
+  { name: "The Karpathy", image: "/mascots/char-the-night-shift-engineer.png", rarity: "epic" },
+  { name: "Slough Boy", image: "/mascots/char-the-researcher.png", rarity: "legendary" },
 ];
 
 // Seeded shuffle for deterministic strip order

@@ -14,6 +14,13 @@ interface Props {
   cps: CPSBreakdown;
 }
 
+import { ALL_CHARACTERS, RARITY_COLORS } from "./CharacterReveal";
+
+function getRarityForCharacter(name: string) {
+  const match = ALL_CHARACTERS.find((c) => c.name === name);
+  return RARITY_COLORS[match?.rarity ?? "common"];
+}
+
 const STATS_VARIANTS = [1, 2, 3, 4, 5] as const;
 // Total carousel items: character card (index 0) + 5 stats variants
 const TOTAL = 1 + STATS_VARIANTS.length;
@@ -32,6 +39,8 @@ export default function ShareCard({ character, stats, cps }: Props) {
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
+  const rarityStyle = getRarityForCharacter(character.name);
+  const rarity = ALL_CHARACTERS.find((c) => c.name === character.name)?.rarity ?? "common";
 
   // Pre-fetch and base64-embed Google Fonts on mount so toPng doesn't hit CORS
   useEffect(() => {
@@ -236,43 +245,162 @@ export default function ShareCard({ character, stats, cps }: Props) {
     };
   }
 
-  // ─── Character card content (index 0 in carousel) ───
+  // ─── Final glow system ───
+  const rc = rarityStyle;
+  const INTENSITY: Record<string, number> = { common: 0.35, uncommon: 0.55, rare: 0.8, epic: 1.0, legendary: 1.4 };
+  const k = INTENSITY[rarity] ?? 0.35;
+  const op = (base: number) =>
+    Math.min(255, Math.round(base * k))
+      .toString(16)
+      .padStart(2, "0");
+  const baseInset = -Math.round(55 * k);
+  const bk = rarity === "legendary" ? k * 1.5 : k;
+  const bop = (base: number) =>
+    Math.min(255, Math.round(base * bk))
+      .toString(16)
+      .padStart(2, "0");
+
   const CharacterCard = (
-    <div
-      className="w-full rounded-3xl overflow-hidden border border-on-surface/10 bg-surface-dim"
-      style={{ aspectRatio: "2 / 3" }}
-    >
-      <div className="w-full h-full flex flex-col items-center justify-between px-6 py-8 md:px-8 md:py-10 relative">
-        <div className="flex flex-col items-center gap-1">
-          <span className="font-label text-[10px] font-extrabold tracking-[0.2em] uppercase text-primary whitespace-nowrap">
-            Claude Code Rewind
-          </span>
-          <span className="font-label text-[9px] tracking-[0.3em] uppercase text-on-surface/30 whitespace-nowrap">
-            Your Claude Story
-          </span>
-        </div>
-        <div className="flex flex-col items-center text-center gap-3 flex-1 justify-center">
-          <div className="w-28 h-28 md:w-36 md:h-36 rounded-2xl overflow-hidden">
-            <img src={getCharacterImage(character.name)} alt={character.name} className="w-full h-full object-cover" />
-          </div>
-          <h2 className="font-headline text-3xl md:text-4xl font-extrabold tracking-tight text-on-surface leading-tight">
-            {character.name}
-          </h2>
-          <p className="font-body text-sm md:text-base italic text-on-surface/60 max-w-xs">
-            &ldquo;{character.oneLiner}&rdquo;
-          </p>
-        </div>
-        <div className="flex flex-wrap justify-center gap-2">
-          {pills.map((pill) => (
-            <span
-              key={pill}
-              className="bg-surface-container-high/80 border border-on-surface/5 rounded-full px-3 py-1 font-label text-[10px] font-bold uppercase tracking-wider text-on-surface/50 whitespace-nowrap"
-            >
-              {pill}
+    <div className="relative w-full" style={{ aspectRatio: "2 / 3" }}>
+      {/* Base inner furnace — all rarities */}
+      <div
+        className="absolute pointer-events-none rounded-3xl"
+        style={{
+          top: baseInset,
+          left: baseInset,
+          right: baseInset,
+          bottom: baseInset,
+          zIndex: 0,
+          background: `radial-gradient(circle at 50% 50%, ${rc.border}${bop(0x55)} 0%, ${rc.border}${bop(0x28)} 25%, ${rc.border}${bop(0x10)} 50%, transparent 70%)`,
+          filter: `blur(${Math.round(22 * k)}px)`,
+        }}
+      />
+
+      {/* Rare: barely-there plasma blob */}
+      {rarity === "rare" && (
+        <div
+          className="absolute pointer-events-none rounded-full"
+          style={{
+            width: 70,
+            height: 50,
+            top: "40%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            background: `radial-gradient(ellipse at 50% 50%, ${rc.border}18 0%, transparent 70%)`,
+            filter: "blur(16px)",
+            zIndex: 0,
+            animation: "sc-plasma-a 5s ease-in-out infinite",
+          }}
+        />
+      )}
+
+      {/* Epic: two plasma blobs */}
+      {rarity === "epic" && (
+        <>
+          <div
+            className="absolute pointer-events-none rounded-full"
+            style={{
+              width: 200,
+              height: 120,
+              top: "35%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              background: `radial-gradient(ellipse at 50% 50%, ${rc.border}${op(0x70)} 0%, ${rc.border}${op(0x35)} 45%, transparent 85%)`,
+              filter: "blur(26px)",
+              zIndex: 0,
+              animation: "sc-plasma-a 4s ease-in-out infinite",
+            }}
+          />
+          <div
+            className="absolute pointer-events-none rounded-full"
+            style={{
+              width: 120,
+              height: 170,
+              top: "55%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              background: `radial-gradient(ellipse at 50% 50%, ${rc.border}${op(0x60)} 0%, ${rc.border}${op(0x28)} 45%, transparent 80%)`,
+              filter: "blur(24px)",
+              zIndex: 0,
+              animation: "sc-plasma-b 5s ease-in-out infinite",
+            }}
+          />
+        </>
+      )}
+
+      {/* Legendary: single large gold blob */}
+      {rarity === "legendary" && (
+        <div
+          className="absolute pointer-events-none rounded-full"
+          style={{
+            width: 220,
+            height: 220,
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -52%)",
+            background: `radial-gradient(circle at 50% 50%, ${rc.border}${op(0x99)} 0%, ${rc.border}${op(0x55)} 40%, ${rc.border}${op(0x1a)} 65%, transparent 85%)`,
+            filter: "blur(32px)",
+            zIndex: 0,
+            animation: "sc-plasma-a 4s ease-in-out infinite",
+          }}
+        />
+      )}
+
+      <style>{`
+        @keyframes sc-plasma-a {
+          0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 0.7; }
+          50% { transform: translate(-50%, -50%) scale(1.15) rotate(12deg); opacity: 1; }
+        }
+        @keyframes sc-plasma-b {
+          0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 0.6; }
+          50% { transform: translate(-50%, -50%) scale(1.12) rotate(-10deg); opacity: 0.9; }
+        }
+      `}</style>
+
+      {/* Card */}
+      <div
+        className="relative w-full h-full rounded-3xl overflow-hidden"
+        style={{ zIndex: 1, backgroundColor: "rgba(30, 30, 28, 0.92)", border: `1px solid ${rc.border}15` }}
+      >
+        <div className="w-full h-full flex flex-col items-center justify-between px-6 py-8 md:px-8 md:py-10 relative">
+          <div className="flex flex-col items-center gap-1">
+            <span className="font-label text-[10px] font-extrabold tracking-[0.2em] uppercase text-primary whitespace-nowrap">
+              Claude Code Rewind
             </span>
-          ))}
+            <span className="font-label text-[9px] tracking-[0.3em] uppercase text-on-surface/30 whitespace-nowrap">
+              Your Claude Story
+            </span>
+          </div>
+          <div className="flex flex-col items-center text-center gap-3 flex-1 justify-center">
+            <div
+              className="w-28 h-28 md:w-36 md:h-36 rounded-2xl overflow-hidden"
+              style={{ boxShadow: `0 0 20px ${rc.glow}, 0 0 40px ${rc.glow}` }}
+            >
+              <img
+                src={getCharacterImage(character.name)}
+                alt={character.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <h2 className="font-headline text-3xl md:text-4xl font-extrabold tracking-tight text-on-surface leading-tight">
+              {character.name}
+            </h2>
+            <p className="font-body text-sm md:text-base italic text-on-surface/60 max-w-xs">
+              &ldquo;{character.oneLiner}&rdquo;
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-2">
+            {pills.map((pill) => (
+              <span
+                key={pill}
+                className="bg-surface-container-high/80 border border-on-surface/5 rounded-full px-3 py-1 font-label text-[10px] font-bold uppercase tracking-wider text-on-surface/50 whitespace-nowrap"
+              >
+                {pill}
+              </span>
+            ))}
+          </div>
+          <p className="font-body text-xs italic text-primary/60 mt-3">{character.endingLine}</p>
         </div>
-        <p className="font-body text-xs italic text-primary/60 mt-3">{character.endingLine}</p>
       </div>
     </div>
   );

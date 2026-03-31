@@ -1,4 +1,4 @@
-import { computeCPS } from "@/lib/scoring";
+import { computeElo } from "@/lib/scoring";
 import { ComputedStats } from "@/types";
 
 const baseStats: ComputedStats = {
@@ -58,9 +58,9 @@ const baseStats: ComputedStats = {
   ],
 };
 
-describe("computeCPS", () => {
+describe("computeElo", () => {
   it("returns a breakdown with all 9 components", () => {
-    const cps = computeCPS(baseStats);
+    const cps = computeElo(baseStats);
     expect(cps).toHaveProperty("precisionIndex");
     expect(cps).toHaveProperty("depthScore");
     expect(cps).toHaveProperty("consistency");
@@ -81,7 +81,7 @@ describe("computeCPS", () => {
       avgMessagesPerSession: 100,
       projectCount: 20,
     };
-    const cps = computeCPS(maxStats);
+    const cps = computeElo(maxStats);
     expect(cps.total).toBeLessThanOrEqual(1000);
   });
 
@@ -95,17 +95,17 @@ describe("computeCPS", () => {
       avgPromptLength: 0,
       projectCount: 0,
     };
-    const cps = computeCPS(zeroStats);
+    const cps = computeElo(zeroStats);
     expect(cps.total).toBeGreaterThanOrEqual(0);
   });
 
   it("single model loyalty scores 100", () => {
-    const cps = computeCPS({ ...baseStats, primaryModelPercentage: 0.95, modelCount: 1 });
+    const cps = computeElo({ ...baseStats, primaryModelPercentage: 0.95, modelCount: 1 });
     expect(cps.loyaltyBonus).toBe(100);
   });
 
   it("many models reduces loyalty score", () => {
-    const cps = computeCPS({ ...baseStats, primaryModelPercentage: 0.4, modelCount: 5 });
+    const cps = computeElo({ ...baseStats, primaryModelPercentage: 0.4, modelCount: 5 });
     expect(cps.loyaltyBonus).toBeLessThan(100);
   });
 
@@ -113,25 +113,25 @@ describe("computeCPS", () => {
     const nightDist = new Array(24).fill(0);
     nightDist[1] = 100;
     nightDist[2] = 100;
-    const cps = computeCPS({ ...baseStats, hourDistribution: nightDist });
+    const cps = computeElo({ ...baseStats, hourDistribution: nightDist });
     expect(cps.nightBonus).toBeGreaterThan(0);
   });
 
   it("no night usage earns zero night bonus", () => {
     const dayDist = new Array(24).fill(0);
     dayDist[14] = 100;
-    const cps = computeCPS({ ...baseStats, hourDistribution: dayDist });
+    const cps = computeElo({ ...baseStats, hourDistribution: dayDist });
     expect(cps.nightBonus).toBe(0);
   });
 
   it("longer streak gives higher streak bonus", () => {
-    const shortStreak = computeCPS({ ...baseStats, longestStreak: 1 });
-    const longStreak = computeCPS({ ...baseStats, longestStreak: 14 });
+    const shortStreak = computeElo({ ...baseStats, longestStreak: 1 });
+    const longStreak = computeElo({ ...baseStats, longestStreak: 14 });
     expect(longStreak.streakBonus).toBeGreaterThan(shortStreak.streakBonus);
   });
 
   it("individual components do not exceed their caps", () => {
-    const cps = computeCPS(baseStats);
+    const cps = computeElo(baseStats);
     expect(cps.precisionIndex).toBeLessThanOrEqual(150);
     expect(cps.depthScore).toBeLessThanOrEqual(150);
     expect(cps.consistency).toBeLessThanOrEqual(100);

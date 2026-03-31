@@ -2,7 +2,7 @@
 
 import { useRef, useState, useCallback, useEffect, TouchEvent } from "react";
 import { motion } from "framer-motion";
-import { Character, ComputedStats, CPSBreakdown } from "@/types";
+import { Character, ComputedStats, EloBreakdown } from "@/types";
 import { ShareData, buildShareURL } from "@/lib/share";
 import { getCharacterImage } from "@/lib/characterImages";
 import { toPng } from "html-to-image";
@@ -11,7 +11,7 @@ import StatsCard from "./StatsCard";
 interface Props {
   character: Character;
   stats: ComputedStats;
-  cps: CPSBreakdown;
+  elo: EloBreakdown;
 }
 
 import { ALL_CHARACTERS, RARITY_COLORS } from "./CharacterReveal";
@@ -32,7 +32,7 @@ function arrayBufferToBase64(buf: ArrayBuffer): string {
   return btoa(binary);
 }
 
-export default function ShareCard({ character, stats, cps }: Props) {
+export default function ShareCard({ character, stats, elo }: Props) {
   const activeCardRef = useRef<HTMLDivElement>(null);
   const fontEmbedCSSRef = useRef<string>("");
   const carouselTouchStartX = useRef<number | null>(null);
@@ -74,7 +74,7 @@ export default function ShareCard({ character, stats, cps }: Props) {
     name: character.name,
     oneLiner: character.oneLiner,
     endingLine: character.endingLine,
-    cps: cps.total,
+    cps: elo.total,
     totalMessages: stats.totalMessages,
     longestStreak: stats.longestStreak,
     peakHour: stats.peakHour,

@@ -18,7 +18,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   }
 
   const title = data.username ? `${data.username}'s Claude Code Rewind` : `Claude Code Rewind — ${data.name}`;
-  const description = `${data.oneLiner} CPS: ${data.cps}/1000. ${data.totalMessages.toLocaleString()} messages. ${data.endingLine}`;
+  const description = `${data.oneLiner} Elo: ${data.cps}/1000. ${data.totalMessages.toLocaleString()} messages. ${data.endingLine}`;
 
   return {
     title,

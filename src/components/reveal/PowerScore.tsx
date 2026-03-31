@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { CPSBreakdown } from "@/types";
+import { EloBreakdown } from "@/types";
 
 interface Props {
-  cps: CPSBreakdown;
+  elo: EloBreakdown;
 }
 
 function AnimatedCounter({
@@ -46,20 +46,20 @@ function AnimatedCounter({
   return <>{value}</>;
 }
 
-export default function PowerScore({ cps }: Props) {
+export default function PowerScore({ elo }: Props) {
   const breakdown = [
-    { label: "Precision", value: cps.precisionIndex, max: 150, color: "#ff6b35" },
-    { label: "Depth", value: cps.depthScore, max: 150, color: "#ffb59d" },
-    { label: "Consistency", value: cps.consistency, max: 100, color: "#ffdbd0" },
-    { label: "Loyalty", value: cps.loyaltyBonus, max: 100, color: "#ff6b35" },
-    { label: "Completion", value: cps.completionRate, max: 150, color: "#ffb59d" },
-    { label: "Velocity", value: cps.velocityScore, max: 100, color: "#ffdbd0" },
-    { label: "Breadth", value: cps.topicBreadth, max: 100, color: "#ff6b35" },
-    { label: "Streak", value: cps.streakBonus, max: 100, color: "#ffb59d" },
+    { label: "Precision", value: elo.precisionIndex, max: 150, color: "#ff6b35" },
+    { label: "Depth", value: elo.depthScore, max: 150, color: "#ffb59d" },
+    { label: "Consistency", value: elo.consistency, max: 100, color: "#ffdbd0" },
+    { label: "Loyalty", value: elo.loyaltyBonus, max: 100, color: "#ff6b35" },
+    { label: "Completion", value: elo.completionRate, max: 150, color: "#ffb59d" },
+    { label: "Velocity", value: elo.velocityScore, max: 100, color: "#ffdbd0" },
+    { label: "Breadth", value: elo.topicBreadth, max: 100, color: "#ff6b35" },
+    { label: "Streak", value: elo.streakBonus, max: 100, color: "#ffb59d" },
   ];
 
-  if (cps.nightBonus > 0) {
-    breakdown.push({ label: "Night Owl", value: cps.nightBonus, max: 50, color: "#ffdbd0" });
+  if (elo.nightBonus > 0) {
+    breakdown.push({ label: "Night Owl", value: elo.nightBonus, max: 50, color: "#ffdbd0" });
   }
 
   return (
@@ -90,7 +90,7 @@ export default function PowerScore({ cps }: Props) {
           className="text-center"
         >
           <span className="font-headline text-6xl md:text-9xl font-extrabold text-primary text-glow">
-            <AnimatedCounter target={cps.total} duration={2500} delay={800} />
+            <AnimatedCounter target={elo.total} duration={2500} delay={800} />
           </span>
           <p className="font-label text-sm uppercase tracking-widest text-on-surface/40 mt-2">out of 1,000</p>
         </motion.div>
@@ -128,7 +128,7 @@ export default function PowerScore({ cps }: Props) {
         </motion.div>
 
         {/* Night bonus easter egg */}
-        {cps.nightBonus > 0 && (
+        {elo.nightBonus > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -136,7 +136,7 @@ export default function PowerScore({ cps }: Props) {
             className="text-center"
           >
             <span className="font-label text-[10px] tracking-widest uppercase text-primary/60">
-              +{cps.nightBonus} Night Owl Bonus
+              +{elo.nightBonus} Night Owl Bonus
             </span>
           </motion.div>
         )}

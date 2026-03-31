@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
             textTransform: "uppercase",
           }}
         >
-          CPS
+          Elo
         </span>
       </div>
 

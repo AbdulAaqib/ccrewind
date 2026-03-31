@@ -118,6 +118,9 @@ Total tokens = input + output + cache read + cache creation. This is consistent 
 ### Download rendering (html-to-image)
 `html-to-image` (`toPng`) miscalculates text width when CSS `letter-spacing` is applied. All elements with `tracking-*` classes in downloadable cards must have `whitespace-nowrap` to prevent broken text layout in screenshots.
 
+### Local auto-detect (dev mode only)
+When running `npm run dev`, the upload screen calls `/api/local-data/status` on mount (instant `fs.access` check). If `~/.claude` exists, a "Use your local data" button appears. Clicking it fetches `/api/local-data` which runs `parseClaudeFolderFromFS()` server-side (`src/lib/server-parser.ts`) and returns `ParsedData`. Both routes return 403 in production — Vercel users must upload via the file picker. The run-locally command (`git clone … && npm i && npm run dev`) is shown as an expandable hint on the upload screen.
+
 ### What's Not Done Yet
 - GIF integration (Walid making them, mascot images already wired in via `/public/mascots/`)
 
@@ -134,8 +137,7 @@ Spotify Wrapped but for your Claude usage. Upload your ccusage export, get a per
 ## Flow
 
 **Screen 0 - Upload**
-Big centered drop zone. "Drop your ccusage export to find out who you really are."
-Accepts the ccusage JSON folder or single export file. Parse entirely in browser. Loading animation of Claude mascot cracking knuckles.
+Bold Wrapped layout. "Claude Code Rewind." headline, two stacked preview cards (The Dario epic purple, The Sama uncommon green) on the right. Primary CTA adapts: "Use your local data" when `~/.claude` is auto-detected (dev mode), "Upload folder" otherwise. Demo + Upload as secondary buttons. "Can't see .claude?" and "Run locally" are inline-expandable links. All processing client-side or via local API route.
 
 **Screens 1–10 - The Stats**
 Each screen is a full viewport slide, Instagram story style. Tap or click to advance. Each has:

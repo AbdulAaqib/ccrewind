@@ -143,6 +143,8 @@ The share flow generates a compact URL (`/share?d=...`) encoding 13 dot-separate
 
 ## Getting started
 
+### Option 1 — Run locally (recommended for privacy)
+
 ```bash
 git clone https://github.com/Junaid2005/ccrewind
 cd ccrewind
@@ -150,7 +152,11 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and drop your `~/.claude` folder, or click **Try Demo**.
+Open [http://localhost:3000](http://localhost:3000). Your `~/.claude` folder is **auto-detected** — no upload needed. Just click **Use your local data** and you're in.
+
+### Option 2 — Use the live site
+
+Go to [ccrewind.com](https://ccrewind.com) and drop your `~/.claude` folder via the file picker, or click **Try Demo**.
 
 ### Finding your .claude folder (it's hidden)
 

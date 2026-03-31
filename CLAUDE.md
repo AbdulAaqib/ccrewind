@@ -38,7 +38,7 @@ src/
     stats.ts              - Computes all slide metrics from parsed data (incl. RSI clustering, username extraction)
     narratives.ts         - Dynamic copy generation per slide (archetype labels, stories)
     archetypes.ts         - 9 character definitions with hash-based assignment
-    scoring.ts            - CPS (Claude Power Score) out of 1000, 9 components
+    scoring.ts            - Claude Elo out of 1000, 9 components
     share.ts              - Compact share URL encoding/decoding (dot-delimited numbers + username)
     characterImages.ts    - Maps character names to mascot image paths
     demo.ts               - Deterministic demo data generator (seeded PRNG, 45 days, 187 sessions)
@@ -59,7 +59,7 @@ src/
 10. Streak - Consistency (calendar grid)
 11. StopReason - Session endings (split bar)
 12. RetrySpiral - Retry Spiral Index (Archimedean spiral)
-13. PowerScore - CPS out of 1000 (animated counter + breakdown)
+13. PowerScore - Claude Elo out of 1000 (animated counter + breakdown)
 14. CharacterReveal - Archetype reveal (confetti, name, one-liner, mascot image)
 
 **Reveal phase (after slides):**
@@ -92,7 +92,7 @@ Upload screen includes hidden folder visibility instructions per OS (macOS: Cmd+
 
 ### Key Metrics
 - **Retry Spiral Index (RSI)** - Clusters consecutive similar prompts (Jaccard similarity > 0.3, within 20min). RSI = avg attempts per cluster. Bands: Sniper (<1.5), Refiner (1.5–3.0), Loop Artist (>3.0).
-- **CPS (Claude Power Score)** - 9 components, max 1000. Precision, Depth, Consistency, Loyalty, Completion, Velocity, Breadth, Night Owl (easter egg), Streak.
+- **Claude Elo** - 9 components, max 1000. Precision, Depth, Consistency, Loyalty, Completion, Velocity, Breadth, Night Owl (easter egg), Streak.
 
 ### DevOps
 - CI: `.github/workflows/ci.yml` - runs on every push/PR to main: Prettier → Lint → Test → Build
@@ -127,7 +127,7 @@ Total tokens = input + output + cache read + cache creation. This is consistent 
 
 ## Concept
 
-Spotify Wrapped but for your Claude usage. Upload your ccusage export, get a personalised story of how you use Claude, ending with your archetype and a mega Claude Power Score. Every slide is: a stat, a story, a chart, a gif. Pure client side, deployed on Vercel, shareable.
+Spotify Wrapped but for your Claude usage. Upload your ccusage export, get a personalised story of how you use Claude, ending with your archetype and a mega Claude Elo score. Every slide is: a stat, a story, a chart, a gif. Pure client side, deployed on Vercel, shareable.
 
 ---
 
@@ -148,7 +148,7 @@ Each screen is a full viewport slide, Instagram story style. Tap or click to adv
 Big dramatic reveal. Archetype name, description, mascot in full costume, shareable card.
 
 **Screen 12 - The Mega Score**
-Claude Power Score out of 1000. Breakdown of how it was calculated. Shareable.
+Claude Elo out of 1000. Breakdown of how it was calculated. Shareable.
 
 ---
 
@@ -476,7 +476,7 @@ Mascot: translucent, floating, fading out mid-sentence
 
 ---
 
-## The Mega Score - Claude Power Score (CPS)
+## The Mega Score - Claude Elo
 
 Score out of 1000. Shown on the final screen with a dramatic counter animation.
 
@@ -506,7 +506,7 @@ Final screen shows score, archetype name, a one-line verdict, and a shareable ca
 - Gifs hardcoded per slide and per character, sourced from Giphy or illustrated. Each slide has one gif that fires before the chart animates in.
 - html2canvas or canvas API for shareable card export on the final slide
 - Slides are full viewport height, dark background, tap or click to advance. Mobile friendly.
-- Characters and CPS scoring logic is pure JS, no API calls needed
+- Characters and Elo scoring logic is pure JS, no API calls needed
 
 ---
 
@@ -518,7 +518,7 @@ Wrapped-style full viewport slides. Dark background. One stat per screen. Bold n
 
 ## The Final Slide - Your Claude Character
 
-After the CPS reveal, one more slide. Full screen. Confetti cannon fires. This is the money shot.
+After the Elo reveal, one more slide. Full screen. Confetti cannon fires. This is the money shot.
 
 ### The Format
 
@@ -599,12 +599,12 @@ Ending line: "Claude is rooting for you."
 3. Character name slams into centre of screen, large, bold
 4. Claude mascot in character costume fades in or drops in below the name
 5. One-liner appears beneath
-6. CPS score pulses in the corner
+6. Elo score pulses in the corner
 7. Two or three of the user's most extreme stats surface as small pills around the card
-8. Shareable card auto-generates: character name, mascot, CPS score, one-liner, date
+8. Shareable card auto-generates: character name, mascot, Elo score, one-liner, date
 9. Big button: "Share your Claude Character"
 
-The shareable card should look like a Wrapped card. Dark background, Claude orange accent, character name large in the centre, mascot illustration above it, CPS and one-liner small below. People should want to post it.
+The shareable card should look like a Wrapped card. Dark background, Claude orange accent, character name large in the centre, mascot illustration above it, Elo and one-liner small below. People should want to post it.
 
 ---
 

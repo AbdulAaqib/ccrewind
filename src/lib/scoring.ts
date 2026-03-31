@@ -1,6 +1,6 @@
-import { ComputedStats, CPSBreakdown } from "@/types";
+import { ComputedStats, EloBreakdown } from "@/types";
 
-export function computeCPS(stats: ComputedStats): CPSBreakdown {
+export function computeElo(stats: ComputedStats): EloBreakdown {
   const precisionIndex = Math.min(
     150,
     Math.round(

@@ -20,10 +20,10 @@ import CharacterReveal from "@/components/reveal/CharacterReveal";
 import PowerScore from "@/components/reveal/PowerScore";
 import ShareCard from "@/components/reveal/ShareCard";
 import CreditsPage from "@/components/reveal/CreditsPage";
-import { ParsedData, ComputedStats, Character, CPSBreakdown } from "@/types";
+import { ParsedData, ComputedStats, Character, EloBreakdown } from "@/types";
 import { computeStats } from "@/lib/stats";
 import { assignCharacter } from "@/lib/archetypes";
-import { computeCPS } from "@/lib/scoring";
+import { computeElo } from "@/lib/scoring";
 
 type AppPhase = "upload" | "slides" | "reveal";
 
@@ -36,15 +36,15 @@ export default function Home() {
     return computeStats(parsedData);
   }, [parsedData]);
 
-  const character: Character | null = useMemo(() => {
+  const elo: EloBreakdown | null = useMemo(() => {
     if (!stats) return null;
-    return assignCharacter(stats);
+    return computeElo(stats);
   }, [stats]);
 
-  const cps: CPSBreakdown | null = useMemo(() => {
-    if (!stats) return null;
-    return computeCPS(stats);
-  }, [stats]);
+  const character: Character | null = useMemo(() => {
+    if (!stats || !elo) return null;
+    return assignCharacter(stats, elo.total);
+  }, [stats, elo]);
 
   const handleDataParsed = (data: ParsedData) => {
     setParsedData(data);
@@ -64,7 +64,7 @@ export default function Home() {
           </motion.div>
         )}
 
-        {phase === "slides" && stats && character && cps && (
+        {phase === "slides" && stats && character && elo && (
           <motion.div
             key="slides"
             initial={{ opacity: 0 }}
@@ -84,13 +84,13 @@ export default function Home() {
               <CommitHistory stats={stats} />
               <Sharpshooter stats={stats} />
               <Streak stats={stats} />
-              <PowerScore cps={cps} />
-              <CharacterReveal character={character} stats={stats} cps={cps} />
+              <PowerScore elo={elo} />
+              <CharacterReveal character={character} stats={stats} elo={elo} />
             </SlideContainer>
           </motion.div>
         )}
 
-        {phase === "reveal" && character && stats && cps && (
+        {phase === "reveal" && character && stats && elo && (
           <motion.div
             key="reveal"
             initial={{ opacity: 0 }}
@@ -98,9 +98,9 @@ export default function Home() {
             transition={{ duration: 0.5 }}
             className="min-h-screen"
           >
-            <ShareCard character={character} stats={stats} cps={cps} />
+            <ShareCard character={character} stats={stats} elo={elo} />
             <div id="dashboard">
-              <Dashboard stats={stats} cps={cps} />
+              <Dashboard stats={stats} elo={elo} />
             </div>
             <div id="credits">
               <CreditsPage />

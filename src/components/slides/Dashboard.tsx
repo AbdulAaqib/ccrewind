@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import * as d3 from "d3";
-import { ComputedStats, CPSBreakdown } from "@/types";
+import { ComputedStats, EloBreakdown } from "@/types";
 
 function fmt(n: number): string {
   if (n >= 1_000_000_000) return `${(n / 1_000_000_000).toFixed(1)}B`;
@@ -146,7 +146,7 @@ function ActivityRow({ data }: { data: Array<{ date: string; messageCount: numbe
   );
 }
 
-export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: CPSBreakdown }) {
+export default function Dashboard({ stats, elo }: { stats: ComputedStats; elo: EloBreakdown }) {
   const toolUseCount = stats.stopReasonCounts["tool_use"] ?? 0;
   const endTurnCount = stats.stopReasonCounts["end_turn"] ?? 0;
   const stopTotal = toolUseCount + endTurnCount;
@@ -172,7 +172,7 @@ export default function Dashboard({ stats, cps }: { stats: ComputedStats; cps: C
       >
         {/* Row 1: Hero Stats */}
         <div className="grid grid-cols-3 md:grid-cols-6 divide-x divide-[#3d3d3a]/60 border-b border-[#3d3d3a]/60">
-          <StatCell label="Elo" value={cps.total.toString()} sub="/ 1,000" delay={0.3} />
+          <StatCell label="Elo" value={elo.total.toString()} sub="/ 1,000" delay={0.3} />
           <StatCell label="Messages" value={fmt(stats.totalMessages)} delay={0.35} />
           <StatCell label="Sessions" value={fmt(stats.totalSessions)} delay={0.4} />
           <StatCell label="Tokens" value={fmt(stats.totalTokens)} delay={0.45} />

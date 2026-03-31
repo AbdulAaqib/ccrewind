@@ -143,8 +143,8 @@ const characters: CharacterDef[] = [
   },
 ];
 
-export function assignCharacter(stats: ComputedStats): Character {
-  const rounded = Math.round(stats.totalMessages / 100) * 100;
+export function assignCharacter(stats: ComputedStats, eloTotal: number): Character {
+  const rounded = Math.round(eloTotal / 10) * 10;
   const seed = (rounded * 2654435761) >>> 0;
   const pick = characters[seed % characters.length];
   return {

@@ -164,7 +164,7 @@ export interface Character {
   description: string;
 }
 
-export interface CPSBreakdown {
+export interface EloBreakdown {
   precisionIndex: number;
   depthScore: number;
   consistency: number;

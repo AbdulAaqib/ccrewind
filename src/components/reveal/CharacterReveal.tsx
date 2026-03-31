@@ -2,13 +2,13 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Character, ComputedStats, CPSBreakdown } from "@/types";
+import { Character, ComputedStats, EloBreakdown } from "@/types";
 import { getCharacterImage } from "@/lib/characterImages";
 
 interface Props {
   character: Character;
   stats: ComputedStats;
-  cps: CPSBreakdown;
+  elo: EloBreakdown;
 }
 
 export type Rarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
@@ -60,7 +60,7 @@ function getCardW() {
   return window.innerWidth >= 768 ? CARD_W_LG : CARD_W_SM;
 }
 
-export default function CharacterReveal({ character, stats, cps: _cps }: Props) {
+export default function CharacterReveal({ character, stats, elo: _elo }: Props) {
   const [phase, setPhase] = useState<"waiting" | "spinning" | "landed" | "reveal">("waiting");
   const stripRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);

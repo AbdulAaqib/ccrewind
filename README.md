@@ -2,12 +2,12 @@
 
 > There's no way to see your Claude Code usage. We changed that. Your developer archetype. Your token costs. Your Claude ELO. Nobody else has touched this data. Find out where you actually stand.
 
-Upload your `~/.claude` folder. Get a personalised story of your usage. Find out your archetype. Get your Claude Power Score. Everything runs in the browser - zero data leaves your machine.
+Upload your `~/.claude` folder. Get a personalised story of your usage. Find out your archetype. Get your Claude Elo. Everything runs in the browser - zero data leaves your machine.
 
-**Live:** [ccrewind.vercel.app](https://ccrewind.vercel.app) &nbsp;|&nbsp; **Releases:** [github.com/Junaid2005/ccrewind/releases](https://github.com/Junaid2005/ccrewind/releases)
+**Live:** [ccrewind.com](https://ccrewind.com) &nbsp;|&nbsp; **Releases:** [github.com/Junaid2005/ccrewind/releases](https://github.com/Junaid2005/ccrewind/releases)
 
 [![CI](https://github.com/Junaid2005/ccrewind/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Junaid2005/ccrewind/actions/workflows/ci.yml)
-[![Vercel](https://therealsujitk-vercel-badge.vercel.app/?app=ccrewind)](https://ccrewind.vercel.app)
+[![Vercel](https://therealsujitk-vercel-badge.vercel.app/?app=ccrewind)](https://ccrewind.com)
 
 ---
 
@@ -31,18 +31,18 @@ Claude Code Rewind analyses your local Claude Code history and turns it into a f
 | 10 | The Streak | Consistency calendar |
 | 11 | Stop Reason | tool_use vs end_turn split |
 | 12 | Retry Spiral | How often you re-prompt - Archimedean spiral |
-| 13 | Power Score | Claude Power Score out of 1000 |
+| 13 | Power Score | Claude Elo out of 1000 |
 | 14 | Character Reveal | Your archetype - confetti, mascot, one-liner |
 
 After the slides: a **ShareCard** carousel with 6 downloadable cards (character + 5 stats variants), a full-screen **Dashboard** with every stat in one screenshottable page, and a cinematic **Credits** page.
 
 ### The archetypes
 
-9 characters assigned by hash-based selection from your usage patterns:
+9 characters assigned based on your Claude Elo score:
 
 > The Quant · The Dario · The Degen · The Karpathy · The Musk · The Sama · The SBF · Slough Boy · The Intern
 
-### Claude Power Score (CPS)
+### Claude Elo
 
 Score out of 1000, 9 components:
 
@@ -96,7 +96,7 @@ Max                1000pts
 ┌─────────────┐  ┌─────────────┐
 │ narratives  │  │  scoring    │
 │ archetypes  │  │             │
-│             │  │ CPSBreakdown│
+│             │  │ EloBreakdown│
 │ SlideNarr.  │  └─────────────┘
 └──────┬──────┘
        │
@@ -232,7 +232,7 @@ Releases: [github.com/Junaid2005/ccrewind/releases](https://github.com/Junaid200
 
 ```
 __tests__/
-  scoring.test.ts      CPS calculation, component caps, night bonus, loyalty
+  scoring.test.ts      Elo calculation, component caps, night bonus, loyalty
   archetypes.test.ts   character assignment logic, determinism, known name set
   narratives.test.ts   all archetype label tiers across all slides
   stats.test.ts        parser output, slug→path normalisation, token counts

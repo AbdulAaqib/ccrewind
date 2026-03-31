@@ -55,7 +55,7 @@ const baseStats: ComputedStats = {
 
 describe("assignCharacter", () => {
   it("always returns a character with required fields", () => {
-    const char = assignCharacter(baseStats);
+    const char = assignCharacter(baseStats, 750);
     expect(char).toHaveProperty("name");
     expect(char).toHaveProperty("oneLiner");
     expect(char).toHaveProperty("endingLine");
@@ -72,27 +72,21 @@ describe("assignCharacter", () => {
       avgMessagesPerSession: 3,
       longestStreak: 1,
     };
-    const char = assignCharacter(lowStats);
+    const char = assignCharacter(lowStats, 50);
     expect(char).toHaveProperty("name");
     expect(char.name.length).toBeGreaterThan(0);
   });
 
-  it("is deterministic for the same totalMessages", () => {
-    const charA = assignCharacter(baseStats);
-    const charB = assignCharacter(baseStats);
+  it("is deterministic for the same eloTotal", () => {
+    const charA = assignCharacter(baseStats, 750);
+    const charB = assignCharacter(baseStats, 750);
     expect(charA.name).toBe(charB.name);
   });
 
-  it("returns a different character for different totalMessages", () => {
-    // Characters are assigned by rounding to nearest 100, so use values 100 apart
-    const charA = assignCharacter({
-      ...baseStats,
-      totalMessages: 100,
-    });
-    const charB = assignCharacter({
-      ...baseStats,
-      totalMessages: 200,
-    });
+  it("returns a different character for different eloTotals", () => {
+    // Characters are assigned by rounding to nearest 10, so use values 10 apart
+    const charA = assignCharacter(baseStats, 100);
+    const charB = assignCharacter(baseStats, 200);
     expect(charA.name).not.toBe(charB.name);
   });
 
@@ -108,7 +102,7 @@ describe("assignCharacter", () => {
       "Slough Boy",
       "The Intern",
     ];
-    const char = assignCharacter(baseStats);
+    const char = assignCharacter(baseStats, 750);
     expect(validNames).toContain(char.name);
   });
 });

@@ -394,7 +394,7 @@ export default function ShareCard({ character, stats, elo }: Props) {
         {/* Carousel ring */}
         <div
           className="relative w-full max-w-[320px] md:max-w-[360px] mx-auto mb-4"
-          style={{ perspective: "1200px", height: "min(55vh, 480px)" }}
+          style={{ perspective: "1200px", height: "clamp(400px, 65vh, 580px)" }}
           onTouchStart={(e: TouchEvent<HTMLDivElement>) => {
             carouselTouchStartX.current = e.touches[0].clientX;
           }}
@@ -421,7 +421,7 @@ export default function ShareCard({ character, stats, elo }: Props) {
         </div>
 
         {/* Navigation — below cards */}
-        <div className="relative z-10 flex items-center gap-4 mt-6">
+        <div className="relative z-10 flex items-center gap-4 mt-2">
           <button
             onClick={() => setActiveIdx((i) => (i - 1 + TOTAL) % TOTAL)}
             className="w-8 h-8 rounded-full border border-on-surface/10 flex items-center justify-center text-on-surface/40 hover:text-on-surface hover:border-on-surface/30 transition-all"

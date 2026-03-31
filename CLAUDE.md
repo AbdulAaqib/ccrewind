@@ -32,7 +32,7 @@ src/
       PowerScore.tsx      - Animated counter, breakdown bars
       ShareCard.tsx       - 3D carousel of character + 5 stats card variants, download/share buttons
       StatsCard.tsx       - 5 stats card variants (dev terminal, receipt, token report, session log, model card)
-      CreditsPage.tsx     - Cinematic credits page with team LinkedIn/GitHub links
+      CreditsPage.tsx     - Credits page with polaroid photo wall, team links, click-to-fullscreen lightbox
   lib/
     parser.ts             - Parses raw ~/.claude folder (stats-cache.json, history.jsonl, session JSONLs)
     stats.ts              - Computes all slide metrics from parsed data (incl. RSI clustering, username extraction)

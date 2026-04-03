@@ -62,6 +62,65 @@ Max                1000pts
 
 ---
 
+## /ccrewind — Terminal report
+
+A terminal stats report that runs directly in your Claude Code session via a slash command. No browser needed.
+
+```
+┌──────────────────────────────────────────────────┐
+│             ◆ CC REWIND ◆ REPORT                 │
+│                ccrewind.com                      │
+└──────────────────────────────────────────────────┘
+
+  COST & MODELS
+  Total spend: $47.23
+  claude-sonnet-4-5  ████████████████░░░░  77%  $36.41
+  claude-opus-4-5    ████░░░░░░░░░░░░░░░░  18%  $8.61
+
+  TOP PROJECTS
+  ccrewind           ██████████████░░░░  $18.40
+  ai-side-project    █████████░░░░░░░░░  $11.20
+
+  ...character reveal, streak calendar, Claude Elo...
+```
+
+### Install
+
+```bash
+npx ccrewind --setup
+```
+
+This copies the report script to `~/.local/share/ccrewind/` and registers two Claude Code slash commands. After setup:
+
+| Command | What it does |
+|---------|-------------|
+| `/ccrewind` | Runs the terminal stats report inline |
+| `/ccrewind-ui` | Starts the web UI with `~/.claude` auto-detected (requires local repo clone) |
+
+Or run without installing:
+
+```bash
+npx ccrewind          # terminal report
+npx ccrewind --gui    # open web UI (requires local repo clone)
+```
+
+### What it shows
+
+| Section | Content |
+|---------|---------|
+| Cost & Models | Total spend, per-model breakdown with cost |
+| Top Projects | Top 5 repos by estimated cost |
+| Token Usage | Input / Output / Cache Read / Cache Write with bars |
+| Top Tools | Most-used Claude tools |
+| Activity by Hour | 24-hour sparkline, peak hour callout |
+| Streak | 7×7 calendar grid, longest + current streak |
+| Birthday | First session date |
+| Character | Your archetype, one-liner, Claude Elo |
+
+All data read from `~/.claude` — nothing leaves your machine.
+
+---
+
 ## How it works
 
 ### Data flow
@@ -143,7 +202,21 @@ The share flow generates a compact URL (`/share?d=...`) encoding 13 dot-separate
 
 ## Getting started
 
-### Option 1 — Run locally (recommended for privacy)
+### Option 1 — Terminal report (fastest)
+
+```bash
+npx ccrewind
+```
+
+Runs immediately. No browser, no install. Add `--setup` to also register the `/ccrewind` Claude Code slash command:
+
+```bash
+npx ccrewind --setup
+```
+
+After setup, type `/ccrewind` inside any Claude Code session.
+
+### Option 2 — Run locally (recommended for privacy)
 
 ```bash
 git clone https://github.com/Junaid2005/ccrewind
@@ -154,7 +227,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). Your `~/.claude` folder is **auto-detected** — no upload needed. Just click **Use your local data** and you're in.
 
-### Option 2 — Use the live site
+### Option 3 — Use the live site
 
 Go to [ccrewind.com](https://ccrewind.com) and drop your `~/.claude` folder via the file picker, or click **Try Demo**.
 
@@ -192,10 +265,13 @@ push or PR to main
 │  ESLint          code quality              │
 │      │                                     │
 │      ▼                                     │
-│  Jest            49 unit tests             │
+│  Jest            unit tests                │
 │      │                                     │
 │      ▼                                     │
 │  next build      type check + prod build   │
+│      │                                     │
+│      ▼                                     │
+│  esbuild         build:tui npm bundle      │
 │                                            │
 │  Any failure blocks merge.                 │
 └────────────────────────────────────────────┘
@@ -217,6 +293,7 @@ git push v* tag
 │                                            │
 │  (same checks as CI)                       │
 │  Prettier → ESLint → Jest → next build     │
+│      → build:tui                           │
 │      │                                     │
 │      ▼                                     │
 │  GitHub Release created                    │
@@ -234,7 +311,7 @@ Releases: [github.com/Junaid2005/ccrewind/releases](https://github.com/Junaid200
 
 ### Tests
 
-49 tests across 4 suites:
+Tests across 4 suites:
 
 ```
 __tests__/
@@ -250,6 +327,8 @@ npm run lint          # ESLint
 npm run format        # Prettier (auto-fix)
 npm run format:check  # Prettier (CI mode)
 npm run build         # type check + production build
+npm run build:tui     # bundle terminal CLI to dist/ccrewind-tui.mjs
+npm run setup:command # install /ccrewind slash command from local build
 ```
 
 ### Observability
@@ -259,7 +338,7 @@ We track what matters at the build and deploy layer - not at runtime.
 | Signal | Where |
 |--------|-------|
 | Build status | GitHub Actions - every PR gets a pass/fail |
-| Test results | Jest - 49 assertions, printed in CI logs |
+| Test results | Jest - unit tests printed in CI logs |
 | Type errors | TypeScript strict mode - build fails on any type error |
 | Format drift | Prettier check in CI - consistent style enforced across all contributors |
 | Release changelog | Auto-generated from commits on every `v*` tag |
@@ -287,28 +366,18 @@ It runs entirely in the browser. Zero backend, zero telemetry, zero infrastructu
 
 This was version one. The fun version. The "what can you even do with this data" version.
 
-The natural next step is cost. Right now we show token counts - input, output, cache. What we don't show yet is what those tokens *cost*. Anthropic publishes per-model pricing, and every session file has the model name and exact token counts. The math is straightforward:
-
-```
-cost = (input_tokens × input_price) + (output_tokens × output_price)
-     + (cache_read_tokens × cache_read_price)
-     + (cache_creation_tokens × cache_creation_price)
-```
-
-With that, Claude Code Rewind becomes something closer to a spending dashboard - not just "you used 500M tokens" but "you spent £47 on ccrewind, £23 on your AI side project, £12 on university work." Per project, per week, per model. The data is all there. Nobody has surfaced it yet.
+**What's already shipped:** The terminal CLI (`npx ccrewind`) now shows cost per project and cost per model — not just token counts but actual spend in dollars. The data is all there in `~/.claude`, and we surface it: "you spent $47 on ccrewind, $23 on your AI side project, $12 on university work."
 
 **Planned extensions:**
 
 | Feature | What it enables |
 |---------|-----------------|
-| Cost per project | See which repos are burning the most budget |
-| Cost per model | See what Opus vs Sonnet actually costs you in practice |
+| `/ccrewind-ui` slash command | Open ccrewind.com pre-loaded with your data from Claude Code |
 | Weekly/monthly spend trends | Identify your most expensive sessions |
-| Cost efficiency score | Tokens per useful output - are you getting value? |
+| Cost efficiency score | Tokens per useful output — are you getting value? |
 | Team dashboards | Aggregate across multiple `~/.claude` exports (enterprise) |
 | Budget alerts | Warn when a project exceeds a token or cost threshold |
-
-The architecture is already there. The parser reads all the right fields. Adding cost is a config object of model prices and a multiplier at compute time - no new data sources needed.
+| GIF integration | Walid's mascot animations wired into every slide |
 
 For enterprise customers who *do* have API access to usage data, the same frontend could be powered by a real-time backend instead of a folder drop. The visualisation layer doesn't change. The data pipeline does.
 

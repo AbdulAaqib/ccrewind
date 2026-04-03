@@ -44,6 +44,19 @@ src/
     demo.ts               - Deterministic demo data generator (seeded PRNG, 45 days, 187 sessions)
   types/
     index.ts              - All TypeScript interfaces
+
+scripts/
+  ccrewind-tui.ts         - Terminal CLI entry point (bundled to dist/ via esbuild)
+                            Sections: cost+models, top projects, tokens, top tools,
+                            activity by hour, streak calendar, birthday, character reveal
+                            --setup flag copies self to ~/.local/share/ccrewind/ and
+                            registers /ccrewind and /ccrewind-ui slash commands
+                            --gui flag starts next dev + opens browser (dev/repo-only;
+                              detects repo by checking for package.json next to dist/)
+
+dist/                     - esbuild output (gitignored, published to npm via "files" field)
+  ccrewind-tui.mjs        - Self-contained ESM bundle with #!/usr/bin/env node shebang
+                            Used as npm bin entry: `npx ccrewind` or `npx ccrewind --setup`
 ```
 
 ### Slide Flow (14 slides + reveal + dashboard)
@@ -95,11 +108,15 @@ Upload screen includes hidden folder visibility instructions per OS (macOS: Cmd+
 - **Claude Elo** - 9 components, max 1000. Precision, Depth, Consistency, Loyalty, Completion, Velocity, Breadth, Night Owl (easter egg), Streak.
 
 ### DevOps
-- CI: `.github/workflows/ci.yml` - runs on every push/PR to main: Prettier → Lint → Test → Build
+- CI: `.github/workflows/ci.yml` - runs on every push/PR to main: Prettier → Lint → Test → Build → Build TUI
 - Release: `.github/workflows/release.yml` - runs on `v*` tags: same checks → creates GitHub Release with auto-generated changelog
-- Tests: 49 Jest tests across `__tests__/` (scoring, archetypes, narratives, stats)
+- Tests: Jest tests across `__tests__/` (scoring, archetypes, narratives, stats)
 - Formatting: Prettier with `.prettierrc`, `npm run format` to fix, `npm run format:check` for CI
 - Linting: ESLint via `eslint-config-next`
+- npm package: published as `ccrewind`, bin entry `ccrewind` → `dist/ccrewind-tui.mjs`
+  - `npm run build:tui` — esbuild bundle (runs automatically via `prepublishOnly`)
+  - `npm run setup:command` — install /ccrewind slash command from local build
+  - `"files": ["dist/"]` in package.json overrides .gitignore so dist/ is included in npm publish
 
 ### Project name normalisation (important)
 history.jsonl stores project as real paths: `/home/user/dev/project`

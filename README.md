@@ -279,9 +279,15 @@ push or PR to main
 
 ### Release pipeline
 
+Versioning convention:
+
+1. Bump `package.json` → `"version": "X.Y.Z"` manually.
+2. Commit: `chore: bump version to X.Y.Z`
+3. Tag and push:
+
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag vX.Y.Z
+git push origin vX.Y.Z
 ```
 
 ```
@@ -301,11 +307,16 @@ git push v* tag
 │  marked as Latest                          │
 │      │                                     │
 │      ▼                                     │
+│  npm publish (auto, via NPM_TOKEN secret)  │
+│      │                                     │
+│      ▼                                     │
 │  Vercel deploys automatically              │
 │                                            │
 │  Release blocked if any check fails.       │
 └────────────────────────────────────────────┘
 ```
+
+To set up npm auto-publish on a fork: add an `NPM_TOKEN` secret under **Settings → Secrets and variables → Actions**.
 
 Releases: [github.com/Junaid2005/ccrewind/releases](https://github.com/Junaid2005/ccrewind/releases)
 

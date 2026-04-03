@@ -1,8 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import UploadScreen from "@/components/upload/UploadScreen";
+import UploadScreenV1 from "@/components/upload/UploadScreenV1";
+import UploadScreenV2 from "@/components/upload/UploadScreenV2";
+import UploadScreenV3 from "@/components/upload/UploadScreenV3";
+import UploadScreenV4 from "@/components/upload/UploadScreenV4";
+import UploadScreenV5 from "@/components/upload/UploadScreenV5";
 import SlideContainer from "@/components/slides/SlideContainer";
 import GraveyardShift from "@/components/slides/GraveyardShift";
 import Delegator from "@/components/slides/Delegator";
@@ -26,6 +31,26 @@ import { assignCharacter } from "@/lib/archetypes";
 import { computeElo } from "@/lib/scoring";
 
 type AppPhase = "upload" | "slides" | "reveal";
+
+function UploadVariant({ onDataParsed }: { onDataParsed: (data: ParsedData) => void }) {
+  const searchParams = useSearchParams();
+  const v = searchParams.get("v");
+
+  switch (v) {
+    case "1":
+      return <UploadScreenV1 onDataParsed={onDataParsed} />;
+    case "2":
+      return <UploadScreenV2 onDataParsed={onDataParsed} />;
+    case "3":
+      return <UploadScreenV3 onDataParsed={onDataParsed} />;
+    case "4":
+      return <UploadScreenV4 onDataParsed={onDataParsed} />;
+    case "5":
+      return <UploadScreenV5 onDataParsed={onDataParsed} />;
+    default:
+      return <UploadScreenV3 onDataParsed={onDataParsed} />;
+  }
+}
 
 export default function Home() {
   const [phase, setPhase] = useState<AppPhase>("upload");
@@ -60,7 +85,9 @@ export default function Home() {
       <AnimatePresence mode="wait">
         {phase === "upload" && (
           <motion.div key="upload" exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.3 }}>
-            <UploadScreen onDataParsed={handleDataParsed} />
+            <Suspense fallback={<UploadScreenV3 onDataParsed={handleDataParsed} />}>
+              <UploadVariant onDataParsed={handleDataParsed} />
+            </Suspense>
           </motion.div>
         )}
 

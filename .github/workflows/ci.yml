@@ -30,3 +30,6 @@ jobs:
 
       - name: Type check & Build
         run: npm run build
+
+      - name: Build TUI
+        run: npm run build:tui

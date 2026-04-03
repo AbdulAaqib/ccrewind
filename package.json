@@ -1,8 +1,13 @@
 {
   "name": "ccrewind",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Spotify Wrapped for your Claude Code usage — terminal report + Claude Code slash command",
+  "bin": {
+    "ccrewind": "dist/ccrewind-tui.mjs"
+  },
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,7 +15,10 @@
     "lint": "eslint src/",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\"",
-    "test": "jest"
+    "test": "jest",
+    "build:tui": "esbuild scripts/ccrewind-tui.ts --bundle --platform=node --format=esm --outfile=dist/ccrewind-tui.mjs --alias:@=./src --banner:js='#!/usr/bin/env node'",
+    "setup:command": "node dist/ccrewind-tui.mjs --setup",
+    "prepublishOnly": "npm run build:tui"
   },
   "repository": {
     "type": "git",
@@ -42,6 +50,7 @@
   "devDependencies": {
     "@types/d3": "^7.4.3",
     "@types/jest": "^30.0.0",
+    "esbuild": "^0.28.0",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.1",
     "jest": "^30.3.0",

@@ -201,14 +201,19 @@ function TabContentNPM({ active }: { active: boolean }) {
         )}
         {lines >= 5 && <p className="text-on-surface/40 mt-3 italic">→ ccrewind.com for the full story</p>}
       </div>
-      <div className="mt-4 text-right border-t border-on-surface/10 pt-3">
-        <a
-          href="https://www.npmjs.com/package/ccrewind"
-          target="_blank"
-          rel="noreferrer"
-          className="font-label text-primary/80 hover:text-primary text-[10px] uppercase tracking-wider hover:underline transition-colors"
-        >
-          View on npm →
+      <div className="mt-4 border-t border-on-surface/10 pt-3 flex items-center justify-end gap-2">
+        <a href="https://www.npmjs.com/package/ccrewind" target="_blank" rel="noreferrer">
+          <img
+            src="https://img.shields.io/npm/v/ccrewind?style=flat-square&color=ff6b35&labelColor=1a1a1a&label=npm"
+            alt="npm version"
+          />
+        </a>
+        <a href="https://badge.socket.dev/npm/package/ccrewind/1.0.0" target="_blank" rel="noreferrer">
+          <img
+            src="https://badge.socket.dev/npm/package/ccrewind/1.0.0"
+            alt="Socket Badge"
+            style={{ height: "20px" }}
+          />
         </a>
       </div>
     </div>
@@ -223,13 +228,21 @@ function TabContentClaude() {
     setTimeout(() => setCopied(false), 1500);
   };
   return (
-    <div className="w-full mt-2">
+    <div className="w-full">
       <h3 className="font-headline font-bold text-on-surface mb-3 text-lg">Run inside Claude Code</h3>
-      <div className="relative bg-[#1e1e1e] border border-on-surface/10 p-3 rounded-xl flex items-center justify-between mb-4 shadow-inner">
-        <code className="font-mono text-[13px] text-primary">npx ccrewind --setup</code>
+      <div className="relative overflow-hidden bg-[#0d0d0d] border border-white/10 rounded-xl px-4 py-3 flex items-center justify-between gap-3 shadow-lg mb-4">
+        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary rounded-full shrink-0" />
+        <code className="flex flex-col gap-0.5 overflow-hidden min-w-0">
+          <span className="font-mono text-sm text-primary font-medium tracking-wide whitespace-nowrap">
+            npx ccrewind --setup
+          </span>
+          <span className="font-mono text-xs whitespace-nowrap" style={{ color: "rgba(39,201,63,0.45)" }}>
+            # registers slash commands
+          </span>
+        </code>
         <button
           onClick={copyCmd}
-          className="text-on-surface/40 hover:text-primary transition-colors p-1 bg-surface-container-high rounded-md"
+          className="p-1.5 rounded-md bg-white/5 hover:bg-white/10 text-white/40 hover:text-white/80 transition-colors shrink-0"
         >
           {copied ? (
             <svg
@@ -262,22 +275,13 @@ function TabContentClaude() {
         </button>
       </div>
       <div className="flex gap-2">
-        <div className="bg-surface-container-low border border-on-surface/5 p-3 rounded-xl flex-1 text-center font-mono text-[11px] text-on-surface">
+        <div className="bg-surface-container-low border border-on-surface/5 p-3 rounded-xl flex-1 flex items-center justify-center font-mono text-[11px] text-on-surface">
           <span className="text-primary/90">/ccrewind</span>
-          <span className="block mt-1.5 font-body text-[10px] text-on-surface/40 leading-snug">
-            Terminal stats report
-          </span>
         </div>
-        <div className="bg-surface-container-low border border-on-surface/5 p-3 rounded-xl flex-1 text-center font-mono text-[11px] text-on-surface">
+        <div className="bg-surface-container-low border border-on-surface/5 p-3 rounded-xl flex-1 flex items-center justify-center font-mono text-[11px] text-on-surface">
           <span className="text-primary/90">/ccrewind-ui</span>
-          <span className="block mt-1.5 font-body text-[10px] text-on-surface/40 leading-snug">
-            Opens web UI with auto-detected data
-          </span>
         </div>
       </div>
-      <p className="font-label text-[9px] text-on-surface/30 mt-4 text-center uppercase tracking-widest">
-        Registers slash commands in your Claude Code session
-      </p>
     </div>
   );
 }
@@ -292,6 +296,7 @@ export default function UploadScreenV3({ onDataParsed }: UploadScreenProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [activeTab, setActiveTab] = useState<"npm" | "web" | "claude">("web");
+  const [everExpandedNpm, setEverExpandedNpm] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
   useEffect(() => {
@@ -419,7 +424,7 @@ export default function UploadScreenV3({ onDataParsed }: UploadScreenProps) {
         </button>
       )}
 
-      <div className="flex gap-2 relative">
+      <div className="flex gap-2">
         {localAvailable && (
           <button
             onClick={() => inputRef.current?.click()}
@@ -428,29 +433,39 @@ export default function UploadScreenV3({ onDataParsed }: UploadScreenProps) {
             Upload folder
           </button>
         )}
-        <button
-          onClick={handleDemo}
-          className="flex-1 bg-surface-container-low hover:bg-surface-container border border-on-surface/8 text-on-surface/60 hover:text-on-surface rounded-xl px-4 py-3 font-label text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
-        >
-          Try demo
-        </button>
+        <div className="relative flex-1">
+          <button
+            onClick={handleDemo}
+            className="w-full bg-surface-container-low hover:bg-surface-container border border-on-surface/8 text-on-surface/60 hover:text-on-surface rounded-xl px-4 py-3 font-label text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
+          >
+            Try demo
+          </button>
 
-        <AnimatePresence>
-          {!hasInteracted && (
-            <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 0.7, x: 0, y: [0, -6, 0] }}
-              exit={{ opacity: 0 }}
-              transition={{
-                opacity: { duration: 0.2 },
-                y: { duration: 1.2, repeat: Infinity, ease: "easeInOut" },
-              }}
-              className="absolute -right-4 -top-4 pointer-events-none text-xl"
-            >
-              👆
-            </motion.div>
-          )}
-        </AnimatePresence>
+          <AnimatePresence>
+            {!hasInteracted && (
+              <motion.div
+                initial={{ opacity: 0, rotate: 0 }}
+                animate={{ opacity: 1, x: [0, -5, 0], y: [0, -5, 0], rotate: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{
+                  opacity: { duration: 0.2 },
+                  x: { duration: 1.2, repeat: Infinity, ease: "easeInOut" },
+                  y: { duration: 1.2, repeat: Infinity, ease: "easeInOut" },
+                }}
+                className="absolute right-2 bottom-1 pointer-events-none text-xl"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="white" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M2 2L2 16L6 12L9 18L11 17L8 11L14 11L2 2Z"
+                    stroke="black"
+                    strokeWidth="1"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       <div className="flex items-center justify-between pt-2">
@@ -596,12 +611,18 @@ export default function UploadScreenV3({ onDataParsed }: UploadScreenProps) {
                 </p>
               </motion.div>
 
-              <div className="w-full max-w-md rounded-2xl overflow-hidden border border-on-surface/10 bg-[rgba(0,0,0,0.25)] flex flex-col">
+              <motion.div
+                layout
+                className="w-full max-w-md rounded-2xl overflow-hidden border border-on-surface/10 bg-[rgba(0,0,0,0.25)] flex flex-col"
+              >
                 <div className="flex border-b border-on-surface/10 bg-black/20">
                   {(["npm", "web", "claude"] as const).map((t, idx) => (
                     <button
                       key={t}
-                      onClick={() => setActiveTab(t)}
+                      onClick={() => {
+                        setActiveTab(t);
+                        if (t === "npm") setEverExpandedNpm(true);
+                      }}
                       className={`relative flex-1 py-3.5 px-3 flex items-center justify-center gap-2 font-mono text-[11px] transition-colors ${idx !== 0 ? "border-l border-on-surface/10" : ""} ${activeTab === t ? "bg-white/5" : "hover:bg-white/5"}`}
                       style={{ color: activeTab === t ? "#faf9f5" : "rgba(250,249,245,0.5)" }}
                     >
@@ -656,12 +677,49 @@ export default function UploadScreenV3({ onDataParsed }: UploadScreenProps) {
                     </button>
                   ))}
                 </div>
-                <div className="p-5 h-[320px] overflow-hidden">
-                  {activeTab === "npm" && <TabContentNPM active={true} />}
-                  {activeTab === "web" && <TabContentWeb />}
-                  {activeTab === "claude" && <TabContentClaude />}
-                </div>
-              </div>
+                <motion.div
+                  className="p-5 flex flex-col"
+                  style={{ minHeight: activeTab === "npm" || everExpandedNpm ? "280px" : undefined }}
+                  layout
+                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <AnimatePresence mode="wait">
+                    {activeTab === "npm" && (
+                      <motion.div
+                        key="npm"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                      >
+                        <TabContentNPM active={true} />
+                      </motion.div>
+                    )}
+                    {activeTab === "web" && (
+                      <motion.div
+                        key="web"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                      >
+                        <TabContentWeb />
+                      </motion.div>
+                    )}
+                    {activeTab === "claude" && (
+                      <motion.div
+                        key="claude"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                      >
+                        <TabContentClaude />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              </motion.div>
             </div>
 
             <motion.div

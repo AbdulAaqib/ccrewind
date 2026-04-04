@@ -8,6 +8,8 @@ Upload your `~/.claude` folder. Get a personalised story of your usage. Find out
 
 [![CI](https://github.com/Junaid2005/ccrewind/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Junaid2005/ccrewind/actions/workflows/ci.yml)
 [![Vercel](https://therealsujitk-vercel-badge.vercel.app/?app=ccrewind)](https://ccrewind.com)
+[![Socket Badge](https://badge.socket.dev/npm/package/ccrewind)](https://badge.socket.dev/npm/package/ccrewind)
+[![npm version](https://img.shields.io/npm/v/ccrewind?style=flat-square)](https://www.npmjs.com/package/ccrewind)
 
 ---
 
@@ -17,22 +19,22 @@ Claude Code Rewind analyses your local Claude Code history and turns it into a f
 
 ### The slides
 
-| # | Slide | What it shows |
-|---|-------|---------------|
-| 1 | Graveyard Shift | When you code - 24h radial clock heatmap |
-| 2 | The Delegator | How much you use agents - force-directed bubble chart |
-| 3 | Top Projects | Your top 3 repos by messages, tokens, sessions |
-| 4 | The Arsenal | Which tools Claude used most - animated bars |
-| 5 | Token Furnace | Total tokens consumed - canvas slot machine reveal |
-| 6 | Loyalty Test | Which model you stick to - racing bars |
-| 7 | Thinking Hours | How long Claude thought on your behalf - EKG brainwave |
-| 8 | Commit History | Project activity over time - GitHub-style heatmap |
-| 9 | Sharpshooter | Prompt length vs follow-ups - scatter quadrant |
-| 10 | The Streak | Consistency calendar |
-| 11 | Stop Reason | tool_use vs end_turn split |
-| 12 | Retry Spiral | How often you re-prompt - Archimedean spiral |
-| 13 | Power Score | Claude Elo out of 1000 |
-| 14 | Character Reveal | Your archetype - confetti, mascot, one-liner |
+| #   | Slide            | What it shows                                          |
+| --- | ---------------- | ------------------------------------------------------ |
+| 1   | Graveyard Shift  | When you code - 24h radial clock heatmap               |
+| 2   | The Delegator    | How much you use agents - force-directed bubble chart  |
+| 3   | Top Projects     | Your top 3 repos by messages, tokens, sessions         |
+| 4   | The Arsenal      | Which tools Claude used most - animated bars           |
+| 5   | Token Furnace    | Total tokens consumed - canvas slot machine reveal     |
+| 6   | Loyalty Test     | Which model you stick to - racing bars                 |
+| 7   | Thinking Hours   | How long Claude thought on your behalf - EKG brainwave |
+| 8   | Commit History   | Project activity over time - GitHub-style heatmap      |
+| 9   | Sharpshooter     | Prompt length vs follow-ups - scatter quadrant         |
+| 10  | The Streak       | Consistency calendar                                   |
+| 11  | Stop Reason      | tool_use vs end_turn split                             |
+| 12  | Retry Spiral     | How often you re-prompt - Archimedean spiral           |
+| 13  | Power Score      | Claude Elo out of 1000                                 |
+| 14  | Character Reveal | Your archetype - confetti, mascot, one-liner           |
 
 After the slides: a **ShareCard** carousel with 6 downloadable cards (character + 5 stats variants), a full-screen **Dashboard** with every stat in one screenshottable page, and a cinematic **Credits** page.
 
@@ -92,9 +94,9 @@ npx ccrewind --setup
 
 This copies the report script to `~/.local/share/ccrewind/` and registers two Claude Code slash commands. After setup:
 
-| Command | What it does |
-|---------|-------------|
-| `/ccrewind` | Runs the terminal stats report inline |
+| Command        | What it does                                                                 |
+| -------------- | ---------------------------------------------------------------------------- |
+| `/ccrewind`    | Runs the terminal stats report inline                                        |
 | `/ccrewind-ui` | Starts the web UI with `~/.claude` auto-detected (requires local repo clone) |
 
 Or run without installing:
@@ -106,16 +108,16 @@ npx ccrewind --gui    # open web UI (requires local repo clone)
 
 ### What it shows
 
-| Section | Content |
-|---------|---------|
-| Cost & Models | Total spend, per-model breakdown with cost |
-| Top Projects | Top 5 repos by estimated cost |
-| Token Usage | Input / Output / Cache Read / Cache Write with bars |
-| Top Tools | Most-used Claude tools |
-| Activity by Hour | 24-hour sparkline, peak hour callout |
-| Streak | 7×7 calendar grid, longest + current streak |
-| Birthday | First session date |
-| Character | Your archetype, one-liner, Claude Elo |
+| Section          | Content                                             |
+| ---------------- | --------------------------------------------------- |
+| Cost & Models    | Total spend, per-model breakdown with cost          |
+| Top Projects     | Top 5 repos by estimated cost                       |
+| Token Usage      | Input / Output / Cache Read / Cache Write with bars |
+| Top Tools        | Most-used Claude tools                              |
+| Activity by Hour | 24-hour sparkline, peak hour callout                |
+| Streak           | 7×7 calendar grid, longest + current streak         |
+| Birthday         | First session date                                  |
+| Character        | Your archetype, one-liner, Claude Elo               |
 
 All data read from `~/.claude` — nothing leaves your machine.
 
@@ -189,14 +191,14 @@ The share flow generates a compact URL (`/share?d=...`) encoding 13 dot-separate
 
 ### Tech stack
 
-| Layer | Tech |
-|-------|------|
-| Framework | Next.js 16, React 19, TypeScript |
-| Styling | Tailwind v4 with `@theme` tokens |
-| Animation | Framer Motion |
-| Charts | D3 (radial clock, bubbles, heatmaps, scatter, spiral) |
-| Canvas | Slot machine (TokenFurnace), EKG brainwave (ThinkingHours) |
-| Deploy | Vercel |
+| Layer     | Tech                                                       |
+| --------- | ---------------------------------------------------------- |
+| Framework | Next.js 16, React 19, TypeScript                           |
+| Styling   | Tailwind v4 with `@theme` tokens                           |
+| Animation | Framer Motion                                              |
+| Charts    | D3 (radial clock, bubbles, heatmaps, scatter, spiral)      |
+| Canvas    | Slot machine (TokenFurnace), EKG brainwave (ThinkingHours) |
+| Deploy    | Vercel                                                     |
 
 ---
 
@@ -233,11 +235,11 @@ Go to [ccrewind.com](https://ccrewind.com) and drop your `~/.claude` folder via 
 
 ### Finding your .claude folder (it's hidden)
 
-| OS | How to show hidden files |
-|----|--------------------------|
-| macOS | `Cmd + Shift + .` in the file picker |
-| Windows | View → Show → Hidden items |
-| Linux | `Ctrl + H` in file manager |
+| OS      | How to show hidden files             |
+| ------- | ------------------------------------ |
+| macOS   | `Cmd + Shift + .` in the file picker |
+| Windows | View → Show → Hidden items           |
+| Linux   | `Ctrl + H` in file manager           |
 
 Your folder is at `~/.claude` - e.g. `/Users/yourname/.claude` or `/home/yourname/.claude`.
 
@@ -279,9 +281,15 @@ push or PR to main
 
 ### Release pipeline
 
+Versioning convention:
+
+1. Bump `package.json` → `"version": "X.Y.Z"` manually.
+2. Commit: `chore: bump version to X.Y.Z`
+3. Tag and push:
+
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag vX.Y.Z
+git push origin vX.Y.Z
 ```
 
 ```
@@ -301,11 +309,16 @@ git push v* tag
 │  marked as Latest                          │
 │      │                                     │
 │      ▼                                     │
+│  npm publish (auto, via NPM_TOKEN secret)  │
+│      │                                     │
+│      ▼                                     │
 │  Vercel deploys automatically              │
 │                                            │
 │  Release blocked if any check fails.       │
 └────────────────────────────────────────────┘
 ```
+
+To set up npm auto-publish on a fork: add an `NPM_TOKEN` secret under **Settings → Secrets and variables → Actions**.
 
 Releases: [github.com/Junaid2005/ccrewind/releases](https://github.com/Junaid2005/ccrewind/releases)
 
@@ -335,14 +348,14 @@ npm run setup:command # install /ccrewind slash command from local build
 
 We track what matters at the build and deploy layer - not at runtime.
 
-| Signal | Where |
-|--------|-------|
-| Build status | GitHub Actions - every PR gets a pass/fail |
-| Test results | Jest - unit tests printed in CI logs |
-| Type errors | TypeScript strict mode - build fails on any type error |
-| Format drift | Prettier check in CI - consistent style enforced across all contributors |
-| Release changelog | Auto-generated from commits on every `v*` tag |
-| Deployment logs | Vercel dashboard - build output, edge runtime warnings, function logs per deployment |
+| Signal            | Where                                                                                |
+| ----------------- | ------------------------------------------------------------------------------------ |
+| Build status      | GitHub Actions - every PR gets a pass/fail                                           |
+| Test results      | Jest - unit tests printed in CI logs                                                 |
+| Type errors       | TypeScript strict mode - build fails on any type error                               |
+| Format drift      | Prettier check in CI - consistent style enforced across all contributors             |
+| Release changelog | Auto-generated from commits on every `v*` tag                                        |
+| Deployment logs   | Vercel dashboard - build output, edge runtime warnings, function logs per deployment |
 
 Zero runtime telemetry is collected. All user data stays in the browser. Observability is entirely at the build and deploy layer, not in the product.
 
@@ -358,7 +371,7 @@ Claude Code Rewind is a proof of concept that shows what is possible when you ac
 
 ### What we built
 
-A fun, story-driven experience. Spotify Wrapped for developers. The goal was to make people *feel* their data rather than read a table. Every metric has an archetype. Every stat has a one-liner. The charts are weird on purpose - radial clocks, Archimedean spirals, slot machines - because the default chart types are boring and the data deserves better.
+A fun, story-driven experience. Spotify Wrapped for developers. The goal was to make people _feel_ their data rather than read a table. Every metric has an archetype. Every stat has a one-liner. The charts are weird on purpose - radial clocks, Archimedean spirals, slot machines - because the default chart types are boring and the data deserves better.
 
 It runs entirely in the browser. Zero backend, zero telemetry, zero infrastructure costs. You drop a folder, you get a story.
 
@@ -370,26 +383,26 @@ This was version one. The fun version. The "what can you even do with this data"
 
 **Planned extensions:**
 
-| Feature | What it enables |
-|---------|-----------------|
+| Feature                      | What it enables                                              |
+| ---------------------------- | ------------------------------------------------------------ |
 | `/ccrewind-ui` slash command | Open ccrewind.com pre-loaded with your data from Claude Code |
-| Weekly/monthly spend trends | Identify your most expensive sessions |
-| Cost efficiency score | Tokens per useful output — are you getting value? |
-| Team dashboards | Aggregate across multiple `~/.claude` exports (enterprise) |
-| Budget alerts | Warn when a project exceeds a token or cost threshold |
-| GIF integration | Walid's mascot animations wired into every slide |
+| Weekly/monthly spend trends  | Identify your most expensive sessions                        |
+| Cost efficiency score        | Tokens per useful output — are you getting value?            |
+| Team dashboards              | Aggregate across multiple `~/.claude` exports (enterprise)   |
+| Budget alerts                | Warn when a project exceeds a token or cost threshold        |
+| GIF integration              | Walid's mascot animations wired into every slide             |
 
-For enterprise customers who *do* have API access to usage data, the same frontend could be powered by a real-time backend instead of a folder drop. The visualisation layer doesn't change. The data pipeline does.
+For enterprise customers who _do_ have API access to usage data, the same frontend could be powered by a real-time backend instead of a folder drop. The visualisation layer doesn't change. The data pipeline does.
 
 ---
 
 ## Contributors
 
-| Contributor | Role |
-|-------------|------|
-| [Junaid](https://github.com/Junaid2005) | Engineering, product, data pipeline |
-| [Abdul](https://github.com/AbdulAaqib) | Development, slides, product & vision |
-| [Walid](https://github.com/samouneh) | Design, mascot GIFs, character art |
+| Contributor                             | Role                                  |
+| --------------------------------------- | ------------------------------------- |
+| [Junaid](https://github.com/Junaid2005) | Engineering, product, data pipeline   |
+| [Abdul](https://github.com/AbdulAaqib)  | Development, slides, product & vision |
+| [Walid](https://github.com/samouneh)    | Design, mascot GIFs, character art    |
 
 ---
 

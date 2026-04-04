@@ -18,8 +18,6 @@ const LOADING_MESSAGES = [
   "Building your story...",
 ];
 
-const CLI_CMD = "git clone https://github.com/Junaid2005/ccrewind.git && cd ccrewind && npm i && npm run dev";
-
 /* ─── Stacked preview cards ─── */
 function PreviewCards() {
   return (
@@ -161,16 +159,223 @@ function PreviewCards() {
   );
 }
 
+function TabContentNPM({ active }: { active: boolean }) {
+  const [copied, setCopied] = useState(false);
+  const copyCmd = () => {
+    navigator.clipboard.writeText("npx ccrewind");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  const hourBars = [40, 30, 25, 20, 10, 10, 10, 15, 20, 30, 35, 45, 60, 70, 80, 95, 75, 30, 15, 50, 55, 65, 50, 45];
+
+  return (
+    <div className="w-full mt-2 mb-4">
+      <div className="bg-[#1e1e1e] border border-on-surface/10 rounded-xl p-4 w-full font-mono text-[11px] shadow-xl leading-relaxed">
+        <div className="flex items-center gap-1.5 mb-3 opacity-60">
+          <div className="w-2 h-2 rounded-full bg-[#ff5f56]"></div>
+          <div className="w-2 h-2 rounded-full bg-[#ffbd2e]"></div>
+          <div className="w-2 h-2 rounded-full bg-[#27c93f]"></div>
+        </div>
+
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-[13px] text-on-surface/70">
+            <span className="text-primary">$</span> npx ccrewind
+          </span>
+          <button
+            onClick={copyCmd}
+            className="p-1.5 rounded-md bg-white/5 hover:bg-white/10 text-white/40 hover:text-white/80 transition-colors shrink-0"
+          >
+            {copied ? (
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            ) : (
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+            )}
+          </button>
+        </div>
+
+        <p className="text-primary font-bold text-center text-[12px] tracking-wider mb-3">⟡ CC REWIND ⟡</p>
+
+        <div className="grid grid-cols-3 gap-2 mb-3">
+          <div className="border border-primary/20 rounded p-2 text-center">
+            <p className="text-primary font-bold text-[14px]">$361</p>
+            <p className="text-on-surface/25 text-[8px] uppercase tracking-wider mt-0.5">cost</p>
+          </div>
+          <div className="border border-primary/20 rounded p-2 text-center">
+            <p className="text-primary font-bold text-[14px]">585M</p>
+            <p className="text-on-surface/25 text-[8px] uppercase tracking-wider mt-0.5">tokens</p>
+          </div>
+          <div className="border border-primary/20 rounded p-2 text-center">
+            <p className="text-primary font-bold text-[14px]">8.4K</p>
+            <p className="text-on-surface/25 text-[8px] uppercase tracking-wider mt-0.5">messages</p>
+          </div>
+        </div>
+
+        <p className="text-on-surface/40 mb-2">
+          <span className="text-primary">───</span> ACTIVITY BY HOUR <span className="text-primary">───</span>
+        </p>
+        <div className="flex items-end gap-[2px] h-10 mb-1">
+          {hourBars.map((h, i) => (
+            <div
+              key={i}
+              className="flex-1 rounded-sm"
+              style={{
+                height: `${h}%`,
+                background: h >= 70 ? "#ff6b35" : h >= 40 ? "rgba(255,107,53,0.5)" : "rgba(255,107,53,0.2)",
+                opacity: active ? 1 : 0,
+                transition: `opacity 0.2s ease ${i * 0.02}s`,
+              }}
+            />
+          ))}
+        </div>
+        <p className="text-on-surface/25 text-[9px] mb-3">peak: 3pm (736 messages)</p>
+
+        <div className="border-t border-on-surface/10 pt-3 flex items-center justify-end gap-2">
+          <a href="https://www.npmjs.com/package/ccrewind" target="_blank" rel="noreferrer">
+            <img
+              src="https://img.shields.io/npm/v/ccrewind?style=flat-square&color=ff6b35&labelColor=1a1a1a&label=npm"
+              alt="npm version"
+              style={{ height: "20px" }}
+            />
+          </a>
+          <a href="https://badge.socket.dev/npm/package/ccrewind" target="_blank" rel="noreferrer">
+            <img src="https://badge.socket.dev/npm/package/ccrewind" alt="Socket Badge" style={{ height: "20px" }} />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TabContentClaude() {
+  const [copied, setCopied] = useState(false);
+  const copyCmd = () => {
+    navigator.clipboard.writeText("npx ccrewind --setup");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+  return (
+    <div className="w-full mb-4">
+      <div className="relative overflow-hidden bg-[#0d0d0d] border border-white/10 rounded-xl px-4 py-3 flex items-center justify-between gap-3 shadow-lg mb-3">
+        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary rounded-full shrink-0" />
+        <code className="flex flex-col gap-0.5 overflow-hidden min-w-0">
+          <span className="font-mono text-sm text-primary font-medium tracking-wide whitespace-nowrap">
+            npx ccrewind --setup
+          </span>
+          <span className="font-mono text-xs whitespace-nowrap" style={{ color: "rgba(39,201,63,0.65)" }}>
+            # sets up ccrewind as a native slash command
+          </span>
+        </code>
+        <button
+          onClick={copyCmd}
+          className="p-1.5 rounded-md bg-white/5 hover:bg-white/10 text-white/40 hover:text-white/80 transition-colors shrink-0"
+        >
+          {copied ? (
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          ) : (
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+          )}
+        </button>
+      </div>
+      <div className="flex gap-2">
+        <div className="bg-surface-container-low border border-on-surface/5 p-3 rounded-xl flex-1 flex flex-col items-center justify-center gap-1 font-mono text-[11px] text-on-surface">
+          <span className="text-primary/90">/ccrewind</span>
+          <span className="text-on-surface/35 text-[9px]">inline report</span>
+        </div>
+        <div className="bg-surface-container-low border border-on-surface/5 p-3 rounded-xl flex-1 flex flex-col items-center justify-center gap-1 font-mono text-[11px] text-on-surface">
+          <span className="text-primary/90">/ccrewind-ui</span>
+          <span className="text-on-surface/35 text-[9px]">open web UI</span>
+        </div>
+      </div>
+      <p className="text-on-surface/35 text-[11px] mt-3 text-center">Run these directly inside Claude Code!</p>
+    </div>
+  );
+}
+
 export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState("Reading your .claude folder...");
+  const [loadingText, setLoadingText] = useState(LOADING_MESSAGES[0]);
   const [error, setError] = useState<string | null>(null);
   const [localAvailable, setLocalAvailable] = useState(false);
   const [showHiddenHelp, setShowHiddenHelp] = useState(false);
-  const [showRunLocally, setShowRunLocally] = useState(false);
-  const [copied, setCopied] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const [activeTab, setActiveTab] = useState<"npm" | "web" | "claude">("npm");
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [cycleKey, setCycleKey] = useState(0);
+  const [cycleActive, setCycleActive] = useState(true);
+  const TABS = ["npm", "web", "claude"] as const;
+  const CYCLE_MS = 6000;
+
+  useEffect(() => {
+    if (!cycleActive) return;
+    const timer = setInterval(() => {
+      setActiveTab((prev) => {
+        const idx = TABS.indexOf(prev);
+        return TABS[(idx + 1) % TABS.length];
+      });
+      setCycleKey((k) => k + 1);
+    }, CYCLE_MS);
+    return () => clearInterval(timer);
+  }, [cycleKey, cycleActive]);
+
+  useEffect(() => {
+    const stop = () => setCycleActive(false);
+    window.addEventListener("click", stop, { once: true });
+    return () => window.removeEventListener("click", stop);
+  }, []);
+
+  const handleTabClick = (t: "npm" | "web" | "claude") => {
+    setActiveTab(t);
+    setCycleActive(false);
+  };
 
   useEffect(() => {
     fetch("/api/local-data/status")
@@ -191,6 +396,7 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
   };
 
   const handleLocalData = useCallback(async () => {
+    setHasInteracted(true);
     setIsLoading(true);
     setError(null);
     setLoadingText(LOADING_MESSAGES[0]);
@@ -215,6 +421,7 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
 
   const handleFiles = useCallback(
     async (files: FileList) => {
+      setHasInteracted(true);
       setIsLoading(true);
       setError(null);
       setLoadingText(LOADING_MESSAGES[0]);
@@ -238,6 +445,7 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
   );
 
   const handleDemo = useCallback(() => {
+    setHasInteracted(true);
     setIsLoading(true);
     setLoadingText("Loading demo data...");
     fetch("/demo-data.json")
@@ -275,27 +483,156 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
     if (e.target.files && e.target.files.length > 0) handleFiles(e.target.files);
   };
 
+  const TabContentWeb = () => (
+    <div className="flex flex-col gap-3 w-full mt-2 mb-6">
+      {localAvailable ? (
+        <button
+          onClick={handleLocalData}
+          className="w-full bg-primary hover:bg-primary/90 text-on-primary rounded-2xl px-8 py-4 font-headline font-bold text-base transition-all duration-200 hover:scale-[1.02] active:scale-95 shadow-lg shadow-primary/20 text-left"
+        >
+          Use your local data
+          <p className="text-on-primary/55 text-[11px] font-normal mt-0.5">~/.claude auto-detected on this machine</p>
+        </button>
+      ) : (
+        <button
+          onClick={() => inputRef.current?.click()}
+          className="w-full bg-primary hover:bg-primary/90 text-on-primary rounded-2xl px-8 py-4 font-headline font-bold text-base transition-all duration-200 hover:scale-[1.02] active:scale-95 shadow-lg shadow-primary/20"
+        >
+          Upload ~/.claude folder
+        </button>
+      )}
+
+      <div className="flex gap-2">
+        {localAvailable && (
+          <button
+            onClick={() => inputRef.current?.click()}
+            className="flex-1 bg-surface-container-low hover:bg-surface-container border border-on-surface/8 text-on-surface/60 hover:text-on-surface rounded-xl px-4 py-3 font-label text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
+          >
+            Upload folder
+          </button>
+        )}
+        <div className="relative flex-1">
+          <button
+            onClick={handleDemo}
+            className="w-full bg-surface-container-low hover:bg-surface-container border border-on-surface/8 text-on-surface/60 hover:text-on-surface rounded-xl px-4 py-3 font-label text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
+          >
+            Try demo
+          </button>
+
+          <AnimatePresence>
+            {!hasInteracted && (
+              <motion.div
+                initial={{ opacity: 0, rotate: 0 }}
+                animate={{ opacity: 1, x: [0, -5, 0], y: [0, -5, 0], rotate: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{
+                  opacity: { duration: 0.2 },
+                  x: { duration: 1.2, repeat: Infinity, ease: "easeInOut" },
+                  y: { duration: 1.2, repeat: Infinity, ease: "easeInOut" },
+                }}
+                className="absolute right-4 bottom-[-4px] pointer-events-none text-xl"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="white" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M2 2L2 16L6 12L9 18L11 17L8 11L14 11L2 2Z"
+                    stroke="black"
+                    strokeWidth="1"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between pt-2">
+        <span className="inline-flex items-center gap-1.5 text-on-surface/25">
+          <svg
+            width="11"
+            height="11"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <span className="font-label text-[9px] font-bold tracking-widest uppercase">Your data stays local</span>
+        </span>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowHiddenHelp(!showHiddenHelp)}
+            className="group cursor-pointer font-label text-[9px] font-bold tracking-wider uppercase text-on-surface/35 hover:text-primary transition-colors flex items-center gap-1"
+          >
+            <span className="underline underline-offset-2 decoration-on-surface/20 group-hover:decoration-primary transition-colors">
+              Can&apos;t see .claude?
+            </span>
+            <motion.span
+              animate={{ rotate: showHiddenHelp ? 180 : 0 }}
+              transition={{ duration: 0.2 }}
+              className="opacity-50 group-hover:opacity-100"
+            >
+              ↓
+            </motion.span>
+          </button>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {showHiddenHelp && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden mt-1"
+          >
+            <div className="bg-surface-container-low/80 border border-on-surface/6 rounded-xl px-4 py-3 space-y-2">
+              <p className="font-label text-[9px] font-bold tracking-[0.2em] uppercase text-on-surface/30 mb-2">
+                Show hidden files first:
+              </p>
+              {[
+                { os: "macOS", hint: "Cmd + Shift + .", note: "in Finder" },
+                { os: "Windows", hint: "View → Show → Hidden items", note: "" },
+                { os: "Linux", hint: "Ctrl + H", note: "in file manager" },
+              ].map(({ os, hint, note }) => (
+                <div key={os} className="flex items-center gap-2">
+                  <span className="font-label text-[9px] font-bold text-primary/70 w-12">{os}</span>
+                  <code className="font-mono text-[10px] text-on-surface/50 bg-surface-container-high/50 px-2 py-0.5 rounded">
+                    {hint}
+                  </code>
+                  {note && <span className="font-label text-[9px] text-on-surface/25">{note}</span>}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden"
+      className="min-h-screen flex flex-col items-center px-6 pt-20 pb-12 relative overflow-hidden"
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
     >
-      {/* Background */}
       <div className="fixed inset-0 grain-texture" />
       <div className="absolute top-1/3 -left-32 w-[500px] h-[500px] bg-primary/8 rounded-full blur-[160px] pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[130px] pointer-events-none" />
 
       <AnimatePresence mode="wait">
         {isLoading ? (
-          /* ── Loading state ── */
           <motion.div
             key="loading"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="flex flex-col items-center gap-8 relative z-10"
+            className="flex-1 flex flex-col items-center justify-center gap-8 relative z-10"
           >
             <div className="relative w-24 h-24">
               <motion.div
@@ -327,277 +664,173 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
             </AnimatePresence>
           </motion.div>
         ) : (
-          /* ── Upload state ── */
           <motion.div
             key="upload"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5 }}
-            className="relative z-10 w-full max-w-5xl flex flex-col md:flex-row items-center gap-12 md:gap-16"
+            className="relative z-10 w-full max-w-5xl"
           >
-            {/* ── Left: hero + actions ── */}
-            <div className="flex-1 flex flex-col items-center md:items-start gap-8 max-w-lg">
-              {/* Headline */}
+            <div className="flex flex-col items-center md:items-start w-full max-w-lg">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                className="text-center md:text-left"
+                className="text-center md:text-left mb-8 w-full"
               >
-                <motion.img
-                  src="/mascots/power-score.png"
-                  alt="Claude mascot"
-                  initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.1, type: "spring", stiffness: 180, damping: 14 }}
-                  className="w-12 h-12 rounded-xl object-cover mb-5"
-                />
-                <h1
-                  className="font-headline font-extrabold tracking-tighter leading-[0.88]"
-                  style={{ fontSize: "clamp(3.5rem, 8vw, 6rem)" }}
-                >
+                <h1 className="font-headline font-extrabold tracking-tighter leading-[0.88] text-[clamp(3rem,6vw,5.5rem)]">
                   <span className="text-on-surface">Claude Code</span>
                   <br />
                   <span className="text-primary text-glow">Rewind.</span>
                 </h1>
-                <p className="font-body text-base md:text-lg italic text-on-surface/35 mt-5 max-w-sm">
+                <p className="font-body text-base md:text-lg italic text-on-surface/35 mt-4 max-w-sm mx-auto md:mx-0">
                   Connect your data. Get your character. Share your stats.
                 </p>
               </motion.div>
 
-              {/* Actions */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.25, duration: 0.6 }}
-                className="flex flex-col gap-3 w-full max-w-sm"
-              >
-                {/* Primary CTA — adapts based on local availability */}
-                {localAvailable ? (
-                  <button
-                    onClick={handleLocalData}
-                    className="w-full bg-primary hover:bg-primary/90 text-on-primary rounded-2xl px-8 py-4 font-headline font-bold text-base transition-all duration-200 hover:scale-[1.02] active:scale-95 shadow-lg shadow-primary/20 text-left"
-                  >
-                    Use your local data
-                    <p className="text-on-primary/55 text-[11px] font-normal mt-0.5">
-                      ~/.claude auto-detected on this machine
-                    </p>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => inputRef.current?.click()}
-                    className="w-full bg-primary hover:bg-primary/90 text-on-primary rounded-2xl px-8 py-4 font-headline font-bold text-base transition-all duration-200 hover:scale-[1.02] active:scale-95 shadow-lg shadow-primary/20"
-                  >
-                    Upload ~/.claude folder
-                  </button>
-                )}
-
-                {/* Secondary CTAs */}
-                <div className="flex gap-2">
-                  {localAvailable && (
+              <div className="w-full max-w-md rounded-2xl border border-on-surface/10 bg-[rgba(0,0,0,0.25)] flex flex-col">
+                <div className="flex border-b border-on-surface/10 bg-black/20">
+                  {(["npm", "web", "claude"] as const).map((t, idx) => (
                     <button
-                      onClick={() => inputRef.current?.click()}
-                      className="flex-1 bg-surface-container-low hover:bg-surface-container border border-on-surface/8 text-on-surface/60 hover:text-on-surface rounded-xl px-4 py-3 font-label text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
+                      key={t}
+                      onClick={() => handleTabClick(t)}
+                      className={`relative flex-1 py-3.5 px-3 flex items-center justify-center gap-2 font-mono text-[11px] transition-colors ${idx !== 0 ? "border-l border-on-surface/10" : ""} ${activeTab === t ? "bg-white/5" : "hover:bg-white/5"}`}
+                      style={{ color: activeTab === t ? "#faf9f5" : "rgba(250,249,245,0.5)" }}
                     >
-                      Upload folder
+                      {t === "npm" ? (
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                        >
+                          <polyline points="4 17 10 11 4 5" />
+                          <line x1="12" y1="19" x2="20" y2="19" />
+                        </svg>
+                      ) : t === "web" ? (
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                        >
+                          <circle cx="12" cy="12" r="10" />
+                          <line x1="2" y1="12" x2="22" y2="12" />
+                          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                        </svg>
+                      ) : (
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                        >
+                          <polyline points="16 18 22 12 16 6" />
+                          <polyline points="8 6 2 12 8 18" />
+                        </svg>
+                      )}
+                      <span>{t === "npm" ? "npm package" : t === "web" ? "web" : "claude code"}</span>
+                      {activeTab === t && (
+                        <div className="absolute left-0 right-0 bottom-[-1px] h-[1px] bg-[rgba(23,23,23,1)] z-10" />
+                      )}
+                      {/* Progress bar — only while auto-cycling */}
+                      {activeTab === t && cycleActive && (
+                        <motion.div
+                          key={`prog-${cycleKey}`}
+                          className="absolute left-0 bottom-0 h-[2px] bg-primary"
+                          initial={{ width: "0%" }}
+                          animate={{ width: "100%" }}
+                          transition={{ duration: CYCLE_MS / 1000, ease: "linear" }}
+                        />
+                      )}
                     </button>
-                  )}
-                  <button
-                    onClick={handleDemo}
-                    className="flex-1 bg-surface-container-low hover:bg-surface-container border border-on-surface/8 text-on-surface/60 hover:text-on-surface rounded-xl px-4 py-3 font-label text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
-                  >
-                    Try demo
-                  </button>
+                  ))}
                 </div>
 
-                {/* Drag hint when dragging */}
-                <AnimatePresence>
-                  {isDragging && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.97 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.97 }}
-                      className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
-                    >
-                      <div className="border-2 border-dashed border-primary rounded-3xl px-16 py-12 text-center">
-                        <p className="font-headline text-2xl font-extrabold text-primary">Drop it like it&apos;s hot</p>
-                        <p className="font-body text-sm italic text-on-surface/40 mt-2">
-                          release to upload your ~/.claude folder
-                        </p>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Utility links */}
-                <div className="flex items-center justify-between pt-1">
-                  <span className="inline-flex items-center gap-1.5 text-on-surface/25">
-                    <svg
-                      width="11"
-                      height="11"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                    <span className="font-label text-[9px] font-bold tracking-widest uppercase">
-                      Your data stays local
-                    </span>
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => {
-                        setShowHiddenHelp(!showHiddenHelp);
-                        setShowRunLocally(false);
-                      }}
-                      className="group cursor-pointer font-label text-[9px] font-bold tracking-wider uppercase text-on-surface/35 hover:text-primary transition-colors flex items-center gap-1"
-                    >
-                      <span className="underline underline-offset-2 decoration-on-surface/20 group-hover:decoration-primary transition-colors">
-                        Can&apos;t see .claude?
-                      </span>
-                      <motion.span
-                        animate={{ rotate: showHiddenHelp ? 180 : 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="opacity-50 group-hover:opacity-100"
+                <div className="p-5 pt-3 pb-4">
+                  <AnimatePresence mode="wait">
+                    {activeTab === "npm" && (
+                      <motion.div
+                        key="npm"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
                       >
-                        ↓
-                      </motion.span>
-                    </button>
-                    <span className="text-on-surface/10">·</span>
-                    <button
-                      onClick={() => {
-                        setShowRunLocally(!showRunLocally);
-                        setShowHiddenHelp(false);
-                      }}
-                      className="group cursor-pointer font-label text-[9px] font-bold tracking-wider uppercase text-on-surface/35 hover:text-primary transition-colors flex items-center gap-1"
-                    >
-                      <span className="underline underline-offset-2 decoration-on-surface/20 group-hover:decoration-primary transition-colors">
-                        Run locally
-                      </span>
-                      <motion.span
-                        animate={{ rotate: showRunLocally ? 180 : 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="opacity-50 group-hover:opacity-100"
+                        <TabContentNPM active={true} />
+                      </motion.div>
+                    )}
+                    {activeTab === "web" && (
+                      <motion.div
+                        key="web"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
                       >
-                        ↓
-                      </motion.span>
-                    </button>
-                  </div>
+                        <TabContentWeb />
+                      </motion.div>
+                    )}
+                    {activeTab === "claude" && (
+                      <motion.div
+                        key="claude"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                      >
+                        <TabContentClaude />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-
-                {/* Expandable: hidden file help */}
-                <AnimatePresence>
-                  {showHiddenHelp && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="bg-surface-container-low/80 border border-on-surface/6 rounded-xl px-4 py-3 space-y-2">
-                        <p className="font-label text-[9px] font-bold tracking-[0.2em] uppercase text-on-surface/30 mb-2">
-                          Show hidden files first:
-                        </p>
-                        {[
-                          { os: "macOS", hint: "Cmd + Shift + .", note: "in Finder" },
-                          { os: "Windows", hint: "View → Show → Hidden items", note: "" },
-                          { os: "Linux", hint: "Ctrl + H", note: "in file manager" },
-                        ].map(({ os, hint, note }) => (
-                          <div key={os} className="flex items-center gap-2">
-                            <span className="font-label text-[9px] font-bold text-primary/70 w-12">{os}</span>
-                            <code className="font-mono text-[10px] text-on-surface/50 bg-surface-container-high/50 px-2 py-0.5 rounded">
-                              {hint}
-                            </code>
-                            {note && <span className="font-label text-[9px] text-on-surface/25">{note}</span>}
-                          </div>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Expandable: run locally */}
-                <AnimatePresence>
-                  {showRunLocally && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="bg-surface-container-low/80 border border-primary/10 rounded-xl px-4 py-3">
-                        <p className="font-label text-[9px] font-bold tracking-[0.2em] uppercase text-primary/50 mb-2">
-                          Run locally — auto-detects your ~/.claude
-                        </p>
-                        <div className="relative group flex items-center gap-2">
-                          <code className="font-mono text-[10px] text-on-surface/40 bg-surface-container-high/80 px-3 py-2 rounded-lg flex-1 overflow-x-auto whitespace-nowrap block">
-                            {CLI_CMD}
-                          </code>
-                          <button
-                            onClick={() => {
-                              navigator.clipboard.writeText(CLI_CMD);
-                              setCopied(true);
-                              setTimeout(() => setCopied(false), 1500);
-                            }}
-                            className="shrink-0 p-1.5 rounded-md bg-surface-container-highest/80 hover:bg-primary/20 text-on-surface/30 hover:text-primary transition-colors"
-                          >
-                            {copied ? (
-                              <svg
-                                width="13"
-                                height="13"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <polyline points="20 6 9 17 4 12" />
-                              </svg>
-                            ) : (
-                              <svg
-                                width="13"
-                                height="13"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                              </svg>
-                            )}
-                          </button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
+              </div>
             </div>
-
-            {/* ── Right: stacked preview cards ── */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.35 }}
-              className="shrink-0 hidden md:block"
-            >
-              <PreviewCards />
-            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Error */}
+      {/* Preview cards — fixed to viewport center, independent of tab height */}
+      {!isLoading && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.35 }}
+          className="fixed inset-0 pointer-events-none hidden md:flex items-center justify-end px-6 z-10"
+        >
+          <div className="w-full max-w-5xl mx-auto flex justify-end">
+            <div className="pointer-events-auto">
+              <PreviewCards />
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      <AnimatePresence>
+        {isDragging && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.97 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+          >
+            <div className="border-2 border-dashed border-primary rounded-3xl px-16 py-12 text-center">
+              <p className="font-headline text-2xl font-extrabold text-primary">Drop it like it&apos;s hot</p>
+              <p className="font-body text-sm italic text-on-surface/40 mt-2">
+                release to upload your ~/.claude folder
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {error && (
           <motion.div
@@ -611,11 +844,10 @@ export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
         )}
       </AnimatePresence>
 
-      {/* Hidden file input */}
       <input
         ref={inputRef}
         type="file"
-        /* @ts-expect-error webkitdirectory is not in the type definitions */
+        // @ts-expect-error webkitdirectory is non-standard
         webkitdirectory=""
         directory=""
         multiple

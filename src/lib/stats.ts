@@ -195,13 +195,11 @@ export function computeStats(data: ParsedData): ComputedStats {
   const projectSet = new Set<string>();
   const branchSet = new Set<string>();
   const projectActivity: Record<string, number> = {};
-  // Build slug→realPath from history so we can resolve session folder names.
-  // Windows paths use \ and have a drive letter colon (C:\...), Unix paths use /.
-  const pathToSlug = (p: string) =>
-    p.includes("\\") ? p.replaceAll("\\", "-").replaceAll(":", "-") : p.replaceAll("/", "-");
+  // Build slug→realPath from history so we can resolve session folder names
   for (const entry of history) {
     if (entry.project) {
-      slugToPath[pathToSlug(entry.project)] = entry.project;
+      const slug = entry.project.replaceAll("/", "-");
+      slugToPath[slug] = entry.project;
       projectSet.add(entry.project);
     }
   }
@@ -231,15 +229,11 @@ export function computeStats(data: ParsedData): ComputedStats {
     }
   }
   const topProjectStats = Array.from(projectSet)
-    .map((fullPath) => ({
-      name:
-        fullPath
-          .split(fullPath.includes("\\") ? "\\" : "/")
-          .filter(Boolean)
-          .at(-1) ?? fullPath,
-      messages: projectActivity[fullPath] || 0,
-      tokens: projectTokens[fullPath] || 0,
-      sessions: projectSessions[fullPath] || 0,
+    .map((name) => ({
+      name,
+      messages: projectActivity[name] || 0,
+      tokens: projectTokens[name] || 0,
+      sessions: projectSessions[name] || 0,
     }))
     .sort((a, b) => b.messages - a.messages)
     .slice(0, 5);
@@ -440,15 +434,15 @@ function extractUsername(history: HistoryEntry[], sessions: { messages: { cwd?: 
   for (const session of sessions) {
     for (const msg of session.messages) {
       if (msg.cwd) {
-        // /home/username/... or /Users/username/... or C:\Users\username\...
-        const match = msg.cwd.match(/^(?:\/(?:home|Users)\/|[A-Za-z]:\\[Uu]sers\\)([^/\\]+)/);
+        // /home/username/... or /Users/username/...
+        const match = msg.cwd.match(/^\/(?:home|Users)\/([^/]+)/);
         if (match) return match[1];
       }
     }
   }
   for (const entry of history) {
     if (entry.project) {
-      const match = entry.project.match(/^(?:\/(?:home|Users)\/|[A-Za-z]:\\[Uu]sers\\)([^/\\]+)/);
+      const match = entry.project.match(/^\/(?:home|Users)\/([^/]+)/);
       if (match) return match[1];
     }
   }

@@ -33,7 +33,7 @@
   "bugs": {
     "url": "https://github.com/Junaid2005/ccrewind/issues"
   },
-  "homepage": "https://github.com/Junaid2005/ccrewind#readme",
+  "homepage": "https://ccrewind.com",
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.2",
     "@types/d3": "^7.4.3",

@@ -24,8 +24,8 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MASCOTS_DIR = os.path.join(REPO_ROOT, "public", "mascots")
 OUTPUT_FILE = os.path.join(REPO_ROOT, "scripts", "mascots-ansi.ts")
 
-WIDTH = 56
-HEIGHT = 28
+WIDTH = 40
+HEIGHT = 20
 BG_THRESH = 35  # euclidean distance for flood-fill background detection
 
 CHAR_MAP: dict[str, str] = {

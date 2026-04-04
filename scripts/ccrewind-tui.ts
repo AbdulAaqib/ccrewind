@@ -4,6 +4,7 @@ import { computeElo } from "@/lib/scoring";
 import { assignCharacter } from "@/lib/archetypes";
 import type { ComputedStats, EloBreakdown, Character } from "@/types";
 import fs from "fs/promises";
+import { spawnSync } from "child_process";
 import path from "path";
 import os from "os";
 import { fileURLToPath } from "url";
@@ -267,10 +268,73 @@ function renderStreak(stats: ComputedStats): string {
   ].join("\n");
 }
 
+// ── Mascot image map (character name → mascot filename) ──────────────────────
+const MASCOT_FILES: Record<string, string> = {
+  "The Intern": "char-the-intern.png",
+  "The Degen": "char-the-degen.png",
+  "The SBF": "char-the-ghost.png",
+  "The Sama": "char-the-operator.png",
+  "The Quant": "char-the-quant.png",
+  "The Musk": "char-the-chaos-agent.png",
+  "The Dario": "char-the-visionary.png",
+  "The Karpathy": "char-the-night-shift-engineer.png",
+  "Slough Boy": "char-the-researcher.png",
+};
+
+function findMascotImagePath(characterName: string): string | null {
+  const filename = MASCOT_FILES[characterName] ?? "character-reveal.png";
+  // When running from dist/ (npm install), mascots live at ../../public/mascots/
+  // When running from repo root, they live at public/mascots/
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const candidates = [
+    path.join(__dirname, "..", "public", "mascots", filename),
+    path.join(__dirname, "..", "..", "public", "mascots", filename),
+    path.join(process.cwd(), "public", "mascots", filename),
+  ];
+  for (const p of candidates) {
+    try {
+      // sync check — fine here since we're outside the hot path
+      const { statSync } = require("fs");
+      statSync(p);
+      return p;
+    } catch {
+      // not found at this path, try next
+    }
+  }
+  return null;
+}
+
+function renderMascotWithChafa(imagePath: string): string | null {
+  try {
+    const result = spawnSync(
+      "chafa",
+      ["--size=46x22", "--symbols=block+border", "--colors=256", imagePath],
+      { encoding: "utf8", timeout: 5000 }
+    );
+    if (result.status === 0 && result.stdout) {
+      return result.stdout.trimEnd();
+    }
+  } catch {
+    // chafa not installed or failed — silently skip
+  }
+  return null;
+}
+
 function renderCharacterReveal(_stats: ComputedStats, elo: EloBreakdown, character: Character): string {
-  return [
-    sectionHeader("YOUR CHARACTER"),
-    "",
+  const lines: string[] = [sectionHeader("YOUR CHARACTER"), ""];
+
+  const imagePath = findMascotImagePath(character.name);
+  if (imagePath) {
+    const art = renderMascotWithChafa(imagePath);
+    if (art) {
+      // indent each line of the art by 2 spaces
+      art.split("\n").forEach((l) => lines.push("  " + l));
+      lines.push("");
+    }
+  }
+
+  lines.push(
     `  ${orange("\u2726")} ${bold(white(character.name))} ${orange("\u2726")}`,
     `  ${dim('"')}${white(character.oneLiner)}${dim('"')}`,
     "",
@@ -278,8 +342,10 @@ function renderCharacterReveal(_stats: ComputedStats, elo: EloBreakdown, charact
     `  ${renderEloBar(elo.total)}`,
     "",
     `  ${dim(character.endingLine)}`,
-    "",
-  ].join("\n");
+    ""
+  );
+
+  return lines.join("\n");
 }
 
 function renderFooter(): string {

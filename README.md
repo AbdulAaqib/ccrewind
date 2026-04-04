@@ -8,7 +8,7 @@ Upload your `~/.claude` folder. Get a personalised story of your usage. Find out
 
 [![CI](https://github.com/Junaid2005/ccrewind/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Junaid2005/ccrewind/actions/workflows/ci.yml)
 [![Vercel](https://therealsujitk-vercel-badge.vercel.app/?app=ccrewind)](https://ccrewind.com)
-[![Socket Badge](https://badge.socket.dev/npm/package/ccrewind/1.0.0)](https://badge.socket.dev/npm/package/ccrewind/1.0.0)
+[![Socket Badge](https://badge.socket.dev/npm/package/ccrewind)](https://badge.socket.dev/npm/package/ccrewind)
 [![npm version](https://img.shields.io/npm/v/ccrewind?style=flat-square)](https://www.npmjs.com/package/ccrewind)
 
 ---

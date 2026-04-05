@@ -11,6 +11,7 @@ Requires: Pillow  (pip install pillow)
 import json
 import math
 import os
+import re
 import sys
 from collections import deque
 
@@ -141,6 +142,14 @@ def img_to_ansi(path: str) -> str:
 
         parts.append(RESET)
         lines.append("".join(parts))
+
+    def is_blank(line: str) -> bool:
+        return re.sub(r"\x1b\[[0-9;]*m", "", line).strip() == ""
+
+    while lines and is_blank(lines[0]):
+        lines.pop(0)
+    while lines and is_blank(lines[-1]):
+        lines.pop()
 
     return "\n".join(lines)
 

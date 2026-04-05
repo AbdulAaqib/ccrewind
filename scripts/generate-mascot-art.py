@@ -24,8 +24,8 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MASCOTS_DIR = os.path.join(REPO_ROOT, "public", "mascots")
 OUTPUT_FILE = os.path.join(REPO_ROOT, "scripts", "mascots-ansi.ts")
 
-WIDTH = 40
-HEIGHT = 20
+WIDTH = 30
+HEIGHT = 15
 BG_THRESH = 35  # euclidean distance for flood-fill background detection
 
 CHAR_MAP: dict[str, str] = {
@@ -179,6 +179,14 @@ def main() -> None:
         f.write("\n".join(ts_lines))
 
     print(f"Written: {OUTPUT_FILE}")
+
+    # also write preview JSON for quick terminal testing
+    preview_path = "/tmp/mascots_preview.json"
+    with open(preview_path, "w", encoding="utf-8") as f:
+        json.dump(results, f, ensure_ascii=False)
+    print(f"Preview : {preview_path}")
+    print(f"\nTo view all mascots:")
+    print(f'  python3 -c "import json; data=json.load(open(\'{preview_path}\')); [print(\'\\n\\033[1;38;5;208m── \'+n+\' ──\\033[0m\\n\'+a) for n,a in data.items()]"')
 
 
 if __name__ == "__main__":

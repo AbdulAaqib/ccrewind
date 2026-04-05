@@ -269,7 +269,13 @@ function renderStreak(stats: ComputedStats): string {
 }
 
 function renderCharacterReveal(_stats: ComputedStats, elo: EloBreakdown, character: Character): string {
-  const lines: string[] = [sectionHeader("YOUR CHARACTER"), ""];
+  const lines: string[] = [
+    sectionHeader("YOUR CHARACTER"),
+    "",
+    `  ${orange("\u2726")} ${bold(white(character.name))} ${orange("\u2726")}`,
+    `  ${dim('"')}${white(character.oneLiner)}${dim('"')}`,
+    "",
+  ];
 
   const art = MASCOT_ART[character.name];
   if (art) {
@@ -278,9 +284,6 @@ function renderCharacterReveal(_stats: ComputedStats, elo: EloBreakdown, charact
   }
 
   lines.push(
-    `  ${orange("\u2726")} ${bold(white(character.name))} ${orange("\u2726")}`,
-    `  ${dim('"')}${white(character.oneLiner)}${dim('"')}`,
-    "",
     `  Claude Elo: ${bold(orange(String(elo.total)))} / 1000`,
     `  ${renderEloBar(elo.total)}`,
     "",

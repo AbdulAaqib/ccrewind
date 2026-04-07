@@ -1,13 +1,19 @@
-const fs = require('fs');
-const path = require('path');
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const srcPath = path.join(__dirname, '../src/components/upload/UploadScreen.tsx');
-const originalSource = fs.readFileSync(srcPath, 'utf8');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const previewCardsMatch = originalSource.match(/\/\* ─── Stacked preview cards ─── \*\/\s*function PreviewCards\(\) \{[\s\S]*?return \([\s\S]*?  \);\n\}/);
-const previewCardsCode = previewCardsMatch[0];
+const srcPath = path.join(__dirname, "../src/components/upload/UploadScreen.tsx");
+const originalSource = fs.readFileSync(srcPath, "utf8");
 
-const generateTemplate = (vNum, chromeCode, wrapperClass, rightColClass) => `
+const previewCardsMatch = originalSource.match(
+  /\/\* ─── Stacked preview cards ─── \*\/\s*function PreviewCards\(\) \{[\s\S]*?return \([\s\S]*?  \);\n\}/
+);
+const previewCardsCode = previewCardsMatch ? previewCardsMatch[0] : "";
+
+const generateTemplate = (vNum: string, chromeCode: string, wrapperClass: string, rightColClass: string) => `
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
@@ -559,10 +565,50 @@ const v5Chrome = `
               </div>
 `;
 
-fs.writeFileSync(path.join(__dirname, '../src/components/upload/UploadScreenV1.tsx'), generateTemplate('1', v1Chrome, 'flex-1 flex flex-col items-center md:items-start w-full max-w-lg', 'shrink-0 hidden md:block'));
-fs.writeFileSync(path.join(__dirname, '../src/components/upload/UploadScreenV2.tsx'), generateTemplate('2', v2Chrome, 'flex-1 flex flex-col items-center md:items-start w-full max-w-lg', 'shrink-0 hidden md:block'));
-fs.writeFileSync(path.join(__dirname, '../src/components/upload/UploadScreenV3.tsx'), generateTemplate('3', v3Chrome, 'flex-1 flex flex-col items-center md:items-start w-full max-w-lg', 'shrink-0 hidden md:block'));
-fs.writeFileSync(path.join(__dirname, '../src/components/upload/UploadScreenV4.tsx'), generateTemplate('4', v4Chrome, 'flex-1 flex flex-col items-center md:items-start w-full max-w-lg', 'shrink-0 hidden md:block'));
-fs.writeFileSync(path.join(__dirname, '../src/components/upload/UploadScreenV5.tsx'), generateTemplate('5', v5Chrome, 'flex-1 flex flex-col items-center md:items-start w-full max-w-lg', 'shrink-0 hidden md:block'));
+fs.writeFileSync(
+  path.join(__dirname, "../src/components/upload/UploadScreenV1.tsx"),
+  generateTemplate(
+    "1",
+    v1Chrome,
+    "flex-1 flex flex-col items-center md:items-start w-full max-w-lg",
+    "shrink-0 hidden md:block"
+  )
+);
+fs.writeFileSync(
+  path.join(__dirname, "../src/components/upload/UploadScreenV2.tsx"),
+  generateTemplate(
+    "2",
+    v2Chrome,
+    "flex-1 flex flex-col items-center md:items-start w-full max-w-lg",
+    "shrink-0 hidden md:block"
+  )
+);
+fs.writeFileSync(
+  path.join(__dirname, "../src/components/upload/UploadScreenV3.tsx"),
+  generateTemplate(
+    "3",
+    v3Chrome,
+    "flex-1 flex flex-col items-center md:items-start w-full max-w-lg",
+    "shrink-0 hidden md:block"
+  )
+);
+fs.writeFileSync(
+  path.join(__dirname, "../src/components/upload/UploadScreenV4.tsx"),
+  generateTemplate(
+    "4",
+    v4Chrome,
+    "flex-1 flex flex-col items-center md:items-start w-full max-w-lg",
+    "shrink-0 hidden md:block"
+  )
+);
+fs.writeFileSync(
+  path.join(__dirname, "../src/components/upload/UploadScreenV5.tsx"),
+  generateTemplate(
+    "5",
+    v5Chrome,
+    "flex-1 flex flex-col items-center md:items-start w-full max-w-lg",
+    "shrink-0 hidden md:block"
+  )
+);
 
-console.log('Successfully generated 5 variants (fixed Next.js TS issues).');
+console.log("Successfully generated 5 variants (fixed Next.js TS issues).");

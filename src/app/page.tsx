@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import UploadScreenV3 from "@/components/upload/UploadScreenV3";
+import UploadScreen from "@/components/upload/UploadScreen";
 import SlideContainer from "@/components/slides/SlideContainer";
 import GraveyardShift from "@/components/slides/GraveyardShift";
 import Delegator from "@/components/slides/Delegator";
@@ -60,7 +60,7 @@ export default function Home() {
       <AnimatePresence mode="wait">
         {phase === "upload" && (
           <motion.div key="upload" exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.3 }}>
-            <UploadScreenV3 onDataParsed={handleDataParsed} />
+            <UploadScreen onDataParsed={handleDataParsed} />
           </motion.div>
         )}
 

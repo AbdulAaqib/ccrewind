@@ -286,7 +286,7 @@ function TabContentClaude() {
   );
 }
 
-export default function UploadScreenV3({ onDataParsed }: UploadScreenProps) {
+export default function UploadScreen({ onDataParsed }: UploadScreenProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState(LOADING_MESSAGES[0]);

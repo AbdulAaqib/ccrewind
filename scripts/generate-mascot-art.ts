@@ -44,12 +44,12 @@ function colorDist(a: RGB, b: RGB): number {
   return Math.sqrt((a.r - b.r) ** 2 + (a.g - b.g) ** 2 + (a.b - b.b) ** 2);
 }
 
-function getPixel(img: Jimp, x: number, y: number): RGB {
+function getPixel(img: InstanceType<typeof Jimp>, x: number, y: number): RGB {
   const rgba = intToRGBA(img.getPixelColor(x, y));
   return { r: rgba.r, g: rgba.g, b: rgba.b };
 }
 
-function detectBg(img: Jimp): RGB {
+function detectBg(img: InstanceType<typeof Jimp>): RGB {
   const w = img.width;
   const h = img.height;
   const samples = [
@@ -67,7 +67,7 @@ function detectBg(img: Jimp): RGB {
   };
 }
 
-function makeBgMask(img: Jimp, bg: RGB, thresh: number): boolean[][] {
+function makeBgMask(img: InstanceType<typeof Jimp>, bg: RGB, thresh: number): boolean[][] {
   const w = img.width;
   const h = img.height;
   const visited: boolean[][] = Array.from({ length: w }, () =>
